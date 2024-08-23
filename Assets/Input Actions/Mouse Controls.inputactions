@@ -1,0 +1,54 @@
+{
+    "name": "Mouse Controls",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "d45811c4-a6ea-406a-abe9-e49203434ba1",
+            "actions": [
+                {
+                    "name": "Left click",
+                    "type": "Button",
+                    "id": "dac28192-5494-4baf-8084-f62c88767136",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Right click",
+                    "type": "Button",
+                    "id": "4f54606f-6ced-43b3-a696-3b666091dbd8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "27275b00-c1a0-4203-bc95-2074880d5f5c",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Left click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5ccc4f75-8288-4793-8431-e9c782992fbe",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Right click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
