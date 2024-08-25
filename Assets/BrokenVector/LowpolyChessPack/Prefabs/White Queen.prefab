@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3313976}
   - component: {fileID: 2324324}
   - component: {fileID: 6463976}
-  - component: {fileID: 5355450732995878217}
   m_Layer: 0
   m_Name: White Queen
   m_TagString: Untagged
@@ -107,20 +106,3 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 3d88c9550087ec84c95090f5be583f60, type: 3}
---- !u!114 &5355450732995878217
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 103078}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18da3e3df0f6bec4fa780023ef1dbadd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Damage: 0
-  HP: 0
-  NMOves: 0
-  Type: 0
-  PiecePrefab: {fileID: 0}
