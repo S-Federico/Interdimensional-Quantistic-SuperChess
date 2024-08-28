@@ -1,23 +1,134 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.Search;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
     [SerializeField] private GameObject board;         // Riferimento al GameObject "Board" che contiene il piano
     [SerializeField] private GameObject piecePrefab;   // Prefab del pezzo da instanziare
+    [SerializeField] private int riga;                 
+    [SerializeField] private int colonna;
 
     private Transform planeTransform;                 // Riferimento al Transform del Piano
     private float squareSize;                         // Dimensione di una singola casella
     private int boardSize = 8;                        // Dimensione della scacchiera (8x8)
     private GameObject[,] squares;                    // Array bidimensionale per memorizzare le caselle
 
+    private ChessBoardModel cbm;
+
+    //flag da cancellare
+    private bool showMovesFlag;
+
+
     void Start()
     {
+        cbm = new ChessBoardModel(8,8);
         InitializeBoard();
-        GenerateBoard();
-        DestroyPlane(); // Distrugge il piano dopo aver generato la scacchiera
+
+        showMovesFlag=false;
+
+        //piazza il pezzo su una casella
+        Instantiate(piecePrefab,GetSquare(riga,colonna).transform.position,GetSquare(riga,colonna).transform.rotation);
+
+        int[,] matrice = new int[17, 17]
+        {
+            {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
+            {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
+            {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
+            {0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+            {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
+            {0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
+            {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
+            {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1}
+        };
+
+        cbm.PlacePiece(new Piece(PieceType.Queen,1,1,PieceColor.White,matrice),new int[] {riga,colonna});
     }
+
+    void Update(){
+
+        //tenere una variabile selected chessman, se non Ã¨ null mostriamo le mosse
+
+        if(showMovesFlag){
+            HighlightMoves();
+        }
+        else{
+            HideMoves();
+        }
+
+    }
+
+    void HighlightMoves()
+    {
+        List<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(riga, colonna);
+        
+        Debug.Log($"Found {possibleMoves.Count} possible moves.");
+
+        foreach (int[] move in possibleMoves)
+        {
+            int x = move[0];
+            int y = move[1];
+            GameObject square = GetSquare(x, y);
+            
+            if (square != null)
+            {
+                Debug.Log($"Highlighting square at position ({x}, {y}).");
+                Renderer renderer = square.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    renderer.enabled = true;
+                    renderer.material.color = Color.green;
+                }
+            }
+            else
+            {
+                Debug.Log($"No square found at position ({x}, {y}).");
+            }
+        }
+    }
+
+
+    void HideMoves()
+    {
+        // Itera su tutte le caselle della scacchiera per nascondere le evidenziazioni
+        for (int x = 0; x < boardSize; x++)
+        {
+            for (int y = 0; y < boardSize; y++)
+            {
+                GameObject square = GetSquare(x, y);
+                if (square != null)
+                {
+                    // Rende la casella invisibile o ripristina il suo stato iniziale
+                    Renderer renderer = square.GetComponent<Renderer>();
+                    if (renderer != null)
+                    {
+                        renderer.enabled = false;
+                    }
+                }
+            }
+        }
+    }
+
+
+    public void ToggleShowMovesFlag(){
+        showMovesFlag=!showMovesFlag;
+    }
+
+    GameObject GetSquare(int x,int y){
+        return GameObject.Find($"Square_{x}_{y}");
+    }
+
 
     // Metodo per inizializzare il piano di gioco
     void InitializeBoard()
@@ -28,7 +139,7 @@ public class BoardManager : MonoBehaviour
             if (planeTransform != null)
             {
                 // Calcola la dimensione delle caselle in base alle dimensioni del piano
-                squareSize = planeTransform.localScale.x * 10 / boardSize; // La scala del piano moltiplicata per 10 poiché il piano standard di Unity è di 10 unità
+                squareSize = planeTransform.localScale.x * 10 / boardSize; // La scala del piano moltiplicata per 10 poichï¿½ il piano standard di Unity ï¿½ di 10 unitï¿½
             }
             else
             {
@@ -39,10 +150,13 @@ public class BoardManager : MonoBehaviour
         {
             Debug.LogError("Board non assegnato!");
         }
+
+        GenerateSquares();
+        DestroyPlane();
     }
 
     // Metodo per generare dinamicamente le caselle della scacchiera
-    void GenerateBoard()
+    void GenerateSquares()
     {
         squares = new GameObject[boardSize, boardSize];
 

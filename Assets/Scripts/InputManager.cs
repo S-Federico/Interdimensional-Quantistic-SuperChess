@@ -27,7 +27,7 @@ public class InputManager : MonoBehaviour
 
     void OnEnable()
     {
-        // Abilita le actions quando lo script è attivo
+        // Abilita le actions quando lo script ï¿½ attivo
         leftClickAction.Enable();
         leftClickAction.performed += OnLeftClick;
 
@@ -37,7 +37,7 @@ public class InputManager : MonoBehaviour
 
     void OnDisable()
     {
-        // Disabilita le actions quando lo script è disattivato
+        // Disabilita le actions quando lo script ï¿½ disattivato
         leftClickAction.performed -= OnLeftClick;
         leftClickAction.Disable();
 
@@ -66,6 +66,8 @@ public class InputManager : MonoBehaviour
         {
             Debug.Log("Hai cliccato con il tasto " + buttonType + " su: " + hit.collider.name);
 
+            TestMoves();
+
             // Verifica se l'oggetto ha un tag definito
             if (!string.IsNullOrEmpty(hit.collider.tag) && hit.collider.tag != "Untagged")
             {
@@ -82,6 +84,21 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    private void TestMoves(){
+                        
+        // Trova il componente BoardManager nella scena
+        BoardManager boardManager = FindObjectOfType<BoardManager>();
+        
+        if (boardManager != null)
+        {
+            boardManager.ToggleShowMovesFlag();
+            Debug.Log("BoardMaanger trovato");
+        }
+        else
+        {
+            Debug.LogError("BoardManager non trovato!");
+        }
+    }
     private void HandleBoardPieceClick(GameObject piece, string buttonType)
     {
         // Logica per gestire il click su un pezzo della board

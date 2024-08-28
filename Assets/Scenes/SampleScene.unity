@@ -443,7 +443,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   board: {fileID: 1000394052}
-  piecePrefab: {fileID: 119820, guid: 9e4e635002b6a524ca896adb28e8e388, type: 3}
+  piecePrefab: {fileID: 103078, guid: 6f38c700bedefe64f8364436528e5c3d, type: 3}
+  riga: 5
+  colonna: 5
 --- !u!4 &965710760
 Transform:
   m_ObjectHideFlags: 0
