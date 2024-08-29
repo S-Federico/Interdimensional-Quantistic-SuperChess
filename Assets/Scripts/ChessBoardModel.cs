@@ -120,14 +120,20 @@ public class ChessBoardModel{
                         case null:
                             break;
                         case 1:
-                            moves.Add(new int[] { i, j });
+                            //Se è libera aggiungi casella con valore 1 (movimento), altrimenti con 2(attacco possibile)
+                            if(board[i,j]==null)
+                                moves.Add(new int[] { i, j, 1});
+                            else{
+                                moves.Add(new int[]{ i, j, 2});
+                            }
                             break;
                     }
                 }
             }
         }
+        //Pulisci moves togliendo i movimenti interrotti e gli attacchi non possibili
         return moves;
-    }
+    }   
 
     private void Attack(){
 
