@@ -8,7 +8,7 @@ public class BoardManager : MonoBehaviour
 {
     [SerializeField] private GameObject board;         // Riferimento al GameObject "Board" che contiene il piano
     [SerializeField] private GameObject piecePrefab;   // Prefab del pezzo da instanziare
-    [SerializeField] private int riga;                 
+    [SerializeField] private int riga;
     [SerializeField] private int colonna;
 
     private Transform planeTransform;                 // Riferimento al Transform del Piano
@@ -20,17 +20,18 @@ public class BoardManager : MonoBehaviour
 
     //flag da cancellare
     private bool showMovesFlag;
+    private bool highlightedFlag;
 
 
     void Start()
     {
-        cbm = new ChessBoardModel(8,8);
+        cbm = new ChessBoardModel(8, 8);
         InitializeBoard();
 
-        showMovesFlag=false;
+        showMovesFlag = false;
 
         //piazza il pezzo su una casella
-        Instantiate(piecePrefab,GetSquare(riga,colonna).transform.position,GetSquare(riga,colonna).transform.rotation);
+        Instantiate(piecePrefab, GetSquare(riga, colonna).transform.position, GetSquare(riga, colonna).transform.rotation);
 
         int[,] matrice = new int[17, 17]
         {
@@ -53,18 +54,33 @@ public class BoardManager : MonoBehaviour
             {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1}
         };
 
-        cbm.PlacePiece(new Piece(PieceType.Queen,1,1,PieceColor.White,matrice),new int[] {riga,colonna});
+        matrice= new int[3,3]{
+            {1, 1, 1},
+            {1, 1, 1},
+            {1, 1, 1}
+        };
+
+        cbm.PlacePiece(new Piece(PieceType.Queen, 1, 1, PieceColor.White, matrice, new int[] { riga, colonna }));
     }
 
-    void Update(){
+    void Update()
+    {
 
         //tenere una variabile selected chessman, se non è null mostriamo le mosse
 
-        if(showMovesFlag){
-            HighlightMoves();
+        if (showMovesFlag)
+        {   
+            if(!highlightedFlag){
+                HighlightMoves();
+                highlightedFlag=true;
+            }
         }
-        else{
-            HideMoves();
+        else
+        {   
+            if(highlightedFlag){
+                HideMoves();
+                highlightedFlag=false;
+            }
         }
 
     }
@@ -72,7 +88,7 @@ public class BoardManager : MonoBehaviour
     void HighlightMoves()
     {
         List<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(riga, colonna);
-        
+
         Debug.Log($"Found {possibleMoves.Count} possible moves.");
 
         foreach (int[] move in possibleMoves)
@@ -80,7 +96,7 @@ public class BoardManager : MonoBehaviour
             int x = move[0];
             int y = move[1];
             GameObject square = GetSquare(x, y);
-            
+
             if (square != null)
             {
                 Debug.Log($"Highlighting square at position ({x}, {y}).");
@@ -121,11 +137,13 @@ public class BoardManager : MonoBehaviour
     }
 
 
-    public void ToggleShowMovesFlag(){
-        showMovesFlag=!showMovesFlag;
+    public void ToggleShowMovesFlag()
+    {
+        showMovesFlag = !showMovesFlag;
     }
 
-    GameObject GetSquare(int x,int y){
+    GameObject GetSquare(int x, int y)
+    {
         return GameObject.Find($"Square_{x}_{y}");
     }
 
@@ -151,13 +169,6 @@ public class BoardManager : MonoBehaviour
             Debug.LogError("Board non assegnato!");
         }
 
-        GenerateSquares();
-        DestroyPlane();
-    }
-
-    // Metodo per generare dinamicamente le caselle della scacchiera
-    void GenerateSquares()
-    {
         squares = new GameObject[boardSize, boardSize];
 
         for (int x = 0; x < boardSize; x++)
@@ -197,11 +208,7 @@ public class BoardManager : MonoBehaviour
                 squares[x, y] = newSquare;
             }
         }
-    }
 
-    // Metodo per distruggere il piano dopo aver generato la scacchiera
-    void DestroyPlane()
-    {
         if (planeTransform != null)
         {
             Destroy(planeTransform.gameObject);
@@ -211,4 +218,5 @@ public class BoardManager : MonoBehaviour
             Debug.LogError("Plane non trovato per la distruzione!");
         }
     }
+
 }

@@ -26,16 +26,19 @@ public class Piece{
     private int hp;
     private int attack;
     private PieceColor color;
+
+    private int[] position;
     
     //deve essere sempre di dimensioni dispari e con il pezzo al centro
     private int[,] movementMatrix;
 
-    public Piece(PieceType type,int hp,int attack,PieceColor color,int[,] movementMatrix){
+    public Piece(PieceType type,int hp,int attack,PieceColor color,int[,] movementMatrix,int[] position){
         this.type=type;
         this.hp=hp;
         this.attack=attack;
         this.color=color;
         this.movementMatrix=movementMatrix;
+        this.position=position;
     }
 
     public int[,] GetMovementMatrix(){
@@ -45,6 +48,9 @@ public class Piece{
         return type;
     }
 
+    public int[] GetPosition(){
+        return this.position;
+    }
     
     public int GetHP(){
         return hp;
@@ -58,7 +64,7 @@ public class Piece{
         return color;
     }
     public override string ToString(){
-        return "Piece:"+type+","+hp+","+attack+","+color+",";
+        return "Piece: "+type+", "+hp+", "+attack+", "+color+", "+position;
     }
 }
 
@@ -70,8 +76,8 @@ public class ChessBoardModel{
         board=new Piece[righe,colonne];
     }
     
-    public void PlacePiece(Piece piece, int[] position){
-        board[position[0],position[1]]=piece;
+    public void PlacePiece(Piece piece){
+        board[piece.GetPosition()[0],piece.GetPosition()[1]]=piece;
     }
 
     public void PrintBoard(){
@@ -100,30 +106,31 @@ public class ChessBoardModel{
             return moves;
 
         int[,] matrix = piece.GetMovementMatrix();
-        int offsetRighe = matrix.GetLength(0) / 2;
-        int offsetColonne = matrix.GetLength(1) / 2;
-
-        // Scorri sulle righe della matrice di movimento
-        for (int i = 0; i < matrix.GetLength(0); i++)
-        {
-            // Scorri sulle colonne della matrice di movimento
-            for (int j = 0; j < matrix.GetLength(1); j++)
-            {
-                int newRiga = riga + (i - offsetRighe);
-                int newColonna = colonna + (j - offsetColonne);
-
-                // Controlla che la nuova posizione sia all'interno della scacchiera
-                if (newRiga >= 0 && newRiga < board.GetLength(0) && newColonna >= 0 && newColonna < board.GetLength(1))
-                {
-                    // Se la matrice di movimento segna che ci puoi andare, controlla se è libera
-                    if (matrix[i, j] == 1 && board[newRiga, newColonna] == null)
-                    {
-                        moves.Add(new int[] { newRiga, newColonna });
+        int offsetRighe = (matrix.GetLength(0) / 2)-riga;
+        int offsetColonne = (matrix.GetLength(1) / 2)-colonna;
+        
+        for(int i=0;i<board.GetLength(0);i++){
+            for(int j=0;j<board.GetLength(1);j++){
+                //Se nessuno dei due indici è negativo o supera la linghezza della matrice di movimento
+                if(i + offsetRighe >= 0 && i + offsetRighe < matrix.GetLength(0) &&
+                   j + offsetColonne >= 0 && j + offsetColonne < matrix.GetLength(1))
+                   {
+                    int? move=matrix[i+offsetRighe,j+offsetColonne];
+                    switch(move){
+                        case null:
+                            break;
+                        case 1:
+                            moves.Add(new int[] { i, j });
+                            break;
                     }
                 }
             }
         }
         return moves;
+    }
+
+    private void Attack(){
+
     }
 
 }
