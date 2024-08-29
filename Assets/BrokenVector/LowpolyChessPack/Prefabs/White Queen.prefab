@@ -123,6 +123,7 @@ MonoBehaviour:
   Hp: 3
   Attack: 4
   Color: 87
+  ID: 11
   MovementMatrixInfo:
     gridSize: {x: 17, y: 17}
     cellSize: {x: 32, y: 16}

@@ -9,7 +9,7 @@ public class BoardManager : MonoBehaviour
 {
     [SerializeField] private GameObject board;         // Riferimento al GameObject "Board" che contiene il piano
     [SerializeField] private GameObject piecePrefab;   // Prefab del pezzo da instanziare
-    public Array2DString BoardData;
+    public Array2DInt BoardData;
     public List<GameObject> PiecePrefabs;
     private GameObject[,] Pieces;
     private int Riga;
@@ -237,7 +237,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int j = 0; j < Colonna; j++)
             {
-                GameObject obj = GetPieceFromCode(BoardData.GetCell(i, j));
+                GameObject obj = GetPieceFromId(BoardData.GetCell(i, j));
                 if (obj != null)
                 {
                     result[i, j] = obj;
@@ -249,11 +249,11 @@ public class BoardManager : MonoBehaviour
 
     }
 
-    GameObject GetPieceFromCode(string code)
+    GameObject GetPieceFromId(int id)
     {
         foreach (var prefab in this.PiecePrefabs)
         {
-            if (prefab.GetComponent<PieceStatus>().Code == code)
+            if (prefab.GetComponent<PieceStatus>().ID == id)
             {
                 return prefab;
             }

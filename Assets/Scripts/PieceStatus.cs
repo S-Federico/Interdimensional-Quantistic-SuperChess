@@ -10,6 +10,7 @@ public class PieceStatus : MonoBehaviour
     public int Hp;
     public int Attack;
     public char Color;
+    public int ID;
     
     //deve essere sempre di dimensioni dispari e con il pezzo al centro
     [SerializeField] private Array2DInt MovementMatrixInfo;
