@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Array2DEditor;
 using UnityEditor;
 using UnityEditor.Search;
 using UnityEngine;
@@ -8,8 +9,11 @@ public class BoardManager : MonoBehaviour
 {
     [SerializeField] private GameObject board;         // Riferimento al GameObject "Board" che contiene il piano
     [SerializeField] private GameObject piecePrefab;   // Prefab del pezzo da instanziare
-    [SerializeField] private int riga;                 
-    [SerializeField] private int colonna;
+    public Array2DString BoardData;
+    public List<GameObject> PiecePrefabs;
+    private GameObject[,] Pieces;
+    private int Riga;
+    private int Colonna;
 
     private Transform planeTransform;                 // Riferimento al Transform del Piano
     private float squareSize;                         // Dimensione di una singola casella
@@ -24,46 +28,51 @@ public class BoardManager : MonoBehaviour
 
     void Start()
     {
-        cbm = new ChessBoardModel(8,8);
+        cbm = new ChessBoardModel(8, 8);
         InitializeBoard();
 
-        showMovesFlag=false;
+        showMovesFlag = false;
+
+        this.Pieces = LoadBoardFromBoardData();
 
         //piazza il pezzo su una casella
-        Instantiate(piecePrefab,GetSquare(riga,colonna).transform.position,GetSquare(riga,colonna).transform.rotation);
+        // Instantiate(piecePrefab,GetSquare(Riga,Colonna).transform.position,GetSquare(Riga,Colonna).transform.rotation);
 
-        int[,] matrice = new int[17, 17]
-        {
-            {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-            {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
-            {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
-            {0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
-            {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
-            {0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
-            {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
-            {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
-            {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1}
-        };
+        // int[,] matrice = new int[17, 17]
+        // {
+        //     {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
+        //     {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
+        //     {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
+        //     {0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
+        //     {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
+        //     {0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
+        //     {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
+        //     {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+        //     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        //     {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+        //     {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
+        //     {0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
+        //     {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
+        //     {0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
+        //     {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
+        //     {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
+        //     {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1}
+        // };
 
-        cbm.PlacePiece(new Piece(PieceType.Queen,1,1,PieceColor.White,matrice),new int[] {riga,colonna});
+        // cbm.PlacePiece(new Piece(PieceType.Queen,1,1,PieceColor.White,matrice),new int[] {Riga,Colonna});
     }
 
-    void Update(){
+    void Update()
+    {
 
         //tenere una variabile selected chessman, se non è null mostriamo le mosse
 
-        if(showMovesFlag){
+        if (showMovesFlag)
+        {
             HighlightMoves();
         }
-        else{
+        else
+        {
             HideMoves();
         }
 
@@ -71,8 +80,8 @@ public class BoardManager : MonoBehaviour
 
     void HighlightMoves()
     {
-        List<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(riga, colonna);
-        
+        List<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(Riga, Colonna);
+
         Debug.Log($"Found {possibleMoves.Count} possible moves.");
 
         foreach (int[] move in possibleMoves)
@@ -80,7 +89,7 @@ public class BoardManager : MonoBehaviour
             int x = move[0];
             int y = move[1];
             GameObject square = GetSquare(x, y);
-            
+
             if (square != null)
             {
                 Debug.Log($"Highlighting square at position ({x}, {y}).");
@@ -121,11 +130,13 @@ public class BoardManager : MonoBehaviour
     }
 
 
-    public void ToggleShowMovesFlag(){
-        showMovesFlag=!showMovesFlag;
+    public void ToggleShowMovesFlag()
+    {
+        showMovesFlag = !showMovesFlag;
     }
 
-    GameObject GetSquare(int x,int y){
+    GameObject GetSquare(int x, int y)
+    {
         return GameObject.Find($"Square_{x}_{y}");
     }
 
@@ -210,5 +221,43 @@ public class BoardManager : MonoBehaviour
         {
             Debug.LogError("Plane non trovato per la distruzione!");
         }
+    }
+
+    GameObject[,] LoadBoardFromBoardData()
+    {
+        if (BoardData == null)
+        {
+            Debug.Log("BoardData not specified. Cannot create Board");
+            return null;
+        }
+        Riga = BoardData.GridSize.x;
+        Colonna = BoardData.GridSize.y;
+        GameObject[,] result = new GameObject[Riga, Colonna];
+        for (int i = 0; i < Riga; i++)
+        {
+            for (int j = 0; j < Colonna; j++)
+            {
+                GameObject obj = GetPieceFromCode(BoardData.GetCell(i, j));
+                if (obj != null)
+                {
+                    result[i, j] = obj;
+                    Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                }
+            }
+        }
+        return result;
+
+    }
+
+    GameObject GetPieceFromCode(string code)
+    {
+        foreach (var prefab in this.PiecePrefabs)
+        {
+            if (prefab.GetComponent<PieceStatus>().Code == code)
+            {
+                return prefab;
+            }
+        }
+        return null;
     }
 }
