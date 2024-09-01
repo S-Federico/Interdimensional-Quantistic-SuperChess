@@ -56,7 +56,7 @@ public class BoardManager : MonoBehaviour
         Instantiate(piecePrefab, GetSquare(riga-1, colonna).transform.position, GetSquare(riga-1, colonna).transform.rotation);
 
         cbm.PlacePiece(new Piece(PieceType.Queen, 1, 1, PieceColor.White, matrice, new int[] { riga, colonna }));
-        cbm.PlacePiece(new Piece(PieceType.Queen, 1, 1, PieceColor.White, matrice, new int[] { riga-1, colonna }));
+        cbm.PlacePiece(new Piece(PieceType.Queen, 1, 1, PieceColor.Black, matrice, new int[] { riga-1, colonna }));
 
     }
 
@@ -86,22 +86,34 @@ public class BoardManager : MonoBehaviour
     {
         HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(riga, colonna);
 
-        Debug.Log($"Found {possibleMoves.Count} possible moves.");
-
         foreach (int[] move in possibleMoves)
         {
             int x = move[0];
             int y = move[1];
+            int moveType=move[2];
+            Debug.Log("Found move ("+x+","+y+")"+"  type:"+moveType);
             GameObject square = GetSquare(x, y);
 
             if (square != null)
             {
-                Debug.Log($"Highlighting square at position ({x}, {y}).");
                 Renderer renderer = square.GetComponent<Renderer>();
                 if (renderer != null)
                 {
                     renderer.enabled = true;
-                    renderer.material.color = Color.green;
+                    switch (moveType)
+                    {
+                        case 1:
+                            renderer.material.color = Color.green;
+                            break;
+                        case 2:
+                            renderer.material.color = Color.red;
+                            break;
+                        default:
+                            renderer.material.color = Color.white;
+                            break;
+                    }
+                        
+                    
                 }
             }
             else
