@@ -57,6 +57,10 @@ public class InputManager : MonoBehaviour
 
     private void HandleClick(string buttonType)
     {
+
+        BoardManager boardManager = FindObjectOfType<BoardManager>();
+
+        boardManager.SetShowMovesFlag(false);
         // Ottieni la posizione del mouse
         Vector2 mousePosition = Mouse.current.position.ReadValue();
         Ray ray = mainCamera.ScreenPointToRay(mousePosition);
@@ -64,9 +68,7 @@ public class InputManager : MonoBehaviour
         // Controlla se il raycast colpisce qualcosa
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            Debug.Log("Hai cliccato con il tasto " + buttonType + " su: " + hit.collider.name);
-
-            TestMoves();
+            Debug.Log("Hai cliccato con il tasto " + buttonType + " su: " + hit.collider.name + " , " + hit.collider.gameObject.tag);
 
             // Verifica se l'oggetto ha un tag definito
             if (!string.IsNullOrEmpty(hit.collider.tag) && hit.collider.tag != "Untagged")
@@ -84,30 +86,22 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private void TestMoves(){
-                        
-        // Trova il componente BoardManager nella scena
-        BoardManager boardManager = FindObjectOfType<BoardManager>();
-        
-        if (boardManager != null)
-        {
-            boardManager.ToggleShowMovesFlag();
-            Debug.Log("BoardMaanger trovato");
-        }
-        else
-        {
-            Debug.LogError("BoardManager non trovato!");
-        }
-    }
+
     private void HandleBoardPieceClick(GameObject piece, string buttonType)
     {
-        // Logica per gestire il click su un pezzo della board
-        Debug.Log("Hai selezionato il pezzo: " + piece.name + " con il tasto " + buttonType);
+        // Trova il componente BoardManager nella scena
+        BoardManager boardManager = FindObjectOfType<BoardManager>();
+
+        if (boardManager != null)
+        {
+            boardManager.SelectPiece(piece);
+            boardManager.SetShowMovesFlag(true);
+        }
+
     }
 
     private void HandleConsumableClick(GameObject consumable, string buttonType)
     {
-        // Logica per gestire il click su un consumabile
-        Debug.Log("Hai selezionato il consumabile: " + consumable.name + " con il tasto " + buttonType);
+
     }
 }
