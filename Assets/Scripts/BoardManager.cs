@@ -53,14 +53,11 @@ public class BoardManager : MonoBehaviour
             {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
             {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1}
         };
-
-        matrice= new int[3,3]{
-            {1, 1, 1},
-            {1, 1, 1},
-            {1, 1, 1}
-        };
+        Instantiate(piecePrefab, GetSquare(riga-1, colonna).transform.position, GetSquare(riga-1, colonna).transform.rotation);
 
         cbm.PlacePiece(new Piece(PieceType.Queen, 1, 1, PieceColor.White, matrice, new int[] { riga, colonna }));
+        cbm.PlacePiece(new Piece(PieceType.Queen, 1, 1, PieceColor.White, matrice, new int[] { riga-1, colonna }));
+
     }
 
     void Update()
@@ -87,7 +84,7 @@ public class BoardManager : MonoBehaviour
 
     void HighlightMoves()
     {
-        List<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(riga, colonna);
+        HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(riga, colonna);
 
         Debug.Log($"Found {possibleMoves.Count} possible moves.");
 
