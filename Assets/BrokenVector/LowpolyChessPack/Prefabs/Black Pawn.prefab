@@ -119,10 +119,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2407b55a6f02b914c8bc798820f3c397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PieceType: 49
+  PieceType: 0
   Hp: 0
   Attack: 0
-  Color: 49
+  Color: 0
   ID: 4
   MovementMatrixInfo:
     gridSize: {x: 3, y: 3}

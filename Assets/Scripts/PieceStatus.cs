@@ -6,10 +6,10 @@ using UnityEngine;
 
 public class PieceStatus : MonoBehaviour
 {
-    public char PieceType;
-    public int Hp;
-    public int Attack;
-    public char Color;
+    public PieceType PieceType;
+    public int Hp = 1;
+    public int Attack = 1;
+    public PieceColor PieceColor;
     public int ID;
     
     //deve essere sempre di dimensioni dispari e con il pezzo al centro
@@ -35,7 +35,7 @@ public class PieceStatus : MonoBehaviour
 
     public string Code {
         get {
-            return "" + this.PieceType + this.Color;
+            return "" + this.PieceType + this.PieceColor;
         }
     }
 
