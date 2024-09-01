@@ -11,6 +11,8 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private int riga;
     [SerializeField] private int colonna;
 
+
+
     private Transform planeTransform;                 // Riferimento al Transform del Piano
     private float squareSize;                         // Dimensione di una singola casella
     private int boardSize = 8;                        // Dimensione della scacchiera (8x8)
@@ -18,23 +20,19 @@ public class BoardManager : MonoBehaviour
 
     private ChessBoardModel cbm;
 
-    //flag da cancellare
     private bool showMovesFlag;
     private bool highlightedFlag;
 
+    public GameObject selectedPiece;
 
     void Start()
     {
         cbm = new ChessBoardModel(8, 8);
         InitializeBoard();
-
+        selectedPiece = null;
         showMovesFlag = false;
-
-        //piazza il pezzo su una casella
-        Instantiate(piecePrefab, GetSquare(riga, colonna).transform.position, GetSquare(riga, colonna).transform.rotation);
-
         int[,] matrice = new int[17, 17]
-        {
+{
             {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
             {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
             {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
@@ -52,31 +50,31 @@ public class BoardManager : MonoBehaviour
             {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
             {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
             {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1}
-        };
-        Instantiate(piecePrefab, GetSquare(riga-1, colonna).transform.position, GetSquare(riga-1, colonna).transform.rotation);
+};
 
-        cbm.PlacePiece(new Piece(PieceType.Queen, 1, 1, PieceColor.White, matrice, new int[] { riga, colonna }));
-        cbm.PlacePiece(new Piece(PieceType.Queen, 1, 1, PieceColor.Black, matrice, new int[] { riga-1, colonna }));
+        PlacePiece(piecePrefab, 5, 5, PieceType.Queen, PieceColor.White, matrice);
+        PlacePiece(piecePrefab, 5, 3, PieceType.Queen, PieceColor.Black, matrice);
+        PlacePiece(piecePrefab, 3, 5, PieceType.Queen, PieceColor.White, matrice);
 
     }
 
     void Update()
     {
 
-        //tenere una variabile selected chessman, se non è null mostriamo le mosse
-
         if (showMovesFlag)
-        {   
-            if(!highlightedFlag){
+        {
+            if (!highlightedFlag)
+            {
                 HighlightMoves();
-                highlightedFlag=true;
+                highlightedFlag = true;
             }
         }
         else
-        {   
-            if(highlightedFlag){
+        {
+            if (highlightedFlag)
+            {
                 HideMoves();
-                highlightedFlag=false;
+                highlightedFlag = false;
             }
         }
 
@@ -84,14 +82,17 @@ public class BoardManager : MonoBehaviour
 
     void HighlightMoves()
     {
-        HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(riga, colonna);
+
+        int[] coord = GetPositionFromPiece(selectedPiece);
+
+        HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(coord[0], coord[1]);
 
         foreach (int[] move in possibleMoves)
         {
             int x = move[0];
             int y = move[1];
-            int moveType=move[2];
-            Debug.Log("Found move ("+x+","+y+")"+"  type:"+moveType);
+            int moveType = move[2];
+            Debug.Log("Found move (" + x + "," + y + ")" + "  type:" + moveType);
             GameObject square = GetSquare(x, y);
 
             if (square != null)
@@ -112,8 +113,8 @@ public class BoardManager : MonoBehaviour
                             renderer.material.color = Color.white;
                             break;
                     }
-                        
-                    
+
+
                 }
             }
             else
@@ -145,10 +146,34 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-
-    public void ToggleShowMovesFlag()
+    public void PlacePiece(GameObject piece, int riga, int colonna, PieceType type, PieceColor color, int[,] matrice)
     {
-        showMovesFlag = !showMovesFlag;
+        //questo metodo serve per piazzare i pezzi sulla scacchiera e sul modello
+        //Siccome per ora ancora non siamo fissi sul modello dati e sulle interazioni, ci sono pochi controlli
+        //nel caso ideale si dovrebbe controllare se sul modello si può piazzare il pezzo e poi nel caso farlo piazzare 
+        //inoltre tocca capire come mettere una classe che contiene le informazioni del pezzo o attaccare una data class al prefab o qualcosa Gabri aiuto
+
+        //so che dovrei mettere lo square e il pezzo figli ad un gameobject vuoto comune e sarebbe meglio, ma per qualche motivo non riesco a farlo senza deformare tutto
+        GameObject newpiece = Instantiate(piece, GetSquare(riga, colonna).transform.position, GetSquare(riga, colonna).transform.rotation);
+        newpiece.transform.localScale = new Vector3(1, 1, 1);
+        cbm.PlacePiece(new Piece(type, 1, 1, color, matrice, new int[] { riga, colonna }));
+
+    }
+
+    public void SelectPiece(GameObject piece)
+    {
+        if (piece != null){
+            Debug.Log("Pezzo non nullo");
+        selectedPiece = piece;
+        }else{
+            Debug.Log("Pezzo nullo");
+        }
+    }
+
+
+    public void SetShowMovesFlag(bool value)
+    {
+        showMovesFlag = value;
     }
 
     GameObject GetSquare(int x, int y)
@@ -156,6 +181,16 @@ public class BoardManager : MonoBehaviour
         return GameObject.Find($"Square_{x}_{y}");
     }
 
+    GameObject GetPiece(int riga, int colonna)
+    {
+        GameObject piece = null;
+        GameObject square = GetSquare(riga, colonna);
+        if (square == null)
+        {
+            piece = square.transform.GetChild(0).gameObject;
+        }
+        return piece;
+    }
 
     // Metodo per inizializzare il piano di gioco
     void InitializeBoard()
@@ -227,5 +262,91 @@ public class BoardManager : MonoBehaviour
             Debug.LogError("Plane non trovato per la distruzione!");
         }
     }
+
+
+    public int[] GetPositionFromSquare(GameObject square)
+    {
+        int[] position = new int[] { -1, -1 };
+
+        if (square != null)
+        {
+            // Ottieni il nome dell'oggetto square
+            string squareName = square.name;
+
+            // Assicurati che il nome inizi con "Square_"
+            if (squareName.StartsWith("Square_"))
+            {
+                // Estrai la parte successiva al prefisso "Square_"
+                string[] parts = squareName.Substring(7).Split('_');
+
+                if (parts.Length == 2)
+                {
+                    if (int.TryParse(parts[0], out int x) && int.TryParse(parts[1], out int y))
+                    {
+                        // Se i numeri sono validi, li assegnamo a position
+                        position[0] = x;
+                        position[1] = y;
+                    }
+                    else
+                    {
+                        Debug.LogError("Il nome del quadrato non contiene numeri validi.");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("Il nome del quadrato non è nel formato corretto.");
+                }
+            }
+            else
+            {
+                Debug.LogError("Il nome dell'oggetto non inizia con 'Square_'.");
+            }
+        }
+        else
+        {
+            Debug.LogError("Square è null!");
+        }
+
+        return position;
+    }
+    public int[] GetPositionFromPiece(GameObject piece)
+    {
+        int[] position = new int[] { -1, -1 };
+
+        // Ottenere la posizione di partenza del raggio dal GameObject "piece"
+        Vector3 rayOrigin = piece.transform.position;
+        rayOrigin.y += 1; // Dove 'offsetY' è il valore che vuoi aggiungere
+
+        // Direzione del raggio verso il basso
+        Vector3 rayDirection = Vector3.down;
+
+        // Distanza massima che il raggio può percorrere
+        float maxDistance = 100f;
+
+        // Raycast per colpire un oggetto nel percorso del raggio
+        RaycastHit hit;
+        if (Physics.Raycast(rayOrigin, rayDirection, out hit, maxDistance))
+        {
+            // Controllo se l'oggetto colpito ha un nome nel formato "Square_x_y"
+            string hitObjectName = hit.collider.gameObject.name;
+            if (hitObjectName.StartsWith("Square_"))
+            {
+                // Splitta il nome per estrarre le coordinate x e y
+                string[] nameParts = hitObjectName.Split('_');
+                if (nameParts.Length == 3)
+                {
+                    // Prova a convertire le coordinate in numeri interi
+                    if (int.TryParse(nameParts[1], out int x) && int.TryParse(nameParts[2], out int y))
+                    {
+                        position[0] = x;
+                        position[1] = y;
+                    }
+                }
+            }
+        }
+        Debug.Log("colpito: " + position[0] + " " + position[1]);
+        return position;
+    }
+
 
 }
