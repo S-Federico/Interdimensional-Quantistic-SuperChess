@@ -7,21 +7,6 @@ using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public enum PieceColor
-{
-    Black,
-    White
-}
-
-public enum PieceType
-{
-    Pawn,
-    Rook,
-    Knight,
-    Bishop,
-    Queen,
-    King
-}
 
 public class Piece
 {
