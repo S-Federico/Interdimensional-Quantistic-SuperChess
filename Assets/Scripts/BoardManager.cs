@@ -9,10 +9,9 @@ using UnityEngine;
 public class BoardManager : MonoBehaviour
 {
     [SerializeField] private GameObject board;         // Riferimento al GameObject "Board" che contiene il piano
-    [SerializeField] private GameObject piecePrefab;   // Prefab del pezzo da instanziare
     public Array2DInt BoardData;
     public List<GameObject> PiecePrefabs;
-    private GameObject[,] Pieces;
+    private PieceStatus[,] Pieces;
     private int Riga;
     private int Colonna;
 
@@ -30,74 +29,41 @@ public class BoardManager : MonoBehaviour
 
     void Start()
     {
-        cbm = new ChessBoardModel(8, 8);
-        cbm = new ChessBoardModel(8, 8);
+        cbm = new ChessBoardModel();
         InitializeBoard();
 
         showMovesFlag = false;
 
         // Questa riga di codice carica i pezzi da inspector
-        this.Pieces = LoadBoardFromBoardData();
-
-        // //piazza il pezzo su una casella
-        // // Instantiate(piecePrefab,GetSquare(Riga,Colonna).transform.position,GetSquare(Riga,Colonna).transform.rotation);
-
-        // int[,] matrice = new int[17, 17]
-        // {
-        //     {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-        //     {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
-        //     {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
-        //     {0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
-        //     {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
-        //     {0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
-        //     {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
-        //     {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-        //     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        //     {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-        //     {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
-        //     {0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
-        //     {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
-        //     {0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
-        //     {0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
-        //     {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
-        //     {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1}
-        // };
-
-        // PlacePiece(piecePrefab, 5, 5, PieceType.Queen, PieceColor.White, matrice);
-        // PlacePiece(piecePrefab, 5, 3, PieceType.Queen, PieceColor.Black, matrice);
-        // PlacePiece(piecePrefab, 3, 5, PieceType.Queen, PieceColor.White, matrice);
-
-        // cbm.PlacePiece(new Piece(PieceType.Queen,1,1,PieceColor.White,matrice,new int[] {Riga,Colonna}));
+        Pieces = LoadBoardFromBoardData();
     }
 
     void Update()
     {
-
         if (showMovesFlag)
         {
-            if (!highlightedFlag)
+            if (selectedPiece != null)
             {
                 HighlightMoves();
-                highlightedFlag = true;
             }
-        }
-        else
-        {
-            if (highlightedFlag)
+            else
             {
                 HideMoves();
-                highlightedFlag = false;
             }
         }
+        showMovesFlag = false;
 
     }
 
     void HighlightMoves()
     {
 
-        int[] coord = GetPositionFromPiece(selectedPiece);
+        //int[] coord = GetPositionFromPiece(selectedPiece);
+        PieceStatus pieceStatus = selectedPiece.GetComponent<PieceStatus>();
 
-        HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(coord[0], coord[1]);
+        HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(pieceStatus, Pieces);
+        string possibleMovesStr = string.Join(",", possibleMoves);
+        Debug.Log("Possible moves: " + possibleMovesStr);
 
         foreach (int[] move in possibleMoves)
         {
@@ -158,28 +124,14 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public void PlacePiece(GameObject piece, int riga, int colonna, PieceType type, PieceColor color, int[,] matrice)
-    {
-        //questo metodo serve per piazzare i pezzi sulla scacchiera e sul modello
-        //Siccome per ora ancora non siamo fissi sul modello dati e sulle interazioni, ci sono pochi controlli
-        //nel caso ideale si dovrebbe controllare se sul modello si può piazzare il pezzo e poi nel caso farlo piazzare 
-        //inoltre tocca capire come mettere una classe che contiene le informazioni del pezzo o attaccare una data class al prefab o qualcosa Gabri aiuto
-
-        //so che dovrei mettere lo square e il pezzo figli ad un gameobject vuoto comune e sarebbe meglio, ma per qualche motivo non riesco a farlo senza deformare tutto
-        GameObject newpiece = Instantiate(piece, GetSquare(riga, colonna).transform.position, GetSquare(riga, colonna).transform.rotation);
-        newpiece.transform.localScale = new Vector3(1, 1, 1);
-        cbm.PlacePiece(new Piece(type, 1, 1, color, matrice, new int[] { riga, colonna }));
-
-    }
-
     public void SelectPiece(GameObject piece)
     {
         if (piece != null)
         {
             Debug.Log("Pezzo non nullo");
             //Deselect piece if is selected while is still selected
-            if (selectedPiece == piece) 
-            { 
+            if (selectedPiece == piece)
+            {
                 selectedPiece = null;
             }
             else
@@ -191,8 +143,8 @@ public class BoardManager : MonoBehaviour
         {
             Debug.Log("Pezzo nullo");
         }
-        showMovesFlag = selectedPiece != null;
-        highlightedFlag = selectedPiece != null;
+        showMovesFlag = true;
+        //highlightedFlag = selectedPiece != null;
     }
 
 
@@ -204,17 +156,6 @@ public class BoardManager : MonoBehaviour
     GameObject GetSquare(int x, int y)
     {
         return GameObject.Find($"Square_{x}_{y}");
-    }
-
-    GameObject GetPiece(int riga, int colonna)
-    {
-        GameObject piece = null;
-        GameObject square = GetSquare(riga, colonna);
-        if (square == null)
-        {
-            piece = square.transform.GetChild(0).gameObject;
-        }
-        return piece;
     }
 
     // Metodo per inizializzare il piano di gioco
@@ -288,7 +229,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    GameObject[,] LoadBoardFromBoardData()
+    PieceStatus[,] LoadBoardFromBoardData()
     {
         if (BoardData == null)
         {
@@ -297,7 +238,7 @@ public class BoardManager : MonoBehaviour
         }
         Riga = BoardData.GridSize.x;
         Colonna = BoardData.GridSize.y;
-        GameObject[,] result = new GameObject[Riga, Colonna];
+        PieceStatus[,] result = new PieceStatus[Riga, Colonna];
         for (int i = 0; i < Riga; i++)
         {
             for (int j = 0; j < Colonna; j++)
@@ -305,10 +246,10 @@ public class BoardManager : MonoBehaviour
                 GameObject obj = GetPieceFromId(BoardData.GetCell(i, j));
                 if (obj != null)
                 {
-                    result[i, j] = obj;
                     PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
                     pieceStatus.Position = new Vector2(i, j);
                     Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                    result[i, j] = pieceStatus;
                 }
             }
         }
@@ -327,92 +268,5 @@ public class BoardManager : MonoBehaviour
         }
         return null;
     }
-
-
-    public int[] GetPositionFromSquare(GameObject square)
-    {
-        int[] position = new int[] { -1, -1 };
-
-        if (square != null)
-        {
-            // Ottieni il nome dell'oggetto square
-            string squareName = square.name;
-
-            // Assicurati che il nome inizi con "Square_"
-            if (squareName.StartsWith("Square_"))
-            {
-                // Estrai la parte successiva al prefisso "Square_"
-                string[] parts = squareName.Substring(7).Split('_');
-
-                if (parts.Length == 2)
-                {
-                    if (int.TryParse(parts[0], out int x) && int.TryParse(parts[1], out int y))
-                    {
-                        // Se i numeri sono validi, li assegnamo a position
-                        position[0] = x;
-                        position[1] = y;
-                    }
-                    else
-                    {
-                        Debug.LogError("Il nome del quadrato non contiene numeri validi.");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Il nome del quadrato non è nel formato corretto.");
-                }
-            }
-            else
-            {
-                Debug.LogError("Il nome dell'oggetto non inizia con 'Square_'.");
-            }
-        }
-        else
-        {
-            Debug.LogError("Square è null!");
-        }
-
-        return position;
-    }
-
-    public int[] GetPositionFromPiece(GameObject piece)
-    {
-        int[] position = new int[] { -1, -1 };
-
-        // Ottenere la posizione di partenza del raggio dal GameObject "piece"
-        Vector3 rayOrigin = piece.transform.position;
-        rayOrigin.y += 1; // Dove 'offsetY' è il valore che vuoi aggiungere
-
-        // Direzione del raggio verso il basso
-        Vector3 rayDirection = Vector3.down;
-
-        // Distanza massima che il raggio può percorrere
-        float maxDistance = 100f;
-
-        // Raycast per colpire un oggetto nel percorso del raggio
-        RaycastHit hit;
-        if (Physics.Raycast(rayOrigin, rayDirection, out hit, maxDistance))
-        {
-            // Controllo se l'oggetto colpito ha un nome nel formato "Square_x_y"
-            string hitObjectName = hit.collider.gameObject.name;
-            if (hitObjectName.StartsWith("Square_"))
-            {
-                // Splitta il nome per estrarre le coordinate x e y
-                string[] nameParts = hitObjectName.Split('_');
-                if (nameParts.Length == 3)
-                {
-                    // Prova a convertire le coordinate in numeri interi
-                    if (int.TryParse(nameParts[1], out int x) && int.TryParse(nameParts[2], out int y))
-                    {
-                        position[0] = x;
-                        position[1] = y;
-                    }
-                }
-            }
-        }
-        Debug.Log("colpito: " + position[0] + " " + position[1]);
-        return position;
-    }
-
-
+    
 }

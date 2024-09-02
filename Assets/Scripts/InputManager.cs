@@ -57,9 +57,6 @@ public class InputManager : MonoBehaviour
 
     private void HandleClick(string buttonType)
     {
-
-        BoardManager boardManager = FindObjectOfType<BoardManager>();
-
         //boardManager.SetShowMovesFlag(false);
         // Ottieni la posizione del mouse
         Vector2 mousePosition = Mouse.current.position.ReadValue();

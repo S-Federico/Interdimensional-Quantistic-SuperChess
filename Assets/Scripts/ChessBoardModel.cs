@@ -7,80 +7,10 @@ using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-
-public class Piece
-{
-
-    private PieceType type;
-    private int hp;
-    private int attack;
-    private PieceColor color;
-
-    private int[] position;
-
-    //deve essere sempre di dimensioni dispari e con il pezzo al centro
-    private int[,] movementMatrix;
-
-    public Piece(PieceType type, int hp, int attack, PieceColor color, int[,] movementMatrix, int[] position)
-    {
-        this.type = type;
-        this.hp = hp;
-        this.attack = attack;
-        this.color = color;
-        this.movementMatrix = movementMatrix;
-        this.position = position;
-    }
-
-    public int[,] GetMovementMatrix()
-    {
-        return this.movementMatrix;
-    }
-    public new PieceType GetType()
-    {
-        return type;
-    }
-
-    public int[] GetPosition()
-    {
-        return this.position;
-    }
-
-    public int GetHP()
-    {
-        return hp;
-    }
-
-    public int GetAttack()
-    {
-        return attack;
-    }
-
-    public PieceColor GetColor()
-    {
-        return color;
-    }
-    public override string ToString()
-    {
-        return "Piece: " + type + ", " + hp + ", " + attack + ", " + color + ", " + position;
-    }
-}
-
 public class ChessBoardModel
 {
 
-    private Piece[,] board;
-
-    public ChessBoardModel(int righe, int colonne)
-    {
-        board = new Piece[righe, colonne];
-    }
-
-    public void PlacePiece(Piece piece)
-    {
-        board[piece.GetPosition()[0], piece.GetPosition()[1]] = piece;
-    }
-
-    public void PrintBoard()
+    public void PrintBoard(PieceStatus[,] board)
     {
         for (int i = 0; i < board.GetLength(0); i++)
         {
@@ -96,25 +26,28 @@ public class ChessBoardModel
         }
     }
 
-    public bool IsWhite(int riga, int colonna)
+    public bool IsWhite(int riga, int colonna, PieceStatus[,] board)
     {
-        return board[riga, colonna].GetColor() == PieceColor.White;
+        return board[riga, colonna].PieceColor == PieceColor.White;
     }
 
-    public HashSet<int[]> GetPossibleMovesForPiece(int riga, int colonna)
+    public HashSet<int[]> GetPossibleMovesForPiece(PieceStatus pieceStatus, PieceStatus[,] board)
     {
         HashSet<int[]> moves = new HashSet<int[]>();
 
-        Piece piece = board[riga, colonna];
+        int riga = (int)pieceStatus.Position.x;
+        int colonna = (int)pieceStatus.Position.y;
+
+        PieceStatus piece = board[riga, colonna];
         if (piece == null)
             return moves;
 
-        int[,] matrix = piece.GetMovementMatrix();
+        int[,] matrix = piece.MovementMatrix;
         int offsetRighe = matrix.GetLength(0) / 2;
         int offsetColonne = matrix.GetLength(1) / 2;
 
         // Creiamo una lista per tracciare le caselle ostruite
-        HashSet<(int, int)> caselleOstruite = CalcolaCaselleOstruite(riga, colonna);
+        HashSet<(int, int)> caselleOstruite = CalcolaCaselleOstruite(riga, colonna, board);
 
         // Scorri sulle righe della matrice di movimento
         for (int i = 0; i < matrix.GetLength(0); i++)
@@ -140,7 +73,7 @@ public class ChessBoardModel
                             // Aggiungi come mossa di movimento (tipo = 1)
                             moves.Add(new int[] { newRiga, newColonna, 1 });
                         }
-                        else if (board[newRiga, newColonna].GetColor() == PieceColor.Black) // Controlla se è un pezzo avversario
+                        else if (board[newRiga, newColonna].PieceColor == PieceColor.Black) // Controlla se è un pezzo avversario
                         {
                             // Aggiungi come mossa di attacco (tipo = 2)
                             moves.Add(new int[] { newRiga, newColonna, 2 });
@@ -151,12 +84,12 @@ public class ChessBoardModel
         }
 
         // Pulizia del set di mosse per assicurarsi che siano connesse al pezzo di partenza con movimenti (tipo = 1)
-        moves = CleanDisconnectedMoves(moves, riga, colonna);
+        moves = CleanDisconnectedMoves(moves, riga, colonna, board);
 
         return moves;
     }
 
-    private HashSet<(int, int)> CalcolaCaselleOstruite(int riga, int colonna)
+    private HashSet<(int, int)> CalcolaCaselleOstruite(int riga, int colonna, PieceStatus[,] board)
     {
         HashSet<(int, int)> caselleOstruite = new HashSet<(int, int)>();
 
@@ -207,7 +140,7 @@ public class ChessBoardModel
     }
 
 
-    private HashSet<int[]> CleanDisconnectedMoves(HashSet<int[]> moves, int rigaPezzo, int colonnaPezzo)
+    private HashSet<int[]> CleanDisconnectedMoves(HashSet<int[]> moves, int rigaPezzo, int colonnaPezzo, PieceStatus[,] board)
     {
         HashSet<int[]> connectedMoves = new HashSet<int[]>();
         HashSet<(int, int)> esplorate = new HashSet<(int, int)>();

@@ -16,16 +16,16 @@ public class PieceStatus : MonoBehaviour
     //deve essere sempre di dimensioni dispari e con il pezzo al centro
     [SerializeField] private Array2DInt MovementMatrixInfo;
 
-    public int[,] MovementMatrix;
+    private int[,] _MovementMatrix;
 
-    void Awake()
+    void Start()
     {
         BuildMovementMatrix();
     }
 
     private void BuildMovementMatrix()
     {
-        MovementMatrix = new int[MovementMatrixInfo.GridSize.x, MovementMatrixInfo.GridSize.y];
+        _MovementMatrix = new int[MovementMatrixInfo.GridSize.x, MovementMatrixInfo.GridSize.y];
         // Compute MovementMatrix from data in editor
         if (MovementMatrixInfo != null)
         {
@@ -33,9 +33,18 @@ public class PieceStatus : MonoBehaviour
             {
                 for (int j = 0; j < MovementMatrixInfo.GridSize.y; j++)
                 {
-                    MovementMatrix[i, j] = MovementMatrixInfo.GetCell(i, j);
+                    _MovementMatrix[i, j] = MovementMatrixInfo.GetCell(i, j);
                 }
             }
+        }
+    }
+
+    public int[,] MovementMatrix {
+        get {
+            if (_MovementMatrix == null) {
+                BuildMovementMatrix();
+            }
+            return _MovementMatrix;
         }
     }
 
