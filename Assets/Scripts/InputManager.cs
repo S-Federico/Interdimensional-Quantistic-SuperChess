@@ -60,7 +60,7 @@ public class InputManager : MonoBehaviour
 
         BoardManager boardManager = FindObjectOfType<BoardManager>();
 
-        boardManager.SetShowMovesFlag(false);
+        //boardManager.SetShowMovesFlag(false);
         // Ottieni la posizione del mouse
         Vector2 mousePosition = Mouse.current.position.ReadValue();
         Ray ray = mainCamera.ScreenPointToRay(mousePosition);
@@ -95,7 +95,7 @@ public class InputManager : MonoBehaviour
         if (boardManager != null)
         {
             boardManager.SelectPiece(piece);
-            boardManager.SetShowMovesFlag(true);
+            //boardManager.SetShowMovesFlag(true);
         }
 
     }

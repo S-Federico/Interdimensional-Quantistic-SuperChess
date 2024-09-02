@@ -11,6 +11,7 @@ public class PieceStatus : MonoBehaviour
     public int Attack = 1;
     public PieceColor PieceColor;
     public int ID;
+    public Vector2 Position;
     
     //deve essere sempre di dimensioni dispari e con il pezzo al centro
     [SerializeField] private Array2DInt MovementMatrixInfo;

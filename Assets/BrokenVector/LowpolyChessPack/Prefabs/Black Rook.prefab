@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2498927261343562418}
   m_Layer: 0
   m_Name: Black Rook
-  m_TagString: Untagged
+  m_TagString: BoardPiece
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -122,7 +122,7 @@ MonoBehaviour:
   PieceType: 1
   Hp: 0
   Attack: 0
-  Color: 0
+  PieceColor: 0
   ID: 6
   MovementMatrixInfo:
     gridSize: {x: 3, y: 3}
