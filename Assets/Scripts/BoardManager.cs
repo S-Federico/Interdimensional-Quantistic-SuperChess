@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Array2DEditor;
@@ -132,10 +133,12 @@ public class BoardManager : MonoBehaviour
             //Deselect piece if is selected while is still selected
             if (selectedPiece == piece)
             {
+                Debug.Log("Deselect piece");
                 selectedPiece = null;
             }
             else
             {
+
                 selectedPiece = piece;
             }
         }
@@ -187,6 +190,13 @@ public class BoardManager : MonoBehaviour
             {
                 // Crea un nuovo GameObject piano
                 GameObject newSquare = GameObject.CreatePrimitive(PrimitiveType.Plane);
+
+                // Add tag to square
+                newSquare.tag = Constants.SQUARE_TAG;
+
+                // Add component to square
+                BoardSquare boardSquare = newSquare.AddComponent<BoardSquare>();
+                boardSquare.Position = new Vector2(x, y);
 
                 // Imposta la scala del piano in base alla dimensione della casella
                 newSquare.transform.localScale = new Vector3(squareSize / 10f, 1f, squareSize / 10f);
@@ -246,9 +256,9 @@ public class BoardManager : MonoBehaviour
                 GameObject obj = GetPieceFromId(BoardData.GetCell(i, j));
                 if (obj != null)
                 {
+                    obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
                     PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
                     pieceStatus.Position = new Vector2(i, j);
-                    Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
                     result[i, j] = pieceStatus;
                 }
             }
@@ -268,5 +278,67 @@ public class BoardManager : MonoBehaviour
         }
         return null;
     }
-    
+
+    internal void HandleSquareClick(BoardSquare boardSquare)
+    {
+        // If there is a selected piece, check for movement
+        if (selectedPiece == null) return;
+
+        // Compute possible moves for selected piece
+        HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(selectedPiece.GetComponent<PieceStatus>(), Pieces);
+
+        // Check if the clicked square is in possible moves for piece
+        foreach (int[] move in possibleMoves)
+        {
+            if (move[0] == boardSquare.Position.x && move[1] == boardSquare.Position.y)
+            {
+                if (move[2] == 1)
+                { // Movement
+                    MovePiece(selectedPiece, boardSquare.Position);
+                }
+                else if (move[2] == 2)
+                { //Attack
+                    AttackPiece(selectedPiece.GetComponent<PieceStatus>(), Pieces[(int)boardSquare.Position.x, (int)boardSquare.Position.y]);
+                }
+                
+                // Reset flags
+                selectedPiece = null;
+                showMovesFlag = true;
+                break;
+            }
+        }
+    }
+
+    private void AttackPiece(PieceStatus attacker, PieceStatus target)
+    {
+
+        target.TakeDamage(attacker.Attack);
+        if (target.Hp <= 0) {
+            Pieces[(int)target.Position.x, (int)target.Position.y] = attacker;
+            Pieces[(int)attacker.Position.x, (int)attacker.Position.y] = null;
+            attacker.Position = target.Position;
+            
+            // Phisical movement
+            attacker.transform.position = squares[(int)target.Position.x, (int)target.Position.y].transform.position;
+            
+            // Delete target piece
+            Destroy(target.gameObject);
+
+        }
+    }
+
+    private void MovePiece(GameObject piece, Vector2 destination)
+    {
+        if (piece == null || destination == null) return;
+        PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
+
+        // Perform logical movement
+        Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] = null;
+        Pieces[(int)destination.x, (int)destination.y] = pieceStatus;
+        pieceStatus.Position = destination;
+
+        // Perform phisical movement
+        piece.transform.position = squares[(int)destination.x, (int)destination.y].transform.position;
+
+    }
 }

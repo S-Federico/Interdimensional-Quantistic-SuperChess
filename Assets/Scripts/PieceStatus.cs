@@ -56,6 +56,9 @@ public class PieceStatus : MonoBehaviour
         }
     }
 
+    public void TakeDamage(int damage) {
+        this.Hp -=damage;
+    }
 
 
 }

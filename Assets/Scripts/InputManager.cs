@@ -79,6 +79,12 @@ public class InputManager : MonoBehaviour
                 {
                     HandleConsumableClick(hit.collider.gameObject, buttonType);
                 }
+
+                // Generization of click
+                if (hit.collider.TryGetComponent(out IClickable cliclable))
+                {
+                    cliclable.OnClick();
+                }
             }
         }
     }

@@ -73,9 +73,27 @@ public class ChessBoardModel
                             // Aggiungi come mossa di movimento (tipo = 1)
                             moves.Add(new int[] { newRiga, newColonna, 1 });
                         }
-                        else if (board[newRiga, newColonna].PieceColor == PieceColor.Black) // Controlla se è un pezzo avversario
+                        else if (board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor) // Controlla se è un pezzo avversario
                         {
                             // Aggiungi come mossa di attacco (tipo = 2)
+                            moves.Add(new int[] { newRiga, newColonna, 2 });
+                        }
+                    }
+                    // Se la casella è solo movimento, non attacco
+                    else if (matrix[i, j] == 2)
+                    {
+                        if (board[newRiga, newColonna] == null)
+                        {
+                            // Aggiungi come mossa di movimento (tipo = 1)
+                            moves.Add(new int[] { newRiga, newColonna, 1 });
+                        }
+                    }
+                    // Se la casella è solo attacco
+                    else if (matrix[i, j] == 3)
+                    {
+                        if (board[newRiga, newColonna] != null && board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor)
+                        {
+                            // Aggiungi come mossa di movimento (tipo = 1)
                             moves.Add(new int[] { newRiga, newColonna, 2 });
                         }
                     }
