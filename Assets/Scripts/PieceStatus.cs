@@ -14,7 +14,7 @@ public class PieceStatus : MonoBehaviour
     public Vector2 Position;
 
     //deve essere sempre di dimensioni dispari e con il pezzo al centro
-    [SerializeField] private Array2DInt MovementMatrixInfo;
+    [SerializeField] public Array2DInt MovementMatrixInfo;
 
     private int[,] _MovementMatrix;
 
