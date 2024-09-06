@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class State
 {
-    public PieceStatus[,] board { get; private set; }
     public int[] lastMove { get; private set; } // Salviamo la mossa fatta in questo stato
 
     public PieceStatus movedPiece { get; private set; }
-
-    public State(PieceStatus[,] board, int[] lastMove, PieceStatus movedPiece)
+    public PieceStatus capturedPiece { get; set; }
+    public bool hasMoved = false;
+    public State() { }
+    public State(int[] lastMove, PieceStatus movedPiece)
     {
-        this.board = board;
+        this.capturedPiece = null;
         this.lastMove = lastMove;
         this.movedPiece = movedPiece;
     }
@@ -188,10 +189,8 @@ public class ChessAI
         int startCol = move[1];
         int targetRow = move[2];
         int targetCol = move[3];
-
         PieceStatus movingPiece = board[startRow, startCol];
-
-        Hist.Push(new State(CopyBoard(board), move, movingPiece));
+        State state = new State(move, movingPiece);
 
         if (movingPiece == null) return;
 
@@ -201,20 +200,27 @@ public class ChessAI
             board[targetRow, targetCol] = movingPiece;
             board[startRow, startCol] = null;
             movingPiece.Position = new Vector2(targetRow, targetCol);
+            state.hasMoved = true;
         }
         else
         {
             if (movingPiece.PieceColor != targetPiece.PieceColor)
             {
                 targetPiece.TakeDamage(movingPiece.Attack);
+
                 if (targetPiece.Hp <= 0)
                 {
+                    state.capturedPiece = targetPiece;
                     board[targetRow, targetCol] = movingPiece;
                     board[startRow, startCol] = null;
                     movingPiece.Position = new Vector2(targetRow, targetCol);
+                    state.hasMoved = true;
                 }
             }
         }
+
+        Hist.Push(state);
+
     }
 
     private void PrintBoard(PieceStatus[,] board)
@@ -246,14 +252,29 @@ public class ChessAI
         if (Hist.Count > 0)
         {
             State previousState = Hist.Pop();
-            copiedBoard = CopyBoard(previousState.board);
-            if (bestPiece != null)
-            {
-                if (copiedBoard[(int)bestPiece.Position.x, (int)bestPiece.Position.y] == null)
-                {
-                    bestPiece = previousState.movedPiece;
+
+            int[] move = previousState.lastMove;
+            PieceStatus movedPiece = previousState.movedPiece;
+            PieceStatus capturedPiece = previousState.capturedPiece;
+            bool hasMoved=previousState.hasMoved;
+
+            int startRow = move[0];
+            int startCol = move[1];
+            int targetRow = move[2];
+            int targetCol = move[3];
+
+            if(hasMoved){
+                copiedBoard[startRow,startCol]=movedPiece;
+                movedPiece.Position=new Vector2(startRow,startCol);
+                copiedBoard[targetRow,targetCol]=null;
+                if(capturedPiece != null){
+                    copiedBoard[targetRow,targetCol]=capturedPiece;
+                    capturedPiece.Hp+=movedPiece.Attack;
                 }
+            }else{
+                copiedBoard[targetRow,targetCol].Hp+=movedPiece.Attack;
             }
+
         }
     }
 
