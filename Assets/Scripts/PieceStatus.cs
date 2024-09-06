@@ -60,5 +60,4 @@ public class PieceStatus : MonoBehaviour
         this.Hp -=damage;
     }
 
-
 }

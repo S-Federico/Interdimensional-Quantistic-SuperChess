@@ -9,6 +9,11 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
+    private enum Turn { Player, AI }
+    private Turn currentTurn = Turn.Player; // Iniziamo col turno del giocatore
+    private ChessAI ai; // Aggiungi questa dichiarazione in cima
+
+
     [SerializeField] private GameObject board;         // Riferimento al GameObject "Board" che contiene il piano
     public Array2DInt BoardData;
     public List<GameObject> PiecePrefabs;
@@ -25,36 +30,92 @@ public class BoardManager : MonoBehaviour
 
     private bool showMovesFlag;
     private bool highlightedFlag;
+    private bool alreadyExcecuting;
 
     public GameObject selectedPiece;
 
     void Start()
     {
         cbm = new ChessBoardModel();
+        ai = new ChessAI(cbm); // Inizializza l'IA con il modello della scacchiera
         InitializeBoard();
 
         showMovesFlag = false;
+        alreadyExcecuting = false;
 
         // Questa riga di codice carica i pezzi da inspector
         Pieces = LoadBoardFromBoardData();
     }
 
+
     void Update()
     {
-        if (showMovesFlag)
+        if (currentTurn == Turn.Player)
         {
-            if (selectedPiece != null)
+            alreadyExcecuting = false;
+
+            // Gestione input del giocatore
+            if (showMovesFlag)
             {
-                HighlightMoves();
+                if (selectedPiece != null)
+                {
+                    HighlightMoves();
+                }
+                else
+                {
+                    HideMoves();
+                }
+            }
+        }
+        else if (currentTurn == Turn.AI)
+        {
+            if (!alreadyExcecuting)
+            {
+                alreadyExcecuting = true;
+                ExecuteAITurn();
+            }
+        }
+
+        showMovesFlag = false;
+    }
+    private void ExecuteAITurn()
+    {
+        // Calcola la migliore mossa con l'IA
+        int[] bestMove = ai.GetBestMoveFromPosition(Pieces, 3); // Imposta la profondità desiderata (es. 3)
+        if (bestMove == null || bestMove.Length != 4)
+        {
+            Debug.Log("Nessuna mossa valida trovata dall'IA.");
+            // Gestire la fine del gioco o lo stallo
+            return;
+        }
+
+        if (bestMove.Length == 4)
+        {
+            int startX = bestMove[0];
+            int startY = bestMove[1];
+            int endX = bestMove[2];
+            int endY = bestMove[3];
+            
+            Debug.Log($"Start=({startX},{startY})  Finish=({endX},{endY})");
+
+            PieceStatus movingPiece = Pieces[startX, startY];
+            
+            SelectPiece(movingPiece.gameObject);
+            if (Pieces[endX, endY] == null)
+            {
+                MovePiece(selectedPiece, new Vector2(endX, endY));
             }
             else
             {
-                HideMoves();
+                AttackPiece(movingPiece, Pieces[endX, endY]);
             }
-        }
-        showMovesFlag = false;
 
+                selectedPiece = null;
+
+            currentTurn = Turn.Player;
+        }
     }
+
 
     void HighlightMoves()
     {
@@ -281,46 +342,47 @@ public class BoardManager : MonoBehaviour
 
     internal void HandleSquareClick(BoardSquare boardSquare)
     {
-        // If there is a selected piece, check for movement
-        if (selectedPiece == null) return;
+        if (currentTurn != Turn.Player || selectedPiece == null) return;
 
-        // Compute possible moves for selected piece
+        // Esegue il movimento o l'attacco
         HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(selectedPiece.GetComponent<PieceStatus>(), Pieces);
-
-        // Check if the clicked square is in possible moves for piece
         foreach (int[] move in possibleMoves)
         {
             if (move[0] == boardSquare.Position.x && move[1] == boardSquare.Position.y)
             {
                 if (move[2] == 1)
-                { // Movement
+                {
                     MovePiece(selectedPiece, boardSquare.Position);
                 }
                 else if (move[2] == 2)
-                { //Attack
+                {
                     AttackPiece(selectedPiece.GetComponent<PieceStatus>(), Pieces[(int)boardSquare.Position.x, (int)boardSquare.Position.y]);
                 }
-                
-                // Reset flags
+
                 selectedPiece = null;
                 showMovesFlag = true;
+
+                // Cambia il turno all'IA
+                currentTurn = Turn.AI;
                 break;
             }
         }
     }
 
+
     private void AttackPiece(PieceStatus attacker, PieceStatus target)
     {
 
         target.TakeDamage(attacker.Attack);
-        if (target.Hp <= 0) {
+        if (target.Hp <= 0)
+        {
             Pieces[(int)target.Position.x, (int)target.Position.y] = attacker;
             Pieces[(int)attacker.Position.x, (int)attacker.Position.y] = null;
             attacker.Position = target.Position;
-            
+
             // Phisical movement
             attacker.transform.position = squares[(int)target.Position.x, (int)target.Position.y].transform.position;
-            
+
             // Delete target piece
             Destroy(target.gameObject);
 
