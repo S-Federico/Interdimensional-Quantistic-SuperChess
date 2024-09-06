@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Array2DEditor;
 using UnityEngine;
 
-public class PieceStatus : MonoBehaviour
+public class PieceStatus : MonoBehaviour, IClickable
 {
     public PieceType PieceType;
     public int Hp = 1;
@@ -18,8 +18,11 @@ public class PieceStatus : MonoBehaviour
 
     private int[,] _MovementMatrix;
 
+    private BoardManager boardManager;
+
     void Start()
     {
+        boardManager = FindAnyObjectByType<BoardManager>();
         BuildMovementMatrix();
     }
 
@@ -60,5 +63,8 @@ public class PieceStatus : MonoBehaviour
         this.Hp -=damage;
     }
 
-
+    public void OnClick()
+    {
+        boardManager.SelectPiece(this.gameObject);
+    }
 }

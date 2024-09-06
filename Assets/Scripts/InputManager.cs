@@ -67,24 +67,10 @@ public class InputManager : MonoBehaviour
         {
             Debug.Log("Hai cliccato con il tasto " + buttonType + " su: " + hit.collider.name + " , " + hit.collider.gameObject.tag);
 
-            // Verifica se l'oggetto ha un tag definito
-            if (!string.IsNullOrEmpty(hit.collider.tag) && hit.collider.tag != "Untagged")
+            // Generization of click
+            if (hit.collider.TryGetComponent(out IClickable cliclable))
             {
-                // Controlla il tag dell'oggetto
-                if (hit.collider.CompareTag("BoardPiece"))
-                {
-                    HandleBoardPieceClick(hit.collider.gameObject, buttonType);
-                }
-                else if (hit.collider.CompareTag("Consumable"))
-                {
-                    HandleConsumableClick(hit.collider.gameObject, buttonType);
-                }
-
-                // Generization of click
-                if (hit.collider.TryGetComponent(out IClickable cliclable))
-                {
-                    cliclable.OnClick();
-                }
+                cliclable.OnClick();
             }
         }
     }
