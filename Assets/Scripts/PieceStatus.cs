@@ -14,7 +14,7 @@ public class PieceStatus : MonoBehaviour, IClickable
     public Vector2 Position;
 
     //deve essere sempre di dimensioni dispari e con il pezzo al centro
-    [SerializeField] private Array2DInt MovementMatrixInfo;
+    [SerializeField] public Array2DInt MovementMatrixInfo;
 
     private int[,] _MovementMatrix;
 
@@ -36,15 +36,26 @@ public class PieceStatus : MonoBehaviour, IClickable
             {
                 for (int j = 0; j < MovementMatrixInfo.GridSize.y; j++)
                 {
-                    _MovementMatrix[i, j] = MovementMatrixInfo.GetCell(i, j);
+                    if (this.PieceColor == PieceColor.White)
+                    {
+                        _MovementMatrix[i, j] = MovementMatrixInfo.GetCell(i, j);
+
+                    }
+                    else
+                    {
+                        _MovementMatrix[i, j] = MovementMatrixInfo.GetCell(MovementMatrixInfo.GridSize.x - i - 1, MovementMatrixInfo.GridSize.y - j - 1);
+                    }
                 }
             }
         }
     }
 
-    public int[,] MovementMatrix {
-        get {
-            if (_MovementMatrix == null) {
+    public int[,] MovementMatrix
+    {
+        get
+        {
+            if (_MovementMatrix == null)
+            {
                 BuildMovementMatrix();
             }
             return _MovementMatrix;
@@ -59,8 +70,9 @@ public class PieceStatus : MonoBehaviour, IClickable
         }
     }
 
-    public void TakeDamage(int damage) {
-        this.Hp -=damage;
+    public void TakeDamage(int damage)
+    {
+        this.Hp -= damage;
     }
 
     public void OnClick()
