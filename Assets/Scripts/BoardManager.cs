@@ -95,11 +95,11 @@ public class BoardManager : MonoBehaviour
             int startY = bestMove[1];
             int endX = bestMove[2];
             int endY = bestMove[3];
-            
+
             Debug.Log($"Start=({startX},{startY})  Finish=({endX},{endY})");
 
             PieceStatus movingPiece = Pieces[startX, startY];
-            
+
             SelectPiece(movingPiece.gameObject);
             if (Pieces[endX, endY] == null)
             {
@@ -110,12 +110,21 @@ public class BoardManager : MonoBehaviour
                 AttackPiece(movingPiece, Pieces[endX, endY]);
             }
 
-                selectedPiece = null;
+            selectedPiece = null;
 
             currentTurn = Turn.Player;
         }
+
+        CleanTempObjects();
     }
 
+    private void CleanTempObjects()
+    {
+        foreach (GameObject toDestroy in ai.ToDestroy)
+        {
+            Destroy(toDestroy);
+        }
+    }
 
     void HighlightMoves()
     {
@@ -199,11 +208,21 @@ public class BoardManager : MonoBehaviour
             }
             else
             {
-                PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
-                // Check if is attack
-                if (pieceStatus != null && selectedPiece != null && pieceStatus.PieceColor == PieceColor.Black) {
-                    HandleSquareClick(squares[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y].GetComponent<BoardSquare>());
-                } else if (pieceStatus.PieceColor == PieceColor.White) {
+                if (currentTurn == Turn.Player)
+                {
+                    PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
+                    // Check if is attack
+                    if (pieceStatus != null && selectedPiece != null && pieceStatus.PieceColor == PieceColor.Black)
+                    {
+                        HandleSquareClick(squares[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y].GetComponent<BoardSquare>());
+                    }
+                    else if (pieceStatus.PieceColor == PieceColor.White)
+                    {
+                        selectedPiece = piece;
+                    }
+                }
+                else
+                {
                     selectedPiece = piece;
                 }
             }

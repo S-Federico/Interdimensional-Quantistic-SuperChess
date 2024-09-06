@@ -28,6 +28,7 @@ public class ChessAI
     private PieceStatus bestPiece; // Variabile per salvare il miglior pezzo
     private int bestMoveX, bestMoveY; // Variabili per salvare la miglior mossa
     private List<GameObject> toDestroy;
+    public List<GameObject> ToDestroy {get => toDestroy;}
     public ChessAI(ChessBoardModel cbm)
     {
         Hist = new Stack<State>();
