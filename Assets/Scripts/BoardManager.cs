@@ -199,14 +199,20 @@ public class BoardManager : MonoBehaviour
             }
             else
             {
-
-                selectedPiece = piece;
+                PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
+                // Check if is attack
+                if (pieceStatus != null && selectedPiece != null && pieceStatus.PieceColor == PieceColor.Black) {
+                    HandleSquareClick(squares[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y].GetComponent<BoardSquare>());
+                } else if (pieceStatus.PieceColor == PieceColor.White) {
+                    selectedPiece = piece;
+                }
             }
         }
         else
         {
             Debug.Log("Pezzo nullo");
         }
+        HideMoves();
         showMovesFlag = true;
         //highlightedFlag = selectedPiece != null;
     }
