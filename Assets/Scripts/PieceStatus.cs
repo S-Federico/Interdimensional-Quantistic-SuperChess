@@ -38,12 +38,12 @@ public class PieceStatus : MonoBehaviour, IClickable
                 {
                     if (this.PieceColor == PieceColor.White)
                     {
-                        _MovementMatrix[i, j] = MovementMatrixInfo.GetCell(i, j);
+                        _MovementMatrix[i, j] = MovementMatrixInfo.GetCell(j, i);
 
                     }
                     else
                     {
-                        _MovementMatrix[i, j] = MovementMatrixInfo.GetCell(MovementMatrixInfo.GridSize.x - i - 1, MovementMatrixInfo.GridSize.y - j - 1);
+                        _MovementMatrix[i, j] = MovementMatrixInfo.GetCell(MovementMatrixInfo.GridSize.x - j - 1, MovementMatrixInfo.GridSize.y - i - 1);
                     }
                 }
             }

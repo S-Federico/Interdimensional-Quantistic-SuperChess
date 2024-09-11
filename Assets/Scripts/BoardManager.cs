@@ -6,11 +6,13 @@ using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEditor;
 using UnityEditor.Search;
 using UnityEngine;
+using System.Linq;
+
 
 public class BoardManager : MonoBehaviour
 {
     public enum Turn { Player, AI }
-    private Turn currentTurn = Turn.Player; // Iniziamo col turno del giocatore
+    private Turn currentTurn = Turn.AI; // Iniziamo col turno del giocatore
     private ChessAI ai; // Aggiungi questa dichiarazione in cima
 
 
@@ -78,44 +80,67 @@ public class BoardManager : MonoBehaviour
 
         showMovesFlag = false;
     }
+
     private void ExecuteAITurn()
     {
-        // Calcola la migliore mossa con l'IA
-        int[] bestMove = ai.GetBestMoveFromPosition(Pieces, 3); // Imposta la profondità desiderata (es. 3)
-        if (bestMove == null || bestMove.Length != 4)
+        // Itera su tutti i pezzi sulla scacchiera
+        for (int x = 0; x < Pieces.GetLength(0); x++)
         {
-            Debug.Log("Nessuna mossa valida trovata dall'IA.");
-            // Gestire la fine del gioco o lo stallo
-            return;
+            for (int y = 0; y < Pieces.GetLength(1); y++)
+            {
+                PieceStatus piece = Pieces[x, y];
+
+                // Verifica se il pezzo è del nero (IA) prima di calcolare le mosse
+                if (piece != null && piece.PieceColor==PieceColor.Black) // Supponendo che IsBlack sia un flag che indica se è un pezzo del nero
+                {
+                    // Ottieni tutte le mosse possibili per questo pezzo
+                    HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(piece, Pieces);
+
+                    // Debug: mostra il pezzo e le sue mosse
+                    Debug.Log($"Pezzo IA trovato a ({x},{y}) con {possibleMoves.Count} mosse possibili.");
+
+                    // Evidenzia tutte le mosse possibili
+                    foreach (int[] move in possibleMoves)
+                    {
+                        int targetX = move[0];
+                        int targetY = move[1];
+                        int moveType = move[2]; // Supponendo che moveType indichi il tipo di mossa
+
+                        // Trova la casella corrispondente
+                        GameObject square = GetSquare(targetX, targetY);
+                        if (square != null)
+                        {
+                            Renderer renderer = square.GetComponent<Renderer>();
+                            if (renderer != null)
+                            {
+                                // Colora la casella in base al tipo di mossa (per es. verde per mosse normali, rosso per attacchi)
+                                switch (moveType)
+                                {
+                                    case 1: // Mossa normale
+                                        renderer.material.color = Color.green;
+                                        break;
+                                    case 2: // Mossa di attacco
+                                        renderer.material.color = Color.red;
+                                        break;
+                                    default: // Altro tipo di mossa
+                                        renderer.material.color = Color.white;
+                                        break;
+                                }
+
+                                renderer.enabled = true; // Abilita il renderer per rendere visibile il colore
+                            }
+                        }
+                        else
+                        {
+                            Debug.Log($"Nessuna casella trovata a ({targetX},{targetY}).");
+                        }
+                    }
+                }
+            }
         }
 
-        if (bestMove.Length == 4)
-        {
-            int startX = bestMove[0];
-            int startY = bestMove[1];
-            int endX = bestMove[2];
-            int endY = bestMove[3];
-
-            Debug.Log($"Start=({startX},{startY})  Finish=({endX},{endY})");
-
-            PieceStatus movingPiece = Pieces[startX, startY];
-
-            SelectPiece(movingPiece.gameObject);
-            if (Pieces[endX, endY] == null)
-            {
-                MovePiece(selectedPiece, new Vector2(endX, endY));
-            }
-            else
-            {
-                AttackPiece(movingPiece, Pieces[endX, endY]);
-            }
-
-            selectedPiece = null;
-
-            currentTurn = Turn.Player;
-        }
-
-        CleanTempObjects();
+        // Dopo aver evidenziato tutte le mosse, puoi fare ulteriori debug o lasciare la funzione finire qui
+        Debug.Log("Turno IA (debug) completato, tutte le mosse evidenziate.");
     }
 
     private void CleanTempObjects()
@@ -133,7 +158,7 @@ public class BoardManager : MonoBehaviour
         PieceStatus pieceStatus = selectedPiece.GetComponent<PieceStatus>();
 
         HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(pieceStatus, Pieces);
-        string possibleMovesStr = string.Join(",", possibleMoves);
+        string possibleMovesStr = string.Join(",", possibleMoves.Select(move => "[" + string.Join(",", move) + "]"));
         Debug.Log("Possible moves: " + possibleMovesStr);
 
         foreach (int[] move in possibleMoves)
@@ -141,7 +166,6 @@ public class BoardManager : MonoBehaviour
             int x = move[0];
             int y = move[1];
             int moveType = move[2];
-            Debug.Log("Found move (" + x + "," + y + ")" + "  type:" + moveType);
             GameObject square = GetSquare(x, y);
 
             if (square != null)
@@ -339,7 +363,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int j = 0; j < Colonna; j++)
             {
-                GameObject obj = GetPieceFromId(BoardData.GetCell(i, j));
+                GameObject obj = GetPieceFromId(BoardData.GetCell(j, i));
                 if (obj != null)
                 {
                     obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
@@ -429,7 +453,8 @@ public class BoardManager : MonoBehaviour
 
     }
 
-    public (Turn currTurn, PieceStatus[,] boardConfig) SaveStatus(){
+    public (Turn currTurn, PieceStatus[,] boardConfig) SaveStatus()
+    {
         return (currTurn: currentTurn, boardConfig: Pieces);
     }
 }
