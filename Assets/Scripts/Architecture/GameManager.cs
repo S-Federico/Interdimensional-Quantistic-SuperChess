@@ -14,5 +14,18 @@ public class GameManager : Singleton<GameManager>
         SceneManager.LoadScene("Menu");
     }
 
+    //save to file
+    //trova boardmanager
+    //BoardStatus bs=boardmanager.getstaus
+    //scrivi bs da qualche parte file
 
+    //read
+    //leggi file
+    // crea un boardstatus
+    //triva boardmanager e fai setstate(boardstatus)
+
+    public void SaveToFile(){
+        var boardStatus = GameObject.FindAnyObjectByType<BoardManager>().SaveStatus();
+        Debug.Log("HAI SALVATO YAY");
+    }
 }

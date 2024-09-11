@@ -70,6 +70,9 @@ public class InputManager : MonoBehaviour
             // Generization of click
             if (hit.collider.TryGetComponent(out IClickable cliclable))
             {
+                GameManager gm = GameManager.Instance;
+                gm.SaveToFile();
+                
                 cliclable.OnClick();
             }
         }

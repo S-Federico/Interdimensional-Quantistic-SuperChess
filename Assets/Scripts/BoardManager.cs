@@ -9,7 +9,7 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
-    private enum Turn { Player, AI }
+    public enum Turn { Player, AI }
     private Turn currentTurn = Turn.Player; // Iniziamo col turno del giocatore
     private ChessAI ai; // Aggiungi questa dichiarazione in cima
 
@@ -427,5 +427,9 @@ public class BoardManager : MonoBehaviour
         // Perform phisical movement
         piece.transform.position = squares[(int)destination.x, (int)destination.y].transform.position;
 
+    }
+
+    public (Turn currTurn, PieceStatus[,] boardConfig) SaveStatus(){
+        return (currTurn: currentTurn, boardConfig: Pieces);
     }
 }
