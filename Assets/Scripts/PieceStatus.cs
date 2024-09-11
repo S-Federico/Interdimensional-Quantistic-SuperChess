@@ -66,7 +66,7 @@ public class PieceStatus : MonoBehaviour, IClickable
     {
         get
         {
-            return "" + this.PieceType + this.PieceColor;
+            return "" + this.PieceType + " " + this.Hp + " " + this.Attack + " " + this.PieceColor + " " + this.ID + " " + this.Position+"\n";
         }
     }
 
