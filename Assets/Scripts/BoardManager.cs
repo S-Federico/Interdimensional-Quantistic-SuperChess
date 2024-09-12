@@ -11,7 +11,6 @@ using System.Linq;
 
 public class BoardManager : MonoBehaviour
 {
-    public enum Turn { Player, AI }
     private Turn currentTurn = Turn.Player; // Iniziamo col turno del giocatore
     private ChessAI ai; // Aggiungi questa dichiarazione in cima
 
@@ -430,8 +429,32 @@ public class BoardManager : MonoBehaviour
 
     }
 
-    public (Turn currTurn, PieceStatus[,] boardConfig) SaveStatus()
+    public BoardData GetBoardData()
     {
-        return (currTurn: currentTurn, boardConfig: Pieces);
+        return new BoardData(currentTurn, Pieces);
+    }
+
+    public void BuildFromData(BoardData bData)
+    {
+        this.currentTurn = bData.currentTurn;
+
+        Riga = bData.piecesData.GetLength(0);
+        Colonna = bData.piecesData.GetLength(1);
+        PieceStatus[,] result = new PieceStatus[Riga, Colonna];
+        for (int i = 0; i < Riga; i++)
+        {
+            for (int j = 0; j < Colonna; j++)
+            {
+                GameObject obj = GetPieceFromId(bData.piecesData[i, j].ID);
+                if (obj != null)
+                {
+                    obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                    PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
+                    pieceStatus.BuildFromData(bData.piecesData[i, j]);
+                    result[i, j] = pieceStatus;
+                }
+            }
+        }
+        this.Pieces = result;
     }
 }

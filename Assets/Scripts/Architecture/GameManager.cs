@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Newtonsoft.Json;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -38,8 +39,8 @@ public class GameManager : Singleton<GameManager>
         }
 
         // Chiama SaveStatus() e controlla se il risultato è valido
-        var boardStatus = boardManager.SaveStatus();
-        if (boardStatus.boardConfig == null)
+        BoardData boardStatus = boardManager.GetBoardData();
+        if (boardStatus == null)
         {
             Debug.LogError("boardConfig è null!");
             return;
@@ -58,27 +59,16 @@ public class GameManager : Singleton<GameManager>
         // Pulisci il file esistente
         File.WriteAllText(filePath, "");
 
-        // Ottieni le dimensioni dell'array bidimensionale
-        int rows = boardStatus.boardConfig.GetLength(0);
-        int cols = boardStatus.boardConfig.GetLength(1);
+        string json = JsonConvert.SerializeObject(boardStatus, Formatting.Indented); // Usa JSON.NET
+        Debug.Log(json);
 
-        // Itera su ogni elemento dell'array bidimensionale
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                PieceStatus piece = boardStatus.boardConfig[i, j];
-                if (piece != null)
-                { // Controlla se piece è null
-                    string pieceS = piece.Code;
+        BoardData b = JsonConvert.DeserializeObject<BoardData>(json);
 
-                    // Salva in append il contenuto di pieceS nel file
-                    File.AppendAllText(filePath, pieceS + "\n"); // Aggiunge una nuova riga per ogni pieceS
-                }
-            }
-        }
+        // Confronto delle matrici elemento per elemento
+        bool equal = b.Equals(boardStatus);
+        Debug.Log("Abbiamo salvato bene? " + equal);
 
-        Debug.Log("HAI SALVATO YAY (" + filePath + ")");
+        //Debug.Log("HAI SALVATO YAY (" + filePath + ")");
     }
 
 }

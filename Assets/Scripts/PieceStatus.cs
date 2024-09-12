@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Array2DEditor;
+using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using UnityEngine;
 
 public class PieceStatus : MonoBehaviour, IClickable
@@ -66,8 +67,25 @@ public class PieceStatus : MonoBehaviour, IClickable
     {
         get
         {
-            return "" + this.PieceType + " " + this.Hp + " " + this.Attack + " " + this.PieceColor + " " + this.ID + " " + this.Position+"\n";
+            return "" + this.PieceType + " " + this.Hp + " " + this.Attack + " " + this.PieceColor + " " + this.ID + " " + this.Position + "\n";
         }
+    }
+
+    public PieceData GetPieceData()
+    {
+        return new PieceData(PieceType, Hp, Attack, PieceColor, ID, Position, _MovementMatrix);
+    }
+
+    public void BuildFromData(PieceData pData)
+    {
+        this.PieceType = pData.PieceType;
+        this.Hp = pData.Hp;
+        this.Attack = pData.Attack;
+        this.PieceColor = pData.PieceColor;
+        this.ID = pData.ID;
+        this._MovementMatrix = pData.MovementMatrix;
+        Vector2 pos = new Vector2(pData.Position[0], pData.Position[1]);
+        this.Position = pos;
     }
 
     public void TakeDamage(int damage)
