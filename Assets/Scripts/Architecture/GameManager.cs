@@ -4,12 +4,33 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Newtonsoft.Json;
+using Unity.VisualScripting;
 
 public class GameManager : Singleton<GameManager>
 {
+
+    // Percorso della cartella e del file di salvataggio (usa Application.dataPath per accedere alla cartella Assets)
+    string SaveFolderPath;
+    string SaveFilePath;
+
+    public void Start()
+    {
+        SaveFolderPath = Application.dataPath + "/Files";
+        SaveFilePath = SaveFolderPath + "/boardStatus.txt";
+        // Crea la cartella di salvataggio se non esiste
+        if (!Directory.Exists(SaveFolderPath))
+        {
+            Directory.CreateDirectory(SaveFolderPath);
+        }
+    }
+
     void Awake()
     {
         Debug.Log("Game Manager instantiated!");
+    }
+
+    public void NewGame(){
+        SceneManager.LoadScene("SampleScene");
     }
 
     public void RestartGame()
@@ -18,19 +39,9 @@ public class GameManager : Singleton<GameManager>
         SceneManager.LoadScene("Menu");
     }
 
-    //save to file
-    //trova boardmanager
-    //BoardStatus bs=boardmanager.getstaus
-    //scrivi bs da qualche parte file
 
-    //read
-    //leggi file
-    // crea un boardstatus
-    //triva boardmanager e fai setstate(boardstatus)
-
-    public void SaveToFile()
+    public void SaveGameToFile()
     {
-        // Trova il BoardManager e controlla se esiste
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
         if (boardManager == null)
         {
@@ -38,7 +49,7 @@ public class GameManager : Singleton<GameManager>
             return;
         }
 
-        // Chiama SaveStatus() e controlla se il risultato è valido
+        // Chiama GetBoardData() e controlla se il risultato è valido
         BoardData boardStatus = boardManager.GetBoardData();
         if (boardStatus == null)
         {
@@ -46,29 +57,33 @@ public class GameManager : Singleton<GameManager>
             return;
         }
 
-        // Percorso della cartella e del file (usa Application.dataPath per accedere alla cartella Assets)
-        string folderPath = Application.dataPath + "/Files";
-        string filePath = folderPath + "/boardStatus.txt";
-
-        // Crea la cartella se non esiste
-        if (!Directory.Exists(folderPath))
-        {
-            Directory.CreateDirectory(folderPath);
-        }
-
         // Pulisci il file esistente
-        File.WriteAllText(filePath, "");
+        File.WriteAllText(SaveFilePath, "");
 
         string json = JsonConvert.SerializeObject(boardStatus, Formatting.Indented); // Usa JSON.NET
-        Debug.Log(json);
 
+        //Queste righe servono perché potremmo cambiare cose nel progetto e inserire nello stato 
+        //da salvare oggetti non serializzabili. Questo serve a debuggare questa cosa, lo toglieremo
+        //quando il modello dei dati non cambierà più
         BoardData b = JsonConvert.DeserializeObject<BoardData>(json);
-
-        // Confronto delle matrici elemento per elemento
         bool equal = b.Equals(boardStatus);
         Debug.Log("Abbiamo salvato bene? " + equal);
 
-        //Debug.Log("HAI SALVATO YAY (" + filePath + ")");
+    }
+
+    public void LoadGameFromFile()
+    {
+        string saveJson = System.IO.File.ReadAllText(SaveFilePath);
+        BoardData b = JsonConvert.DeserializeObject<BoardData>(saveJson);
+
+        var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
+        if (boardManager == null)
+        {
+            Debug.LogError("BoardManager non trovato!");
+            return;
+        }
+
+        boardManager.BuildFromData(b);
     }
 
 }
