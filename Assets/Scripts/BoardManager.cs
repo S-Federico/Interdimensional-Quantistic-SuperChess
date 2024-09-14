@@ -436,25 +436,28 @@ public class BoardManager : MonoBehaviour
 
     public void BuildFromData(BoardData bData)
     {
-        this.currentTurn = bData.currentTurn;
-
-        Riga = bData.piecesData.GetLength(0);
-        Colonna = bData.piecesData.GetLength(1);
-        PieceStatus[,] result = new PieceStatus[Riga, Colonna];
-        for (int i = 0; i < Riga; i++)
+        if (bData!=null)
         {
-            for (int j = 0; j < Colonna; j++)
+            this.currentTurn = bData.currentTurn;
+
+            Riga = bData.piecesData.GetLength(0);
+            Colonna = bData.piecesData.GetLength(1);
+            PieceStatus[,] result = new PieceStatus[Riga, Colonna];
+            for (int i = 0; i < Riga; i++)
             {
-                GameObject obj = GetPieceFromId(bData.piecesData[i, j].ID);
-                if (obj != null)
+                for (int j = 0; j < Colonna; j++)
                 {
-                    obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
-                    PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
-                    pieceStatus.BuildFromData(bData.piecesData[i, j]);
-                    result[i, j] = pieceStatus;
+                    GameObject obj = GetPieceFromId(bData.piecesData[i, j].ID);
+                    if (obj != null)
+                    {
+                        obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                        PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
+                        pieceStatus.BuildFromData(bData.piecesData[i, j]);
+                        result[i, j] = pieceStatus;
+                    }
                 }
             }
+            this.Pieces = result;
         }
-        this.Pieces = result;
     }
 }

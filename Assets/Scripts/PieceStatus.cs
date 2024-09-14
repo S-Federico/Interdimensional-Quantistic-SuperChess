@@ -78,14 +78,17 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     public void BuildFromData(PieceData pData)
     {
-        this.PieceType = pData.PieceType;
-        this.Hp = pData.Hp;
-        this.Attack = pData.Attack;
-        this.PieceColor = pData.PieceColor;
-        this.ID = pData.ID;
-        this._MovementMatrix = pData.MovementMatrix;
-        Vector2 pos = new Vector2(pData.Position[0], pData.Position[1]);
-        this.Position = pos;
+        if (pData != null)
+        {
+            this.PieceType = pData.PieceType;
+            this.Hp = pData.Hp;
+            this.Attack = pData.Attack;
+            this.PieceColor = pData.PieceColor;
+            this.ID = pData.ID;
+            this._MovementMatrix = pData.MovementMatrix;
+            Vector2 pos = new Vector2(pData.Position[0], pData.Position[1]);
+            this.Position = pos;
+        }
     }
 
     public void TakeDamage(int damage)

@@ -29,7 +29,10 @@ public class GameManager : Singleton<GameManager>
         Debug.Log("Game Manager instantiated!");
     }
 
-    public void NewGame(){
+    public void NewGame()
+    {
+        // Pulisci il file esistente
+        File.WriteAllText(SaveFilePath, "");
         SceneManager.LoadScene("SampleScene");
     }
 
