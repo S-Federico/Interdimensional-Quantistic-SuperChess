@@ -31,8 +31,9 @@ public class GameManager : Singleton<GameManager>
 
     public void NewGame()
     {
+        Debug.Log("New Game pressed");
         // Pulisci il file esistente
-        File.WriteAllText(SaveFilePath, "");
+        //File.WriteAllText(SaveFilePath, "");
         SceneManager.LoadScene("SampleScene");
     }
 
