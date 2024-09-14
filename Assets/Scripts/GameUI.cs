@@ -21,6 +21,7 @@ public class GameUI : MonoBehaviour
     }
     public void BackToMainMenu()
     {
+        GameManager.Instance.SaveGameToFile();
         GameManager.Instance.RestartGame();
     }
 }

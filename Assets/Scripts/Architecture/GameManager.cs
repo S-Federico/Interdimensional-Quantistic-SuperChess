@@ -37,6 +37,26 @@ public class GameManager : Singleton<GameManager>
         SceneManager.LoadScene("SampleScene");
     }
 
+    public void ContinueGame()
+    {
+        StartCoroutine(LoadSceneAndContinue("SampleScene"));
+    }
+
+    private IEnumerator LoadSceneAndContinue(string sceneName)
+    {
+        // Carica la scena in modo asincrono
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+        // Aspetta fino a quando la scena non è completamente caricata
+        while (!asyncLoad.isDone)
+        {
+            yield return null; // Aspetta un frame
+        }
+
+        // La scena è caricata completamente, ora puoi chiamare il metodo per caricare i dati di gioco
+        LoadGameFromFile();
+    }
+
     public void RestartGame()
     {
         // When game restarts, load the main menu scene
@@ -90,4 +110,8 @@ public class GameManager : Singleton<GameManager>
         boardManager.BuildFromData(b);
     }
 
+    public bool IsSaveFilePresent()
+    {
+        return File.Exists(SaveFilePath);
+    }
 }
