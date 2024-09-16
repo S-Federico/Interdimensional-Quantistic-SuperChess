@@ -13,4 +13,5 @@ public class GameInfo
     {
         return true;
     }
+    List<Consumable> UnlockedConsumables;
 }
