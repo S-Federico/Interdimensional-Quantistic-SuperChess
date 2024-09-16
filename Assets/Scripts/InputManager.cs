@@ -69,7 +69,7 @@ public class InputManager : MonoBehaviour
 
             // Generization of click
             if (hit.collider.TryGetComponent(out IClickable cliclable))
-            {
+            {                
                 cliclable.OnClick();
             }
         }

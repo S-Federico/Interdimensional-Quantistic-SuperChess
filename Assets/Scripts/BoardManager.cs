@@ -6,10 +6,11 @@ using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEditor;
 using UnityEditor.Search;
 using UnityEngine;
+using System.Linq;
+
 
 public class BoardManager : MonoBehaviour
 {
-    private enum Turn { Player, AI }
     private Turn currentTurn = Turn.Player; // Iniziamo col turno del giocatore
     private ChessAI ai; // Aggiungi questa dichiarazione in cima
 
@@ -133,7 +134,7 @@ public class BoardManager : MonoBehaviour
         PieceStatus pieceStatus = selectedPiece.GetComponent<PieceStatus>();
 
         HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(pieceStatus, Pieces);
-        string possibleMovesStr = string.Join(",", possibleMoves);
+        string possibleMovesStr = string.Join(",", possibleMoves.Select(move => "[" + string.Join(",", move) + "]"));
         Debug.Log("Possible moves: " + possibleMovesStr);
 
         foreach (int[] move in possibleMoves)
@@ -141,7 +142,6 @@ public class BoardManager : MonoBehaviour
             int x = move[0];
             int y = move[1];
             int moveType = move[2];
-            Debug.Log("Found move (" + x + "," + y + ")" + "  type:" + moveType);
             GameObject square = GetSquare(x, y);
 
             if (square != null)
@@ -339,7 +339,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int j = 0; j < Colonna; j++)
             {
-                GameObject obj = GetPieceFromId(BoardData.GetCell(i, j));
+                GameObject obj = GetPieceFromId(BoardData.GetCell(j, i));
                 if (obj != null)
                 {
                     obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
@@ -427,5 +427,37 @@ public class BoardManager : MonoBehaviour
         // Perform phisical movement
         piece.transform.position = squares[(int)destination.x, (int)destination.y].transform.position;
 
+    }
+
+    public BoardData GetBoardData()
+    {
+        return new BoardData(currentTurn, Pieces);
+    }
+
+    public void BuildFromData(BoardData bData)
+    {
+        if (bData!=null)
+        {
+            this.currentTurn = bData.currentTurn;
+
+            Riga = bData.piecesData.GetLength(0);
+            Colonna = bData.piecesData.GetLength(1);
+            PieceStatus[,] result = new PieceStatus[Riga, Colonna];
+            for (int i = 0; i < Riga; i++)
+            {
+                for (int j = 0; j < Colonna; j++)
+                {
+                    GameObject obj = GetPieceFromId(bData.piecesData[i, j].ID);
+                    if (obj != null)
+                    {
+                        obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                        PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
+                        pieceStatus.BuildFromData(bData.piecesData[i, j]);
+                        result[i, j] = pieceStatus;
+                    }
+                }
+            }
+            this.Pieces = result;
+        }
     }
 }

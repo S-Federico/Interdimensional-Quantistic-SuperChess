@@ -35,6 +35,9 @@ public class ChessBoardModel
     {
         HashSet<int[]> moves = new HashSet<int[]>();
 
+        //serve per aggiungere separatamente le mosse sconnesse, come quelle del cavallo
+        HashSet<int[]> disconnectedMoves = new HashSet<int[]>();
+
         int riga = (int)pieceStatus.Position.x;
         int colonna = (int)pieceStatus.Position.y;
 
@@ -97,12 +100,27 @@ public class ChessBoardModel
                             moves.Add(new int[] { newRiga, newColonna, 2 });
                         }
                     }
+                    //se la casella è movimento e attacco sconnesso 
+                    else if (matrix[i, j] == 4)
+                    {
+                        if (board[newRiga, newColonna] == null)
+                        {
+                            // Aggiungi come mossa di movimento (tipo = 1)
+                            disconnectedMoves.Add(new int[] { newRiga, newColonna, 1 });
+                        }
+                        else if (board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor) // Controlla se è un pezzo avversario
+                        {
+                            // Aggiungi come mossa di attacco (tipo = 2)
+                            disconnectedMoves.Add(new int[] { newRiga, newColonna, 2 });
+                        }
+                    }
                 }
             }
         }
 
         // Pulizia del set di mosse per assicurarsi che siano connesse al pezzo di partenza con movimenti (tipo = 1)
         moves = CleanDisconnectedMoves(moves, riga, colonna, board);
+        moves.UnionWith(disconnectedMoves);
 
         return moves;
     }
