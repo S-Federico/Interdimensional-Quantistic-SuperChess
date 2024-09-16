@@ -124,10 +124,11 @@ MonoBehaviour:
   Attack: 0
   PieceColor: 1
   ID: 8
+  Position: {x: 0, y: 0}
   MovementMatrixInfo:
     gridSize: {x: 3, y: 3}
     cellSize: {x: 32, y: 16}
     cells:
-    - row: 000000000000000000000000
-    - row: 000000000000000000000000
-    - row: 000000000000000000000000
+    - row: 010000000100000001000000
+    - row: 010000000000000001000000
+    - row: 010000000100000001000000
