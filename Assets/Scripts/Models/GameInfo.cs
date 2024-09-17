@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 public class GameInfo
 {
-    public string ProfileName; //Game1.save
+    public string ProfileName = "Empty"; //Game1.save
     public int currentLevel = 1;
     public int currentStage = 1;
 
@@ -11,7 +11,9 @@ public class GameInfo
 
     public bool HasSaveFile()
     {
-        return true;
+        return SaveManager.Instance.Load<GameInfo>(ProfileName) != null;
     }
     List<Consumable> UnlockedConsumables;
+
+    public BoardData BoardData;
 }

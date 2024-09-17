@@ -51,6 +51,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Interdimensional Quantistic Superchess.sln",
+    "dotnet.defaultSolution": "Interdimensional-Quantistic-SuperChess.sln",
     "dotnet.preferCSharpExtension": true
 }

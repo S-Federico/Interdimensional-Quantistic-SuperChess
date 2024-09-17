@@ -5,23 +5,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Newtonsoft.Json;
 using Unity.VisualScripting;
+using System;
 
 public class GameManager : Singleton<GameManager>
 {
-
-    // Percorso della cartella e del file di salvataggio (usa Application.dataPath per accedere alla cartella Assets)
-    string SaveFolderPath;
-    string SaveFilePath;
-
+    private GameInfo gameInfo;
     public void Start()
     {
-        SaveFolderPath = Application.dataPath + "/Files";
-        SaveFilePath = SaveFolderPath + "/boardStatus.txt";
-        // Crea la cartella di salvataggio se non esiste
-        if (!Directory.Exists(SaveFolderPath))
-        {
-            Directory.CreateDirectory(SaveFolderPath);
-        }
+
     }
 
     void Awake()
@@ -44,13 +35,15 @@ public class GameManager : Singleton<GameManager>
         boardManager.LoadBoardFromBoardData();
     }
 
-    public void NewGame()
+    public void NewGame(GameInfo gameInfo)
     {
+        this.gameInfo = gameInfo;
         StartCoroutine(NewGameCoroutine("SampleScene"));
     }
 
-    public void ContinueGame()
+    public void ContinueGame(GameInfo gameInfo)
     {
+        this.gameInfo = gameInfo;
         StartCoroutine(LoadSceneAndContinue("SampleScene"));
     }
 
@@ -87,30 +80,31 @@ public class GameManager : Singleton<GameManager>
 
         // Chiama GetBoardData() e controlla se il risultato è valido
         BoardData boardStatus = boardManager.GetBoardData();
+        this.gameInfo.BoardData = boardStatus;
         if (boardStatus == null)
         {
             Debug.LogError("boardConfig è null!");
             return;
         }
 
-        // Pulisci il file esistente
-        File.WriteAllText(SaveFilePath, "");
+        // // Pulisci il file esistente
+        // File.WriteAllText(SaveFilePath, "");
 
-        string json = JsonConvert.SerializeObject(boardStatus, Formatting.Indented); // Usa JSON.NET
-        SaveManager.Instance.Save<BoardData>(boardStatus, "boardStatus");
+        // string json = JsonConvert.SerializeObject(boardStatus, Formatting.Indented); // Usa JSON.NET
+        SaveManager.Instance.Save(gameInfo, this.gameInfo.ProfileName);
 
-        //Queste righe servono perché potremmo cambiare cose nel progetto e inserire nello stato 
-        //da salvare oggetti non serializzabili. Questo serve a debuggare questa cosa, lo toglieremo
-        //quando il modello dei dati non cambierà più
-        BoardData b = JsonConvert.DeserializeObject<BoardData>(json);
-        bool equal = b.Equals(boardStatus);
-        Debug.Log("Abbiamo salvato bene? " + equal);
+        // //Queste righe servono perché potremmo cambiare cose nel progetto e inserire nello stato 
+        // //da salvare oggetti non serializzabili. Questo serve a debuggare questa cosa, lo toglieremo
+        // //quando il modello dei dati non cambierà più
+        // BoardData b = JsonConvert.DeserializeObject<BoardData>(json);
+        // bool equal = b.Equals(boardStatus);
+        // Debug.Log("Abbiamo salvato bene? " + equal);
 
     }
 
     public void LoadGameFromFile()
     {
-        BoardData b = SaveManager.Instance.Load<BoardData>("boardStatus");
+        //GameInfo b = SaveManager.Instance.Load<GameInfo>(gameInfo.ProfileName);
 
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
         if (boardManager == null)
@@ -119,11 +113,6 @@ public class GameManager : Singleton<GameManager>
             return;
         }
 
-        boardManager.BuildFromData(b);
-    }
-
-    public bool IsSaveFilePresent()
-    {
-        return File.Exists(SaveFilePath);
+        boardManager.BuildFromData(this.gameInfo.BoardData);
     }
 }
