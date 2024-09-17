@@ -120,8 +120,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PieceType: 5
-  Hp: 2
-  Attack: 2
+  Hp: 1
+  Attack: 1
   PieceColor: 0
   ID: 2
   Position: {x: 3, y: 0}
