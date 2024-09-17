@@ -82,7 +82,7 @@ public class BoardManager : MonoBehaviour
     private void ExecuteAITurn()
     {
         // Calcola la migliore mossa con l'IA
-        int[] bestMove = ai.GetBestMoveFromPosition(Pieces, 3); // Imposta la profondità desiderata (es. 3)
+        int[] bestMove = ai.GetBestMoveFromPosition(Pieces, 4); // Imposta la profondità desiderata (es. 3)
         if (bestMove == null || bestMove.Length != 4)
         {
             Debug.Log("Nessuna mossa valida trovata dall'IA.");
