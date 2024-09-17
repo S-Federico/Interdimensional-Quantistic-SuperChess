@@ -29,12 +29,24 @@ public class GameManager : Singleton<GameManager>
         Debug.Log("Game Manager instantiated!");
     }
 
+    public IEnumerator NewGameCoroutine(string sceneName)
+    {
+        // Carica la scena in modo asincrono
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+        // Aspetta fino a quando la scena non è completamente caricata
+        while (!asyncLoad.isDone)
+        {
+            yield return null; // Aspetta un frame
+        }
+
+        var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
+        boardManager.LoadBoardFromBoardData();
+    }
+
     public void NewGame()
     {
-        Debug.Log("New Game pressed");
-        // Pulisci il file esistente
-        //File.WriteAllText(SaveFilePath, "");
-        SceneManager.LoadScene("SampleScene");
+        StartCoroutine(NewGameCoroutine("SampleScene"));
     }
 
     public void ContinueGame()
@@ -85,6 +97,7 @@ public class GameManager : Singleton<GameManager>
         File.WriteAllText(SaveFilePath, "");
 
         string json = JsonConvert.SerializeObject(boardStatus, Formatting.Indented); // Usa JSON.NET
+        SaveManager.Instance.Save<BoardData>(boardStatus, "boardStatus");
 
         //Queste righe servono perché potremmo cambiare cose nel progetto e inserire nello stato 
         //da salvare oggetti non serializzabili. Questo serve a debuggare questa cosa, lo toglieremo
@@ -97,8 +110,7 @@ public class GameManager : Singleton<GameManager>
 
     public void LoadGameFromFile()
     {
-        string saveJson = System.IO.File.ReadAllText(SaveFilePath);
-        BoardData b = JsonConvert.DeserializeObject<BoardData>(saveJson);
+        BoardData b = SaveManager.Instance.Load<BoardData>("boardStatus");
 
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
         if (boardManager == null)

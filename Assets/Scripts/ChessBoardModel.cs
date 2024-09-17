@@ -97,21 +97,21 @@ public class ChessBoardModel
                         if (board[newRiga, newColonna] != null && board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor)
                         {
                             // Aggiungi come mossa di movimento (tipo = 1)
-                            moves.Add(new int[] { newRiga, newColonna, 2 });
+                            disconnectedMoves.Add(new int[] { newRiga, newColonna, 2 }); // ZIO CINGHIALE
                         }
                     }
                     //se la casella è movimento e attacco sconnesso 
                     else if (matrix[i, j] == 4)
                     {
-                        if (board[newRiga, newColonna] == null)
+                        if (board[newRiga, newColonna] == null) // ZIO MATTONE
                         {
                             // Aggiungi come mossa di movimento (tipo = 1)
-                            disconnectedMoves.Add(new int[] { newRiga, newColonna, 1 });
+                            disconnectedMoves.Add(new int[] { newRiga, newColonna, 1 }); // ZIO SCIMMIA
                         }
                         else if (board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor) // Controlla se è un pezzo avversario
                         {
                             // Aggiungi come mossa di attacco (tipo = 2)
-                            disconnectedMoves.Add(new int[] { newRiga, newColonna, 2 });
+                            disconnectedMoves.Add(new int[] { newRiga, newColonna, 2 }); // ZIO PICCIONE
                         }
                     }
                 }

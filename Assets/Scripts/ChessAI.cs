@@ -179,8 +179,21 @@ public class ChessAI
 
     private bool isGameOver()
     {
-        int currScore = StaticEvaluationFunction();
-        return (currScore < -290 || currScore > 290);
+        int kingCount = 0;
+
+        foreach (PieceStatus piece in copiedBoard)
+        {
+            if (piece != null && piece.PieceType == PieceType.King)
+            {
+                kingCount++;
+                // Se ci sono più di un re, non è game over (serve per testing)
+                if (kingCount > 1)
+                    return false;
+            }
+        }
+
+        // Se c'è esattamente un re, il gioco è finito
+        return kingCount == 1;
     }
 
     private void Move(int[] move, PieceStatus[,] board)

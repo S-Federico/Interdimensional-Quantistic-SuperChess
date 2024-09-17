@@ -45,7 +45,7 @@ public class BoardManager : MonoBehaviour
         alreadyExcecuting = false;
 
         // Questa riga di codice carica i pezzi da inspector
-        Pieces = LoadBoardFromBoardData();
+        //Pieces = LoadBoardFromBoardData();
     }
 
 
@@ -325,7 +325,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    PieceStatus[,] LoadBoardFromBoardData()
+    public PieceStatus[,] LoadBoardFromBoardData()
     {
         if (BoardData == null)
         {
@@ -349,6 +349,7 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+        this.Pieces = result;
         return result;
 
     }
@@ -447,6 +448,7 @@ public class BoardManager : MonoBehaviour
             {
                 for (int j = 0; j < Colonna; j++)
                 {
+                    if (bData.piecesData[i,j] == null) continue;
                     GameObject obj = GetPieceFromId(bData.piecesData[i, j].ID);
                     if (obj != null)
                     {

@@ -4,32 +4,28 @@ using UnityEngine;
 
 using Newtonsoft.Json;
 using System.IO;
+using System;
 
 public class SaveManager : Singleton<SaveManager>
 {
     public void Save<T>(T obj, string fileName)
     {
         // string filePath = Application.persistentDataPath + "/" + fileName + ".save";
-        string filePath = Application.dataPath + "/" + fileName + ".save";
+        string filePath = Application.dataPath + "/" + fileName + ".json";
         string jsonData = JsonConvert.SerializeObject(obj);
 
-        FileStream file;
-
-        if (File.Exists(filePath)) file = File.OpenWrite(filePath);
-        else file = File.Create(filePath);
-
         File.WriteAllText(filePath, jsonData);
-        file.Close();
     }
 
     public T Load<T>(string fileName)
     {
-        string filePath = Application.persistentDataPath + "/" + fileName + ".save";
+        string filePath = Application.dataPath + "/" + fileName + ".json";
         string data;
 
         if (File.Exists(filePath))
         {
             data = File.ReadAllText(filePath);
+            Debug.Log(data);
         }
         else
         {
