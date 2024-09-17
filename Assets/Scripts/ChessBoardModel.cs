@@ -97,7 +97,7 @@ public class ChessBoardModel
                         if (board[newRiga, newColonna] != null && board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor)
                         {
                             // Aggiungi come mossa di movimento (tipo = 1)
-                            disconnectedMoves.Add(new int[] { newRiga, newColonna, 2 }); // ZIO CINGHIALE
+                            moves.Add(new int[] { newRiga, newColonna, 2 }); // ZIO CINGHIALE
                         }
                     }
                     //se la casella è movimento e attacco sconnesso 
@@ -217,14 +217,17 @@ public class ChessBoardModel
         {
             if (move[2] == 2) // È una mossa di attacco
             {
-                // Verifica se la mossa di attacco è adiacente a una mossa di movimento connessa
-                bool isConnected = connectedMoves.Any(m => Math.Abs(m[0] - move[0]) <= 1 && Math.Abs(m[1] - move[1]) <= 1);
+                // Verifica se la mossa di attacco è adiacente a una mossa di movimento connessa 
+                bool isConnected = connectedMoves.Any(m => Math.Abs(m[0] - move[0]) <= 1 && Math.Abs(m[1] - move[1]) <= 1)
+                                || (Math.Abs(rigaPezzo - move[0]) <= 1 && Math.Abs(colonnaPezzo - move[1]) <= 1);
+
                 if (isConnected)
                 {
                     connectedMoves.Add(move);
                 }
             }
         }
+
 
         return connectedMoves;
     }
