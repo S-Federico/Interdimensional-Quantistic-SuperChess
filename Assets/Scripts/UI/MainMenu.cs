@@ -113,4 +113,13 @@ public class MainMenu : MonoBehaviour
     public void LoadGamePressed() {
         GameManager.Instance.ContinueGame(this.selectedGameInfo);
     }
+
+    public void DeleteProfilePressed() {
+        PopupManager.Instance.ShowPopup("Are you sure?", () => {
+            //TODO: Delete file from selectedGameInfo
+            SaveManager.Instance.DeleteFile(this.selectedGameInfo.ProfileName);
+            this.selectedGameInfo = null;
+            GameManager.Instance.RestartGame();
+        }, () => {});
+    }
 }

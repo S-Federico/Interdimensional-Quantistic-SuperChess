@@ -82,4 +82,17 @@ public class SaveManager : Singleton<SaveManager>
             return null;
         }
     }
+
+    public void DeleteFile(string fileName, bool isFullPath = false) {
+        string filePath;
+        if (isFullPath)
+        {
+            filePath = fileName;
+        }
+        else
+        {
+            filePath = $"{baseSavePath}/{fileName}.{SAVE_FILE_EXTENSION}";
+        }
+        File.Delete(filePath);
+    }
 }
