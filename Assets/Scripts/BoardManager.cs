@@ -462,4 +462,8 @@ public class BoardManager : MonoBehaviour
             this.Pieces = result;
         }
     }
+
+    public bool IsGameOver() {
+        return ai.isGameOver();
+    }
 }

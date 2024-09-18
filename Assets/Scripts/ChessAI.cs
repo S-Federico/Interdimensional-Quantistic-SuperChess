@@ -177,7 +177,7 @@ public class ChessAI
         return TotalScore;
     }
 
-    private bool isGameOver()
+    public bool isGameOver()
     {
         int kingCount = 0;
 

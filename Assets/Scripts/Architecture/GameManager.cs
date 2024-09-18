@@ -10,6 +10,11 @@ using System;
 public class GameManager : Singleton<GameManager>
 {
     private GameInfo gameInfo;
+    private bool isPaused = false;
+    private bool isGameOver = false;
+    
+    public bool IsGameOver{get => isGameOver;} 
+    public bool IsPaused { get => isPaused; set => isPaused = value;}
     public void Start()
     {
 
@@ -114,5 +119,10 @@ public class GameManager : Singleton<GameManager>
         }
 
         boardManager.BuildFromData(this.gameInfo.BoardData);
+    }
+
+    public void GameOver()
+    {
+        this.isGameOver = true;
     }
 }
