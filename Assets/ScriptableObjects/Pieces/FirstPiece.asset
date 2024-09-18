@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39e73f42bae1d6045a510629b5240178, type: 3}
-  m_Name: Manual Second
+  m_Script: {fileID: 11500000, guid: 9d62eeb4c859f424a808791b5e0c5966, type: 3}
+  m_Name: FirstPiece
   m_EditorClassIdentifier: 
-  Name: SecondoManual
-  Prefab: {fileID: 179376, guid: 20fba2d07ecf8bf4f949e6e9c195c7b5, type: 3}
+  Name: Skull
+  Prefab: {fileID: 1758002909022086, guid: 1aeca1bd9f707c245a80c7f103d235f9, type: 3}

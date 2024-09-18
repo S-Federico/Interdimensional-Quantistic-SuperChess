@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39e73f42bae1d6045a510629b5240178, type: 3}
-  m_Name: Manual Second
+  m_Script: {fileID: 11500000, guid: c870d172ff623f34e99dee7762238af8, type: 3}
+  m_Name: SecondConsumable
   m_EditorClassIdentifier: 
-  Name: SecondoManual
-  Prefab: {fileID: 179376, guid: 20fba2d07ecf8bf4f949e6e9c195c7b5, type: 3}
+  Name: HpUp
+  Prefab: {fileID: 1855727749493710, guid: 1961192e49bb4e14a96c112a868b1389, type: 3}

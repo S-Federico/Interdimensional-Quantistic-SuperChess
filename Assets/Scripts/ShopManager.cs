@@ -14,8 +14,6 @@ public class ShopManager : MonoBehaviour
 {
     // Il compito di questo manager è quello di popolare lo shop.
     // Nello specifico va a prendere tra gli oggetti "sbloccati" dal player le cose da usare. (1)
-    //      {Probabilmente saranno di 3 tipi: consumabili, non consumabili e pezzi speciali}
-
     // Ovviamente deve far avvenire le transazioni (banalmente scalare i soldi al player ed effettivamente popolare le collezioni) (2)
 
     /*
@@ -31,29 +29,32 @@ public class ShopManager : MonoBehaviour
         Serve anche un metodo(?) per effettuare questo "scambio"
     */
 
-    //placeholder per il gameobject o chi per lui
-
     public GameObject plane_manuals;
     public GameObject plane_pieces;
     public GameObject plane_consumable;
     public List<ScriptableManual> scriptableManualList = new List<ScriptableManual>();
+    public List<ScriptableConsumable> scriptableConsumableList = new List<ScriptableConsumable>();
+    public List<ScriptablePiece> scriptablePieceList = new List<ScriptablePiece>();
     public List<GameObject> manuals = new List<GameObject>();
+    public List<GameObject> consumables = new List<GameObject>();
+    public List<GameObject> pieces = new List<GameObject>();
 
     void Start()
     {
         Debug.Log("SONO LO SHOP MANAGER");
-        LoadScriptableManuals();
-        SelectRandomManuals(3,0.1f);
+        LoadScriptableObjects<ScriptableManual>("Assets/ScriptableObjects/Manuals", scriptableManualList);
+        SelectRandomManuals(scriptableManualList.Count, 0.1f);
+        LoadScriptableObjects<ScriptableConsumable>("Assets/ScriptableObjects/Consumables", scriptableConsumableList);
+        SelectRandomConsumables(scriptableConsumableList.Count, 0.1f);
+        LoadScriptableObjects<ScriptablePiece>("Assets/ScriptableObjects/Pieces", scriptablePieceList);
+        SelectRandomPieces(scriptablePieceList.Count, 0.1f);
     }
 
-    // Metodo per caricare tutti gli ScriptableObject presenti nella cartella
-    public void LoadScriptableManuals()
+    // Metodo per caricare scriptable objects di un tipo specifico da una cartella
+    public void LoadScriptableObjects<T>(string folderPath, List<T> scriptableObjectList) where T : ScriptableObject
     {
-        // Percorso della cartella dove si trovano gli asset
-        string folderPath = "Assets/ScriptableObjects/Manuals";
-
-        // Trova tutti gli asset nella cartella
-        string[] assetGUIDs = AssetDatabase.FindAssets("t:ScriptableManual", new[] { folderPath });
+        // Trova tutti gli asset del tipo specificato nella cartella
+        string[] assetGUIDs = AssetDatabase.FindAssets($"t:{typeof(T).Name}", new[] { folderPath });
 
         // Cicla su ogni GUID trovato e carica l'asset
         foreach (string guid in assetGUIDs)
@@ -61,18 +62,18 @@ public class ShopManager : MonoBehaviour
             // Ottieni il percorso dell'asset
             string assetPath = AssetDatabase.GUIDToAssetPath(guid);
 
-            // Carica l'asset come ScriptableObject
-            ScriptableManual obj = AssetDatabase.LoadAssetAtPath<ScriptableManual>(assetPath);
+            // Carica l'asset come ScriptableObject del tipo specificato
+            T obj = AssetDatabase.LoadAssetAtPath<T>(assetPath);
 
             // Se l'asset è stato trovato e caricato, aggiungilo alla lista
             if (obj != null)
             {
-                scriptableManualList.Add(obj);
-                Debug.Log("Caricato: " + obj.name);
+                scriptableObjectList.Add(obj);
+                Debug.Log($"Caricato: {obj.name}");
             }
             else
             {
-                Debug.LogError("Non è stato possibile caricare l'asset: " + assetPath);
+                Debug.LogError($"Non è stato possibile caricare l'asset: {assetPath}");
             }
         }
     }
@@ -81,6 +82,7 @@ public class ShopManager : MonoBehaviour
     {
         // Questo metodo prende tutti gli asset caricati prima dalle cartelle alle liste (item del gioco)
         // e li confronta con il file di salvataggio del player, che contiene solo gli item sbloccati
+        // Controllare anche per evitare di prendere item che il giocatore ha già negli "slot" (questo vale nello specifico per i manuali)
     }
 
     public void FillShop()
@@ -89,7 +91,6 @@ public class ShopManager : MonoBehaviour
         // istanziare ognuno degli elementi con la transform corretta 
     }
 
-    // Metodo per selezionare 3 elementi casuali
     public void SelectRandomManuals(int numberOfManuals, float padding)
     {
         // Creiamo una copia della lista originale per non modificare quella originale
@@ -138,7 +139,6 @@ public class ShopManager : MonoBehaviour
 
             // Creiamo una leggera rotazione casuale sull'asse Y
             Quaternion rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
-            //Quaternion rotation = Quaternion.Euler(0, 90, 0);
 
             // Istanziamo il manuale selezionato
             GameObject obj = Instantiate(selectedManual.Prefab, position, rotation);
@@ -154,5 +154,96 @@ public class ShopManager : MonoBehaviour
         }
     }
 
+    public void SelectRandomConsumables(int numberOfConsumables, float padding)
+    {
+        List<ScriptableConsumable> tempList = new List<ScriptableConsumable>(scriptableConsumableList);
+        if (tempList.Count < numberOfConsumables)
+        {
+            Debug.LogError("Non ci sono abbastanza manuali nella lista!");
+            return;
+        }
+        float planeLength = plane_consumable.GetComponent<Renderer>().bounds.size.x;
+        float totalRequiredSpace = numberOfConsumables * padding;
+        if (planeLength < totalRequiredSpace)
+        {
+            Debug.LogError("Non c'è abbastanza spazio per posizionare i manuali con il padding richiesto.");
+            return;
+        }
+        float spacing = (planeLength - (padding * (numberOfConsumables - 1))) / (numberOfConsumables + 1);
+        Vector3 planeStartPosition = plane_consumable.transform.position;
+        float planeMinX = planeStartPosition.x - planeLength / 2;
+        for (int i = 0; i < numberOfConsumables; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, tempList.Count);
+            ScriptableConsumable selectedConsumable = tempList[randomIndex];
+            Vector3 position = new Vector3(
+                planeMinX + spacing * (i + 1) + padding * i,
+                planeStartPosition.y,
+                planeStartPosition.z
+            );
+            GameObject obj = Instantiate(selectedConsumable.Prefab, position, Quaternion.identity);
+            Renderer objRenderer = obj.GetComponent<Renderer>();
+            if (objRenderer != null)
+            {
+                float objHeight = objRenderer.bounds.size.y;
+                position.y = planeStartPosition.y + objHeight / 2;
+                obj.transform.position = position;
+            }
+            else
+            {
+                Debug.LogWarning("Il prefab non ha un Renderer. Non posso calcolare la sua altezza.");
+            }
+            obj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
+            consumables.Add(obj);
+            tempList.RemoveAt(randomIndex);
+            Debug.Log("Selezionato consumabile: " + selectedConsumable.name + " alla posizione " + position);
+        }
+    }
+
+    public void SelectRandomPieces(int numberOfPieces, float padding)
+    {
+        List<ScriptablePiece> tempList = new List<ScriptablePiece>(scriptablePieceList);
+        if (tempList.Count < numberOfPieces)
+        {
+            Debug.LogError("Non ci sono abbastanza manuali nella lista!");
+            return;
+        }
+        float planeLength = plane_pieces.GetComponent<Renderer>().bounds.size.x;
+        float totalRequiredSpace = numberOfPieces * padding;
+        if (planeLength < totalRequiredSpace)
+        {
+            Debug.LogError("Non c'è abbastanza spazio per posizionare i manuali con il padding richiesto.");
+            return;
+        }
+        float spacing = (planeLength - (padding * (numberOfPieces - 1))) / (numberOfPieces + 1);
+        Vector3 planeStartPosition = plane_pieces.transform.position;
+        float planeMinX = planeStartPosition.x - planeLength / 2;
+        for (int i = 0; i < numberOfPieces; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, tempList.Count);
+            ScriptablePiece selectedPiece = tempList[randomIndex];
+            Vector3 position = new Vector3(
+                planeMinX + spacing * (i + 1) + padding * i,
+                planeStartPosition.y,
+                planeStartPosition.z
+            );
+            GameObject obj = Instantiate(selectedPiece.Prefab, position, Quaternion.identity);
+            Renderer objRenderer = obj.GetComponent<Renderer>();
+            if (objRenderer != null)
+            {
+                float objHeight = objRenderer.bounds.size.y;
+                position.y = planeStartPosition.y + objHeight / 2;
+                obj.transform.position = position;
+            }
+            else
+            {
+                Debug.LogWarning("Il prefab non ha un Renderer. Non posso calcolare la sua altezza.");
+            }
+            obj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
+            pieces.Add(obj);
+            tempList.RemoveAt(randomIndex);
+            Debug.Log("Selezionato pezzo: " + selectedPiece.name + " alla posizione " + position);
+        }
+    }
 
 }

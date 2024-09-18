@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39e73f42bae1d6045a510629b5240178, type: 3}
   m_Name: ManualThird
   m_EditorClassIdentifier: 
-  Name: 
-  Prefab: {fileID: 0}
+  Name: TerzoManual
+  Prefab: {fileID: 140880, guid: e9155916723d2f541a53f1db112851c8, type: 3}
