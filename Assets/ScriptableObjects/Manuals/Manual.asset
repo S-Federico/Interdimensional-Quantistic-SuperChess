@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39e73f42bae1d6045a510629b5240178, type: 3}
+  m_Name: Manual
+  m_EditorClassIdentifier: 
+  Name: TestManual
+  Prefab: {fileID: 142830, guid: 9f3ef59f783322441a01e041c6c6351f, type: 3}
