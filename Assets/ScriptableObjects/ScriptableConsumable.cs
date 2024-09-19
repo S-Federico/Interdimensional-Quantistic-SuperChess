@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName ="Consumable",menuName ="ScriptableObjects/ScriptableConsumable")]
-public class ScriptableConsumable : ScriptableObject 
+public class ScriptableConsumable : ScriptableItem 
 {
-    public string Name;
-    public GameObject Prefab;    
+
 }

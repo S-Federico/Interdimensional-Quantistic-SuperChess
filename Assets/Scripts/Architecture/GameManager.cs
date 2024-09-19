@@ -9,7 +9,7 @@ using System;
 
 public class GameManager : Singleton<GameManager>
 {
-    private GameInfo gameInfo;
+    public GameInfo gameInfo;
     public void Start()
     {
 
