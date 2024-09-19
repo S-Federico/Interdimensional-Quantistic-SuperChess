@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: TerzoManual
   Prefab: {fileID: 140880, guid: e9155916723d2f541a53f1db112851c8, type: 3}
+  Price: 30

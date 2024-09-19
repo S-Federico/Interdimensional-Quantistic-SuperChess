@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Microphone
   Prefab: {fileID: 1687638559974376, guid: 1963c4ec2cb504e44965c4707b8cafb9, type: 3}
+  Price: 15

@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: TestManual
   Prefab: {fileID: 142830, guid: 9f3ef59f783322441a01e041c6c6351f, type: 3}
+  Price: 10
