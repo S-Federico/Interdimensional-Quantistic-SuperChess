@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -15,13 +16,17 @@ public class ItemData : MonoBehaviour, IClickable
     public float el;
 
     public GameObject buyTag;
+    public GameObject priceTag;
+    public GameObject sellTag;
+    public GameObject useTag;
+
+    //Ancore per i bottoni
+    Vector3 bottomLeft;
+    Vector3 bottomRight;
+    Vector3 bottomCenter;
 
     public void Start()
     {
-        // Instanzia il prefab
-        buyTag = Instantiate(Resources.Load<GameObject>("Prefabs/ButtonPrefab"));
-        buyTag.transform.position = this.gameObject.transform.position;
-
         // Calcola il bounding box del modello del GameObject padre (assumendo che il modello abbia un MeshRenderer)
         Renderer modelRenderer = this.gameObject.GetComponentInChildren<Renderer>();
         if (modelRenderer != null)
@@ -30,15 +35,21 @@ public class ItemData : MonoBehaviour, IClickable
             float objWidth = modelRenderer.bounds.size.x;
             float objLenght = modelRenderer.bounds.size.z;
 
-            Vector3 position = new Vector3();
-            position.z = this.gameObject.transform.position.z - (objLenght / 2) - 0.02f;
-            position.y = this.gameObject.transform.position.y;
-            position.x = this.gameObject.transform.position.x;
-            buyTag.transform.position = position;
+            bottomCenter = new Vector3();
+            bottomCenter.z = this.gameObject.transform.position.z - (objLenght / 2) - 0.06f;
+            bottomCenter.y = this.gameObject.transform.position.y;
+            bottomCenter.x = this.gameObject.transform.position.x;
 
-            // Imposta il padre del bottone
-            buyTag.transform.SetParent(transform);
-            buyTag.SetActive(false);
+            bottomLeft = new Vector3();
+            bottomLeft.z = this.gameObject.transform.position.z - (objLenght / 2) - 0.06f;
+            bottomLeft.y = this.gameObject.transform.position.y;
+            bottomLeft.x = this.gameObject.transform.position.x - 0.07f;
+
+            bottomRight = new Vector3();
+            bottomRight.z = this.gameObject.transform.position.z - (objLenght / 2) - 0.06f;
+            bottomRight.y = this.gameObject.transform.position.y;
+            bottomRight.x = this.gameObject.transform.position.x + 0.07f;
+
         }
         else
         {
@@ -46,6 +57,34 @@ public class ItemData : MonoBehaviour, IClickable
         }
 
         el = 0.1f;
+        float sellprice = scriptableItem.Price / 2;
+
+        buyTag = Instantiate(Resources.Load<GameObject>("Prefabs/ButtonPrefab"));
+        sellTag = Instantiate(Resources.Load<GameObject>("Prefabs/ButtonPrefab"));
+        useTag = Instantiate(Resources.Load<GameObject>("Prefabs/ButtonPrefab"));
+        priceTag = Instantiate(Resources.Load<GameObject>("Prefabs/ButtonPrefab"));
+
+
+        SetButton(buyTag, bottomLeft, ButtonType.Buy, "Buy");
+        SetButton(sellTag, bottomLeft, ButtonType.Sell, $"Sell ({sellprice}$)");
+        SetButton(useTag, bottomRight, ButtonType.Use, "Use");
+        SetButton(priceTag, bottomRight, ButtonType.PriceTag, $"{scriptableItem.Price}$");
+    }
+
+    public void SetButton(GameObject b, Vector3 anchor, ButtonType type, string text)
+    {
+        b.transform.position = this.gameObject.transform.position;
+        b.transform.position = anchor;
+
+        // Imposta il padre del bottone
+        b.transform.SetParent(transform);
+        b.SetActive(false);
+
+        //Imposta il testo
+        b.GetComponentInChildren<TextMeshProUGUI>().text = text;
+        //Imposta il buttontype
+        b.GetComponent<ButtonBehaviour>().associatedItem = this;
+        b.GetComponent<ButtonBehaviour>().type = type;
     }
 
     public void Update()
@@ -81,6 +120,9 @@ public class ItemData : MonoBehaviour, IClickable
     {
         Debug.Log($"Price hidden");
         buyTag.SetActive(false);
+        sellTag.SetActive(false);
+        useTag.SetActive(false);
+        priceTag.SetActive(false);
     }
     public void ElevateItem()
     {
@@ -92,7 +134,16 @@ public class ItemData : MonoBehaviour, IClickable
     public void ShowTags()
     {
         Debug.Log($"Price: {scriptableItem.Price}");
-        buyTag.SetActive(true);
+        if (bought)
+        {
+            sellTag.SetActive(true);
+            useTag.SetActive(true);
+        }
+        else
+        {
+            buyTag.SetActive(true);
+            priceTag.SetActive(true);
+        }
     }
 
     public void OnClick()
