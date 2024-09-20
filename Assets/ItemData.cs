@@ -172,6 +172,9 @@ public class ItemData : MonoBehaviour, IClickable
                 PlayerManager player= GameObject.Find("Player").GetComponent<PlayerManager>();
                 if (player != null){
                     player.Money+=scriptableItem.Price / 2;
+                    Destroy(this.gameObject);
+                }else{
+                    Debug.Log("Player null!");
                 }
                 break;
             case ButtonType.Use:
