@@ -57,7 +57,7 @@ public class ItemData : MonoBehaviour, IClickable
         }
 
         el = 0.1f;
-        float sellprice = scriptableItem.Price / 2;
+        int sellprice = scriptableItem.Price / 2;
 
         buyTag = Instantiate(Resources.Load<GameObject>("Prefabs/ButtonPrefab"));
         sellTag = Instantiate(Resources.Load<GameObject>("Prefabs/ButtonPrefab"));
@@ -149,21 +149,49 @@ public class ItemData : MonoBehaviour, IClickable
     public void OnClick()
     {
         ToggleSelected();
-        /*
-        if (!bought)
-        {
-            ShopManager shop = GameObject.Find("ShopManager").GetComponent<ShopManager>();
-            shop.BuyItem(this);
-        }
-*/
-        //mostra ui con azioni possibili
-        //se bought sono usa e vendi
-        //se non bought sono compra e cazzi
-        //se clicco su compra chiama shopmanager.buy
     }
 
     public void ToggleSelected()
     {
         selected = !selected;
     }
+
+    public void OnButtonClicked(ButtonType buttonType)
+    {
+        switch (buttonType)
+        {
+            case ButtonType.Buy:
+                ToggleSelected();
+                ShopManager shop = FindAnyObjectByType<ShopManager>();
+                if (shop != null){
+                    shop.BuyItem(this);
+                }
+                break;
+            case ButtonType.Sell:
+                ToggleSelected();
+                PlayerManager player= GameObject.Find("Player").GetComponent<PlayerManager>();
+                if (player != null){
+                    player.Money+=scriptableItem.Price / 2;
+                }
+                break;
+            case ButtonType.Use:
+                ToggleSelected();
+                UseItem();
+                break;
+            case ButtonType.PriceTag:
+                ToggleSelected();
+                break;
+            default:
+                ToggleSelected();
+                break;
+        }
+    }
+
+    public void UseItem(){
+        Debug.Log($"Item {scriptableItem.Name} used!");
+        Destroy(this.gameObject);
+    }
+
 }
+
+
