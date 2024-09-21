@@ -56,10 +56,10 @@ public class ScriptableStatusModifier : ScriptableObject
     }
 
 
-    public void Rollback(PieceStatus )
-    {
+    // public void Rollback(PieceStatus )
+    // {
 
-    }
+    // }
 
     public void ApplyModifier(ref int[,] value)
     {
