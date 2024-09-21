@@ -64,7 +64,7 @@ public class PieceStatus : MonoBehaviour, IClickable
     public bool brittle = false;
     public bool commander = false;
     public bool testuggine = false;
-    public float hitChance=1.0f;
+    public double hitChance=1.0;
     public bool scary=false;
 
     //modificatori applicati
