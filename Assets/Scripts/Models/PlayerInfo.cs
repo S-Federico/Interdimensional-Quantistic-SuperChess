@@ -4,7 +4,8 @@ using UnityEngine;
 public class PlayerInfo
 {
     List<PieceStatus> Pieces;
-    List<Consumable> Consumables;
-    List<string> Buffs;
+    List<ScriptableConsumable> Consumables;
+    List<ScriptableManual> Manuals;
+    List<ScriptablePiece> ExtraPieces;
     public int Money;
 }

@@ -74,23 +74,4 @@ public class InputManager : MonoBehaviour
             }
         }
     }
-
-
-    private void HandleBoardPieceClick(GameObject piece, string buttonType)
-    {
-        // Trova il componente BoardManager nella scena
-        BoardManager boardManager = FindObjectOfType<BoardManager>();
-
-        if (boardManager != null)
-        {
-            boardManager.SelectPiece(piece);
-            //boardManager.SetShowMovesFlag(true);
-        }
-
-    }
-
-    private void HandleConsumableClick(GameObject consumable, string buttonType)
-    {
-
-    }
 }
