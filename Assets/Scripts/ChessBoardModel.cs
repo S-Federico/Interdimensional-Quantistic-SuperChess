@@ -79,7 +79,8 @@ public class ChessBoardModel
                         else if (board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor) // Controlla se è un pezzo avversario
                         {
                             // Aggiungi come mossa di attacco (tipo = 2)
-                            moves.Add(new int[] { newRiga, newColonna, 2 });
+                            if (!HasStatusEffect(board[newRiga, newColonna],StatusEffectType.Cloaked))
+                                moves.Add(new int[] { newRiga, newColonna, 2 });
                         }
                     }
                     // Se la casella è solo movimento, non attacco
@@ -97,7 +98,8 @@ public class ChessBoardModel
                         if (board[newRiga, newColonna] != null && board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor)
                         {
                             // Aggiungi come mossa di movimento (tipo = 1)
-                            moves.Add(new int[] { newRiga, newColonna, 2 }); // ZIO CINGHIALE
+                            if (!HasStatusEffect(board[newRiga, newColonna],StatusEffectType.Cloaked))
+                                moves.Add(new int[] { newRiga, newColonna, 2 });
                         }
                     }
                     //se la casella è movimento e attacco sconnesso 
@@ -111,7 +113,8 @@ public class ChessBoardModel
                         else if (board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor) // Controlla se è un pezzo avversario
                         {
                             // Aggiungi come mossa di attacco (tipo = 2)
-                            disconnectedMoves.Add(new int[] { newRiga, newColonna, 2 }); // ZIO PICCIONE
+                            if (!HasStatusEffect(board[newRiga, newColonna],StatusEffectType.Cloaked))
+                                disconnectedMoves.Add(new int[] { newRiga, newColonna, 2 }); // ZIO PICCIONE
                         }
                     }
                 }
@@ -150,7 +153,7 @@ public class ChessBoardModel
                 if (newRiga < 0 || newRiga >= board.GetLength(0) || newColonna < 0 || newColonna >= board.GetLength(1))
                     break;
 
-                if (board[newRiga, newColonna] != null)
+                if (board[newRiga, newColonna] != null && !HasStatusEffect(board[newRiga, newColonna],StatusEffectType.Ethereal))
                 {
                     // Se troviamo un pezzo, blocchiamo tutte le caselle dietro di esso in questa direzione
                     step++;
@@ -231,5 +234,17 @@ public class ChessBoardModel
 
         return connectedMoves;
     }
+
+    public bool HasStatusEffect(PieceStatus piece,StatusEffectType statusEffect)
+    {
+        bool hasEffect = false;
+        foreach (ScriptableStatusModifier status in piece.appliedModifiers)
+        {
+            if (status.statusEffectType == statusEffect)
+                hasEffect = true;
+        }
+        return hasEffect;
+    }
+
 
 }

@@ -18,7 +18,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private GameObject board;         // Riferimento al GameObject "Board" che contiene il piano
     public Array2DInt BoardData;
     public List<GameObject> PiecePrefabs;
-    private PieceStatus[,] Pieces;
+    public PieceStatus[,] Pieces;
     private int Riga;
     private int Colonna;
 
@@ -30,7 +30,6 @@ public class BoardManager : MonoBehaviour
     private ChessBoardModel cbm;
 
     private bool showMovesFlag;
-    private bool highlightedFlag;
     private bool alreadyExcecuting;
 
     public GameObject selectedPiece;
@@ -47,7 +46,6 @@ public class BoardManager : MonoBehaviour
         // Questa riga di codice carica i pezzi da inspector
         //Pieces = LoadBoardFromBoardData();
     }
-
 
     void Update()
     {
@@ -129,7 +127,6 @@ public class BoardManager : MonoBehaviour
 
     void HighlightMoves()
     {
-
         //int[] coord = GetPositionFromPiece(selectedPiece);
         PieceStatus pieceStatus = selectedPiece.GetComponent<PieceStatus>();
 
@@ -398,7 +395,6 @@ public class BoardManager : MonoBehaviour
 
     private void AttackPiece(PieceStatus attacker, PieceStatus target)
     {
-
         target.TakeDamage(attacker.Attack);
         if (target.Hp <= 0)
         {
@@ -437,7 +433,7 @@ public class BoardManager : MonoBehaviour
 
     public void BuildFromData(BoardData bData)
     {
-        if (bData!=null)
+        if (bData != null)
         {
             this.currentTurn = bData.currentTurn;
 
@@ -448,7 +444,7 @@ public class BoardManager : MonoBehaviour
             {
                 for (int j = 0; j < Colonna; j++)
                 {
-                    if (bData.piecesData[i,j] == null) continue;
+                    if (bData.piecesData[i, j] == null) continue;
                     GameObject obj = GetPieceFromId(bData.piecesData[i, j].ID);
                     if (obj != null)
                     {
@@ -463,7 +459,8 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public bool IsGameOver() {
+    public bool IsGameOver()
+    {
         return ai.isGameOver();
     }
 }

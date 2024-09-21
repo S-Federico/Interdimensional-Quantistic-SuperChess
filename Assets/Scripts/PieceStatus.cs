@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Array2DEditor;
-using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using UnityEngine;
 
 
@@ -10,52 +9,55 @@ using UnityEngine;
 public class PieceStatus : MonoBehaviour, IClickable
 {
     public PieceType PieceType;
-/*
-    Possibili parametri su cui i modificatori agiscono :
+    /*
+        Possibili parametri su cui i modificatori agiscono :
 
-    * Attacco, Hp, numero di mosse sono le cose base
+        * Attacco, Hp, numero di mosse sono le cose base DONE
 
-    * cloaked indica se i pezzi avversari possono o meno attaccare questo pezzo
+        * cloaked indica se i pezzi avversari possono o meno attaccare questo pezzo
 
-    * ethereal indica se il pezzo blocca o meno i movimenti degli alleati
+        * ethereal indica se il pezzo blocca o meno i movimenti degli alleati
 
-    * AttackMatrix è una matrice di attacco da applicare nelle caselle attorno al pezzo 
-      attaccato, un attacco ad area insomma
+        * AttackMatrix è una matrice di attacco da applicare nelle caselle attorno al pezzo 
+          attaccato, un attacco ad area insomma
 
-    * AoE(Area of effect) indica se fa attacchi ad area o meno, potrebbe essere 
-      l'implementazione semplice di quello di prima
+        * AoE(Area of effect) indica se fa attacchi ad area o meno, potrebbe essere 
+          l'implementazione semplice di quello di prima
 
-    * Cure indica se può curare i pezzi alleati e di quanto
+        * Cure indica se può curare i pezzi alleati e di quanto
 
-    * Oltre a questo un modificatore potrebbe essere una aggiunta di movimenti alla 
-      matrice di movimento, tipo mettere il pezzo a cavallo
+        * Oltre a questo un modificatore potrebbe essere una aggiunta di movimenti alla 
+          matrice di movimento, tipo mettere il pezzo a cavallo
 
-    * In realtà si potrebbe fare che un tipo di nemico ha come modificatore i fanti a cavallo, 
-      ovvero la cavalleria e quello è un tema
+        * In realtà si potrebbe fare che un tipo di nemico ha come modificatore i fanti a cavallo, 
+          ovvero la cavalleria e quello è un tema
 
-    * Brittle è una proprietà per cui il pezzo diventa di vetro e ha un attacco fortissimo, 
-      ma si rompe appena subisce danno
+        * Brittle è una proprietà per cui il pezzo diventa di vetro e ha un attacco fortissimo, 
+          ma si rompe appena subisce danno
 
-    * Commander significa se aggiunge +1 attacco ai pezzi vicini. 
+        * Commander significa se aggiunge +1 attacco ai pezzi vicini. 
 
-    * In realtà tutti questi buff possono essere interpretati in questo modo, 
-      ovvero che c'è una unità di supporto la cui vicinanza fornisce buff
+        * In realtà tutti questi buff possono essere interpretati in questo modo, 
+          ovvero che c'è una unità di supporto la cui vicinanza fornisce buff
 
-    * Testuggine significa che vicino a unità dello stesso tipo forma una testuggine e guadagna +1 difesa
+        * Testuggine significa che vicino a unità dello stesso tipo forma una testuggine e guadagna +1 difesa
 
-    * Potremmo anche pensare di implementare i vari tipi di danni, magici, fuoco, impatto, ecc e 
-      in questo modo usare sempre la stessa logica ma calcolare i danni diversamente
-      public Enum AttackType { Arcane,Fire,Impact }
+        * Potremmo anche pensare di implementare i vari tipi di danni, magici, fuoco, impatto, ecc e 
+          in questo modo usare sempre la stessa logica ma calcolare i danni diversamente
+          public Enum AttackType { Arcane,Fire,Impact }
 
-    * Potremmo usare una componente fortuna negli attacchi, che possono andare a segno o meno. 
-      In questo modo possiamo dare dei buff o debuff a questa probabilità
-      
-    * Scary riduce la possibilità del nemico di portare a segno l'attacco
-*/
+        * Potremmo usare una componente fortuna negli attacchi, che possono andare a segno o meno. 
+          In questo modo possiamo dare dei buff o debuff a questa probabilità
+
+        * Scary riduce la possibilità del nemico di portare a segno l'attacco
+    */
     public int Hp = 1;
+    public int ActualHp = 1;
     public int Attack = 1;
+    public int ActualAttack = 1;
     public int NumberOfMoves = 1;
-
+    public int ActualNumberOfMoves = 1;
+    public int DamageTaken = 0;
     public bool cloaked = false;
     public bool ethereal = false;
     public int[,] AttackMatrix;
@@ -64,11 +66,11 @@ public class PieceStatus : MonoBehaviour, IClickable
     public bool brittle = false;
     public bool commander = false;
     public bool testuggine = false;
-    public double hitChance=1.0;
-    public bool scary=false;
+    public double hitChance = 1.0;
+    public bool scary = false;
 
     //modificatori applicati
-    public List<ScriptableStatusModifier> appliedModifier;
+    public List<ScriptableStatusModifier> appliedModifiers;
 
     //lista di pezzi affected da questo pezzo
     public PieceColor PieceColor;
@@ -86,6 +88,38 @@ public class PieceStatus : MonoBehaviour, IClickable
     {
         boardManager = FindAnyObjectByType<BoardManager>();
         BuildMovementMatrix();
+    }
+
+    void Update()
+    {
+        ActualHp = CalculateBuff(Hp, appliedModifiers, AttributeType.Hp) - DamageTaken;
+        ActualAttack = CalculateBuff(Attack, appliedModifiers, AttributeType.Attack);
+        ActualNumberOfMoves = CalculateBuff(NumberOfMoves, appliedModifiers, AttributeType.NumberOfMoves);
+    }
+
+    public int CalculateBuff(int baseValue, List<ScriptableStatusModifier> modifiers, AttributeType type)
+    {
+        //facciamo che per ora vanno in ordine di applicazione, poi pensiamo al riordino con priorità
+        int result = baseValue;
+        foreach (ScriptableStatusModifier modifier in modifiers)
+        {
+            if (modifier.attributeType == type)
+            {
+                switch (modifier.applicationType)
+                {
+                    case ModifierApplicationType.Additive:
+                        result += (int)modifier.value;
+                        break;
+                    case ModifierApplicationType.Multiplicative:
+                        result *= (int)modifier.value;
+                        break;
+                    case ModifierApplicationType.Absolute:
+                        result = (int)modifier.value;
+                        return result;
+                }
+            }
+        }
+        return result;
     }
 
     private void BuildMovementMatrix()
@@ -124,14 +158,6 @@ public class PieceStatus : MonoBehaviour, IClickable
         }
     }
 
-    public string Code
-    {
-        get
-        {
-            return "" + this.PieceType + " " + this.Hp + " " + this.Attack + " " + this.PieceColor + " " + this.ID + " " + this.Position + "\n";
-        }
-    }
-
     public PieceData GetPieceData()
     {
         return new PieceData(PieceType, Hp, Attack, PieceColor, ID, Position, _MovementMatrix);
@@ -154,7 +180,50 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     public void TakeDamage(int damage)
     {
-        this.Hp -= damage;
+        DamageTaken += damage;
+    }
+
+    public void CureNearby()
+    {
+        PieceStatus[,] pieces = boardManager.Pieces;
+
+        Vector2[] directions = new Vector2[]
+        {
+        new Vector2(0, 1),    // Su
+        new Vector2(0, -1),   // Giù
+        new Vector2(-1, 0),   // Sinistra
+        new Vector2(1, 0),    // Destra
+        new Vector2(-1, 1),   // Diagonale Su-Sinistra
+        new Vector2(1, 1),    // Diagonale Su-Destra
+        new Vector2(-1, -1),  // Diagonale Giù-Sinistra
+        new Vector2(1, -1)    // Diagonale Giù-Destra
+        };
+
+        foreach (Vector2 direction in directions)
+        {
+            Vector2 adjacentPosition = Position + direction;
+            int x = (int)adjacentPosition.x;
+            int y = (int)adjacentPosition.y;
+
+            // posizione all'interno della matrice
+            if (x >= 0 && x < pieces.GetLength(0) && y >= 0 && y < pieces.GetLength(1))
+            {
+                PieceStatus piece = pieces[x, y];
+
+                if (piece != null)
+                {
+                    // Applica la cura al pezzo.
+                    if (piece.DamageTaken >= cure)
+                    {
+                        piece.DamageTaken -= cure;
+                    }
+                    else
+                    {
+                        piece.DamageTaken = 0;
+                    }
+                }
+            }
+        }
     }
 
     public void OnClick()
