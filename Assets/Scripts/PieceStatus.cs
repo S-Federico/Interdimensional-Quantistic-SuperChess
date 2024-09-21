@@ -66,6 +66,11 @@ public class PieceStatus : MonoBehaviour, IClickable
     public bool testuggine = false;
     public float hitChance=1.0f;
     public bool scary=false;
+
+    //modificatori applicati
+    public List<ScriptableStatusModifier> appliedModifier;
+
+    //lista di pezzi affected da questo pezzo
     public PieceColor PieceColor;
     public int ID;
     public Vector2 Position;
