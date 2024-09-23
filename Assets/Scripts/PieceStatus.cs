@@ -83,24 +83,31 @@ public class PieceStatus : MonoBehaviour, IClickable
     private int[,] _MovementMatrix;
 
     private BoardManager boardManager;
+    public List<ScriptableStatusModifier> CellModifiers;
 
     void Start()
     {
         boardManager = FindAnyObjectByType<BoardManager>();
         BuildMovementMatrix();
+        CellModifiers = new List<ScriptableStatusModifier>();
     }
 
     void Update()
     {
-        ActualHp = CalculateBuff(Hp, appliedModifiers, AttributeType.Hp) - DamageTaken;
-        ActualAttack = CalculateBuff(Attack, appliedModifiers, AttributeType.Attack);
-        ActualNumberOfMoves = CalculateBuff(NumberOfMoves, appliedModifiers, AttributeType.NumberOfMoves);
+        CellModifiersCheck();
+        ActualHp = Hp + CalculateBuff(appliedModifiers, AttributeType.Hp) + CalculateBuff(CellModifiers, AttributeType.Hp) - DamageTaken;
+        ActualAttack = Attack + CalculateBuff(appliedModifiers, AttributeType.Attack) + CalculateBuff(CellModifiers, AttributeType.Attack);
+        ActualNumberOfMoves = NumberOfMoves + CalculateBuff(appliedModifiers, AttributeType.NumberOfMoves) + CalculateBuff(CellModifiers, AttributeType.NumberOfMoves);
     }
 
-    public int CalculateBuff(int baseValue, List<ScriptableStatusModifier> modifiers, AttributeType type)
+    public int CalculateBuff(List<ScriptableStatusModifier> modifiers, AttributeType type)
     {
         //facciamo che per ora vanno in ordine di applicazione, poi pensiamo al riordino con priorità
-        int result = baseValue;
+        int result = 0;
+        if (modifiers == null)
+        {
+            return result;
+        }
         foreach (ScriptableStatusModifier modifier in modifiers)
         {
             if (modifier.attributeType == type)
@@ -120,6 +127,15 @@ public class PieceStatus : MonoBehaviour, IClickable
             }
         }
         return result;
+    }
+
+    private void CellModifiersCheck()
+    {
+        GameObject cell = boardManager.GetSquare((int)Position.x, (int)Position.y);
+        if (cell.GetComponent<BoardSquare>().ManualsModifiers != null)
+        {
+            CellModifiers = cell.GetComponent<BoardSquare>().ManualsModifiers;
+        }
     }
 
     private void BuildMovementMatrix()

@@ -244,7 +244,7 @@ public class BoardManager : MonoBehaviour
         showMovesFlag = value;
     }
 
-    GameObject GetSquare(int x, int y)
+    public GameObject GetSquare(int x, int y)
     {
         return GameObject.Find($"Square_{x}_{y}");
     }
