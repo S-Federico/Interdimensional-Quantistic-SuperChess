@@ -33,12 +33,17 @@ public class BoardManager : MonoBehaviour
     private bool alreadyExcecuting;
 
     public GameObject selectedPiece;
+    private PlayerManager Player;
 
     void Start()
     {
         cbm = new ChessBoardModel();
         ai = new ChessAI(cbm); // Inizializza l'IA con il modello della scacchiera
         InitializeBoard();
+
+        Player = GameObject.FindAnyObjectByType<PlayerManager>();
+
+        AssignModifiers();
 
         showMovesFlag = false;
         alreadyExcecuting = false;
@@ -456,6 +461,25 @@ public class BoardManager : MonoBehaviour
                 }
             }
             this.Pieces = result;
+        }
+    }
+
+    public void AssignModifiers()
+    {
+        foreach (ItemData manual in Player.PManuals)
+        {
+            ScriptableManual ScriptManual = manual.scriptableItem as ScriptableManual;
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (ScriptManual.ApplicationMatrix.GetCell(i,j) == 1)
+                    {
+                        //TODO: Implementarlo per tutta la lista di modifier del manuale (ogni manuale ne può avere più di uno i guess)
+                        GetSquare(i,j).GetComponent<BoardSquare>().ManualsModifiers.Add(manual.scriptableItem.Modifier);
+                    }
+                }
+            }
         }
     }
 
