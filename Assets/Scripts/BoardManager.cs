@@ -11,20 +11,18 @@ using System.Linq;
 
 public class BoardManager : MonoBehaviour
 {
-    private Turn currentTurn = Turn.Player; // Iniziamo col turno del giocatore
-    private ChessAI ai; 
-
-    [SerializeField] private GameObject board;         // Riferimento al GameObject "Board" che contiene il piano
+    private Turn currentTurn = Turn.Player; 
+    [SerializeField] private GameObject board;         
     public Array2DInt BoardData;
     public List<GameObject> PiecePrefabs;
     public PieceStatus[,] Pieces;
     private int Riga;
     private int Colonna;
 
-    private Transform planeTransform;                 // Riferimento al Transform del Piano
-    private float squareSize;                         // Dimensione di una singola casella
-    private int boardSize = 8;                        // Dimensione della scacchiera (8x8)
-    private GameObject[,] squares;                    // Array bidimensionale per memorizzare le caselle
+    private Transform planeTransform;                 
+    private float squareSize;                        
+    private int boardSize = 8;                        
+    private GameObject[,] squares;                   
 
     private ChessBoardModel cbm;
 
@@ -33,22 +31,23 @@ public class BoardManager : MonoBehaviour
 
     public GameObject selectedPiece;
     private PlayerManager Player;
+    public OpponentManager opponent;
 
     void Start()
     {
         cbm = new ChessBoardModel();
-        ai = new ChessAI(cbm); // Inizializza l'IA con il modello della scacchiera
         InitializeBoard();
 
         Player = GameObject.FindAnyObjectByType<PlayerManager>();
 
+        //prima o poi questa cosa sarà fatta con scriptable object prendendo da una serie finita di opponent, 
+        //con le loro formazioni, buff ecc e livello, che fa scalare il tutto, oltre a opening lines e musiche
+        opponent=GameObject.FindAnyObjectByType<OpponentManager>();
         AssignModifiers();
 
         showMovesFlag = false;
         alreadyExcecuting = false;
 
-        // Questa riga di codice carica i pezzi da inspector
-        //Pieces = LoadBoardFromBoardData();
     }
 
     void Update()
@@ -75,58 +74,12 @@ public class BoardManager : MonoBehaviour
             if (!alreadyExcecuting)
             {
                 alreadyExcecuting = true;
-                ExecuteAITurn();
+                opponent.ExecuteAITurn(Pieces);
+                currentTurn = Turn.Player;
             }
         }
 
         showMovesFlag = false;
-    }
-    private void ExecuteAITurn()
-    {
-        // Calcola la migliore mossa con l'IA
-        int[] bestMove = ai.GetBestMoveFromPosition(Pieces, 4); // Imposta la profondità desiderata (es. 3)
-        if (bestMove == null || bestMove.Length != 4)
-        {
-            Debug.Log("Nessuna mossa valida trovata dall'IA.");
-            // Gestire la fine del gioco o lo stallo
-            return;
-        }
-
-        if (bestMove.Length == 4)
-        {
-            int startX = bestMove[0];
-            int startY = bestMove[1];
-            int endX = bestMove[2];
-            int endY = bestMove[3];
-
-            Debug.Log($"Start=({startX},{startY})  Finish=({endX},{endY})");
-
-            PieceStatus movingPiece = Pieces[startX, startY];
-
-            SelectPiece(movingPiece.gameObject);
-            if (Pieces[endX, endY] == null)
-            {
-                MovePiece(selectedPiece, new Vector2(endX, endY));
-            }
-            else
-            {
-                AttackPiece(movingPiece, Pieces[endX, endY]);
-            }
-
-            selectedPiece = null;
-
-            currentTurn = Turn.Player;
-        }
-
-        CleanTempObjects();
-    }
-
-    private void CleanTempObjects()
-    {
-        foreach (GameObject toDestroy in ai.ToDestroy)
-        {
-            Destroy(toDestroy);
-        }
     }
 
     void HighlightMoves()
@@ -237,12 +190,6 @@ public class BoardManager : MonoBehaviour
         //highlightedFlag = selectedPiece != null;
     }
 
-
-    public void SetShowMovesFlag(bool value)
-    {
-        showMovesFlag = value;
-    }
-
     public GameObject GetSquare(int x, int y)
     {
         return GameObject.Find($"Square_{x}_{y}");
@@ -315,14 +262,9 @@ public class BoardManager : MonoBehaviour
                 squares[x, y] = newSquare;
             }
         }
-
         if (planeTransform != null)
         {
             Destroy(planeTransform.gameObject);
-        }
-        else
-        {
-            Debug.LogError("Plane non trovato per la distruzione!");
         }
     }
 
@@ -397,7 +339,7 @@ public class BoardManager : MonoBehaviour
     }
 
 
-    private void AttackPiece(PieceStatus attacker, PieceStatus target)
+    public void AttackPiece(PieceStatus attacker, PieceStatus target)
     {
         target.TakeDamage(attacker.Attack);
         if (target.Hp <= 0)
@@ -415,7 +357,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void MovePiece(GameObject piece, Vector2 destination)
+    public void MovePiece(GameObject piece, Vector2 destination)
     {
         if (piece == null || destination == null) return;
         PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
@@ -480,10 +422,5 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    public bool IsGameOver()
-    {
-        return ai.isGameOver();
     }
 }
