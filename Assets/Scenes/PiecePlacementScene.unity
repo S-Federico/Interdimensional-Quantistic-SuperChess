@@ -440,58 +440,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 105279096}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &116903475
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 116903477}
-  - component: {fileID: 116903476}
-  m_Layer: 0
-  m_Name: Player
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &116903476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 116903475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2438585666f8a245bf3d8bb4170e820, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inventory: []
-  Money: 0
-  TemporaryManuals:
-  - {fileID: 179376, guid: 20fba2d07ecf8bf4f949e6e9c195c7b5, type: 3}
-  - {fileID: 142830, guid: 9f3ef59f783322441a01e041c6c6351f, type: 3}
-  - {fileID: 140880, guid: e9155916723d2f541a53f1db112851c8, type: 3}
-  PManuals: []
-  pieces: []
---- !u!4 &116903477
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 116903475}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4041309, y: 0.88217294, z: 0.5303245}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &123155751
 GameObject:
   m_ObjectHideFlags: 0
@@ -505,7 +453,7 @@ GameObject:
   - component: {fileID: 123155753}
   - component: {fileID: 123155752}
   m_Layer: 0
-  m_Name: Plane (1)
+  m_Name: OpponentPiecesArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -849,6 +797,58 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 358879902}
   m_CullTransparentMesh: 1
+--- !u!1 &511233979
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 511233981}
+  - component: {fileID: 511233980}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &511233980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511233979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2438585666f8a245bf3d8bb4170e820, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventory: []
+  Money: 0
+  TemporaryManuals:
+  - {fileID: 179376, guid: 20fba2d07ecf8bf4f949e6e9c195c7b5, type: 3}
+  - {fileID: 142830, guid: 9f3ef59f783322441a01e041c6c6351f, type: 3}
+  - {fileID: 140880, guid: e9155916723d2f541a53f1db112851c8, type: 3}
+  PManuals: []
+  pieces: []
+--- !u!4 &511233981
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511233979}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.4041309, y: 0.88217294, z: 0.5303245}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &513326238
 GameObject:
   m_ObjectHideFlags: 0
@@ -2275,7 +2275,7 @@ GameObject:
   - component: {fileID: 1460839059}
   - component: {fileID: 1460839058}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: PlayerPiecesArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2846,7 +2846,7 @@ SceneRoots:
   - {fileID: 1412553120}
   - {fileID: 129635358}
   - {fileID: 635026168}
+  - {fileID: 511233981}
   - {fileID: 778643463}
-  - {fileID: 116903477}
   - {fileID: 1460839061}
   - {fileID: 123155755}

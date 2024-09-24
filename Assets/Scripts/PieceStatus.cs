@@ -4,59 +4,52 @@ using System.Collections.Generic;
 using Array2DEditor;
 using UnityEngine;
 
-
-
 public class PieceStatus : MonoBehaviour, IClickable
 {
     public PieceType PieceType;
-    /*
-        Possibili parametri su cui i modificatori agiscono :
 
-        * Attacco, Hp, numero di mosse sono le cose base DONE
+    // Variabili base private
+    private int baseHp = 1;
+    private int baseAttack = 1;
+    private int baseNumberOfMoves = 1;
 
-        * cloaked indica se i pezzi avversari possono o meno attaccare questo pezzo
+    // Proprietà calcolate
+    public int Hp
+    {
+        get
+        {
+            return baseHp + CalculateBuff(appliedModifiers, AttributeType.Hp) + CalculateBuff(CellModifiers, AttributeType.Hp) - DamageTaken;
+        }
+        set
+        {
+            baseHp = value;
+        }
+    }
 
-        * ethereal indica se il pezzo blocca o meno i movimenti degli alleati
+    public int Attack
+    {
+        get
+        {
+            return baseAttack + CalculateBuff(appliedModifiers, AttributeType.Attack) + CalculateBuff(CellModifiers, AttributeType.Attack);
+        }
+        set
+        {
+            baseAttack = value;
+        }
+    }
 
-        * AttackMatrix è una matrice di attacco da applicare nelle caselle attorno al pezzo 
-          attaccato, un attacco ad area insomma
+    public int NumberOfMoves
+    {
+        get
+        {
+            return baseNumberOfMoves + CalculateBuff(appliedModifiers, AttributeType.NumberOfMoves) + CalculateBuff(CellModifiers, AttributeType.NumberOfMoves);
+        }
+        set
+        {
+            baseNumberOfMoves = value;
+        }
+    }
 
-        * AoE(Area of effect) indica se fa attacchi ad area o meno, potrebbe essere 
-          l'implementazione semplice di quello di prima
-
-        * Cure indica se può curare i pezzi alleati e di quanto
-
-        * Oltre a questo un modificatore potrebbe essere una aggiunta di movimenti alla 
-          matrice di movimento, tipo mettere il pezzo a cavallo
-
-        * In realtà si potrebbe fare che un tipo di nemico ha come modificatore i fanti a cavallo, 
-          ovvero la cavalleria e quello è un tema
-
-        * Brittle è una proprietà per cui il pezzo diventa di vetro e ha un attacco fortissimo, 
-          ma si rompe appena subisce danno
-
-        * Commander significa se aggiunge +1 attacco ai pezzi vicini. 
-
-        * In realtà tutti questi buff possono essere interpretati in questo modo, 
-          ovvero che c'è una unità di supporto la cui vicinanza fornisce buff
-
-        * Testuggine significa che vicino a unità dello stesso tipo forma una testuggine e guadagna +1 difesa
-
-        * Potremmo anche pensare di implementare i vari tipi di danni, magici, fuoco, impatto, ecc e 
-          in questo modo usare sempre la stessa logica ma calcolare i danni diversamente
-          public Enum AttackType { Arcane,Fire,Impact }
-
-        * Potremmo usare una componente fortuna negli attacchi, che possono andare a segno o meno. 
-          In questo modo possiamo dare dei buff o debuff a questa probabilità
-
-        * Scary riduce la possibilità del nemico di portare a segno l'attacco
-    */
-    public int Hp = 1;
-    public int ActualHp = 1;
-    public int Attack = 1;
-    public int ActualAttack = 1;
-    public int NumberOfMoves = 1;
-    public int ActualNumberOfMoves = 1;
     public int DamageTaken = 0;
     public bool cloaked = false;
     public bool ethereal = false;
@@ -69,15 +62,15 @@ public class PieceStatus : MonoBehaviour, IClickable
     public double hitChance = 1.0;
     public bool scary = false;
 
-    //modificatori applicati
+    // Modificatori applicati
     public List<ScriptableStatusModifier> appliedModifiers;
 
-    //lista di pezzi affected da questo pezzo
+    // Lista di pezzi affected da questo pezzo
     public PieceColor PieceColor;
     public int ID;
     public Vector2 Position;
 
-    //deve essere sempre di dimensioni dispari e con il pezzo al centro
+    // Deve essere sempre di dimensioni dispari e con il pezzo al centro
     [SerializeField] public Array2DInt MovementMatrixInfo;
 
     private int[,] _MovementMatrix;
@@ -95,14 +88,11 @@ public class PieceStatus : MonoBehaviour, IClickable
     void Update()
     {
         CellModifiersCheck();
-        ActualHp = Hp + CalculateBuff(appliedModifiers, AttributeType.Hp) + CalculateBuff(CellModifiers, AttributeType.Hp) - DamageTaken;
-        ActualAttack = Attack + CalculateBuff(appliedModifiers, AttributeType.Attack) + CalculateBuff(CellModifiers, AttributeType.Attack);
-        ActualNumberOfMoves = NumberOfMoves + CalculateBuff(appliedModifiers, AttributeType.NumberOfMoves) + CalculateBuff(CellModifiers, AttributeType.NumberOfMoves);
     }
 
     public int CalculateBuff(List<ScriptableStatusModifier> modifiers, AttributeType type)
     {
-        //facciamo che per ora vanno in ordine di applicazione, poi pensiamo al riordino con priorità
+        // Facciamo che per ora vanno in ordine di applicazione, poi pensiamo al riordino con priorità
         int result = 0;
         if (modifiers == null)
         {
@@ -122,7 +112,8 @@ public class PieceStatus : MonoBehaviour, IClickable
                         break;
                     case ModifierApplicationType.Absolute:
                         result = (int)modifier.value;
-                        return result;
+                        break;
+
                 }
             }
         }
@@ -151,7 +142,6 @@ public class PieceStatus : MonoBehaviour, IClickable
                     if (this.PieceColor == PieceColor.White)
                     {
                         _MovementMatrix[i, j] = MovementMatrixInfo.GetCell(j, i);
-
                     }
                     else
                     {
@@ -205,14 +195,14 @@ public class PieceStatus : MonoBehaviour, IClickable
 
         Vector2[] directions = new Vector2[]
         {
-        new Vector2(0, 1),    // Su
-        new Vector2(0, -1),   // Giù
-        new Vector2(-1, 0),   // Sinistra
-        new Vector2(1, 0),    // Destra
-        new Vector2(-1, 1),   // Diagonale Su-Sinistra
-        new Vector2(1, 1),    // Diagonale Su-Destra
-        new Vector2(-1, -1),  // Diagonale Giù-Sinistra
-        new Vector2(1, -1)    // Diagonale Giù-Destra
+            new Vector2(0, 1),    // Su
+            new Vector2(0, -1),   // Giù
+            new Vector2(-1, 0),   // Sinistra
+            new Vector2(1, 0),    // Destra
+            new Vector2(-1, 1),   // Diagonale Su-Sinistra
+            new Vector2(1, 1),    // Diagonale Su-Destra
+            new Vector2(-1, -1),  // Diagonale Giù-Sinistra
+            new Vector2(1, -1)    // Diagonale Giù-Destra
         };
 
         foreach (Vector2 direction in directions)
@@ -221,14 +211,14 @@ public class PieceStatus : MonoBehaviour, IClickable
             int x = (int)adjacentPosition.x;
             int y = (int)adjacentPosition.y;
 
-            // posizione all'interno della matrice
+            // Posizione all'interno della matrice
             if (x >= 0 && x < pieces.GetLength(0) && y >= 0 && y < pieces.GetLength(1))
             {
                 PieceStatus piece = pieces[x, y];
 
                 if (piece != null)
                 {
-                    // Applica la cura al pezzo.
+                    // Applica la cura al pezzo
                     if (piece.DamageTaken >= cure)
                     {
                         piece.DamageTaken -= cure;
