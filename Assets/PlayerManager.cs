@@ -9,6 +9,7 @@ public class PlayerManager : MonoBehaviour
     public int Money;
     public List<GameObject> TemporaryManuals;
     public List<ItemData> PManuals;
+    public List<PieceStatus> pieces;
 
     public void Start()
     {
@@ -19,8 +20,10 @@ public class PlayerManager : MonoBehaviour
 
     private void TemporaryInventoryFill()
     {
-        foreach(GameObject go in TemporaryManuals){
+        foreach (GameObject go in TemporaryManuals)
+        {
             PManuals.Add(go.GetComponent<ItemData>());
         }
     }
+
 }

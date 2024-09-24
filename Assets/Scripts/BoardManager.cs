@@ -12,8 +12,7 @@ using System.Linq;
 public class BoardManager : MonoBehaviour
 {
     private Turn currentTurn = Turn.Player; // Iniziamo col turno del giocatore
-    private ChessAI ai; // Aggiungi questa dichiarazione in cima
-
+    private ChessAI ai; 
 
     [SerializeField] private GameObject board;         // Riferimento al GameObject "Board" che contiene il piano
     public Array2DInt BoardData;

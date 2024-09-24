@@ -20,7 +20,31 @@ public static class Utility
                 }
             }
         }
-        return result;  
+        return result;
+    }
+
+    public static List<PieceStatus> SelectCurrentMatchPieces(int n, List<PieceStatus> pieces)
+    {
+        List<PieceStatus> avaiblePieces = new List<PieceStatus>();
+
+        // Se non ci sono abbastanza pezzi li usiamo tutti
+        if (n > pieces.Count)
+        {
+            avaiblePieces = new List<PieceStatus>(pieces);
+            return avaiblePieces;
+        }
+
+        List<PieceStatus> tempList = new List<PieceStatus>(pieces);
+
+        for (int i = 0; i < n; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, tempList.Count);
+            avaiblePieces.Add(tempList[randomIndex]);
+
+            // Rimuovi il pezzo dalla lista temporanea per evitare ripetizioni
+            tempList.RemoveAt(randomIndex);
+        }
+        return avaiblePieces;
     }
 
 }
