@@ -8,7 +8,9 @@ public class PlayerManager : MonoBehaviour
     public List<ItemData> inventory;
     public int Money;
     public List<GameObject> TemporaryManuals;
+    public List<GameObject> TemporaryConsumables;
     public List<ItemData> PManuals;
+    public List<ItemData> PConsumables;
     public List<PieceStatus> pieces;
 
     public void Start()
@@ -24,6 +26,12 @@ public class PlayerManager : MonoBehaviour
         {
             PManuals.Add(go.GetComponent<ItemData>());
         }
+        Debug.Log("PManuals popolato.");
+        foreach (GameObject go in TemporaryConsumables)
+        {
+            PConsumables.Add(go.GetComponent<ItemData>());
+        }
+        Debug.Log("PConsumables popolato.");
     }
 
 }

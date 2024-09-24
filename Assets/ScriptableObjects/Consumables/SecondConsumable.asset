@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: SecondConsumable
   m_EditorClassIdentifier: 
   Name: HpUp
-  Prefab: {fileID: 1855727749493710, guid: 1961192e49bb4e14a96c112a868b1389, type: 3}
+  Prefab: {fileID: 138894, guid: c7491b2a33df8a944bdcf31ff40103c2, type: 3}
   Price: 4
+  Modifiers:
+  - {fileID: 11400000, guid: 40e3edb5d0d0922459426350a11952db, type: 2}
