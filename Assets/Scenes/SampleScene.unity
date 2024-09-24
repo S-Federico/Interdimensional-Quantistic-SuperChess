@@ -274,8 +274,7 @@ MeshRenderer:
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_Materials: []
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -582,8 +581,8 @@ MonoBehaviour:
   - {fileID: 142830, guid: 9f3ef59f783322441a01e041c6c6351f, type: 3}
   - {fileID: 140880, guid: e9155916723d2f541a53f1db112851c8, type: 3}
   TemporaryConsumables:
-  - {fileID: 176050, guid: 72f75b6a94cb9e1449431bac7a846899, type: 3}
-  - {fileID: 138894, guid: c7491b2a33df8a944bdcf31ff40103c2, type: 3}
+  - {fileID: 176050, guid: e157f164f99d6e045b0cd37281b7c2f1, type: 3}
+  - {fileID: 138894, guid: 87449f31749e7b9429392225dbc5bb51, type: 3}
   PManuals: []
   PConsumables: []
   pieces: []
@@ -1794,6 +1793,8 @@ MonoBehaviour:
   - {fileID: 196802, guid: b6c7ad354ac474944ba26b2895a59759, type: 3}
   selectedPiece: {fileID: 0}
   opponent: {fileID: 0}
+  plane_consumables: {fileID: 44312168}
+  consumables: []
 --- !u!4 &965710760
 Transform:
   m_ObjectHideFlags: 0

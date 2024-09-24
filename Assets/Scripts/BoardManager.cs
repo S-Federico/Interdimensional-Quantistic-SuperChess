@@ -27,6 +27,8 @@ public class BoardManager : MonoBehaviour
     private PlayerManager Player;
     public OpponentManager opponent;
     private BoardBehaviour boardBehaviour;
+    public GameObject plane_consumables;
+    public List<GameObject> consumables = new List<GameObject>();
 
     void Start()
     {
@@ -39,6 +41,8 @@ public class BoardManager : MonoBehaviour
         //con le loro formazioni, buff ecc e livello, che fa scalare il tutto, oltre a opening lines e musiche
         opponent = GameObject.FindAnyObjectByType<OpponentManager>();
         AssignModifiers();
+
+        LoadConsumables();
 
         showMovesFlag = false;
         alreadyExcecuting = false;
@@ -333,20 +337,89 @@ public class BoardManager : MonoBehaviour
     {
         foreach (ItemData manual in Player.PManuals)
         {
-            ScriptableManual ScriptManual = manual.scriptableItem as ScriptableManual;
-            for (int i = 0; i < boardBehaviour.BoardSize; i++)
+            if (manual != null)
             {
-                for (int j = 0; j < boardBehaviour.BoardSize; j++)
+                ScriptableManual ScriptManual = manual.scriptableItem as ScriptableManual;
+                for (int i = 0; i < boardBehaviour.BoardSize; i++)
                 {
-                    if (ScriptManual.ApplicationMatrix.GetCell(j, i) == 1)
+                    for (int j = 0; j < boardBehaviour.BoardSize; j++)
                     {
-                        foreach (ScriptableStatusModifier modi in manual.scriptableItem.Modifiers)
+                        if (ScriptManual.ApplicationMatrix.GetCell(j, i) == 1)
                         {
-                            GetSquare(i, j).GetComponent<BoardSquare>().ManualsModifiers.Add(modi);
+                            foreach (ScriptableStatusModifier modi in manual.scriptableItem.Modifiers)
+                            {
+                                GetSquare(i, j).GetComponent<BoardSquare>().ManualsModifiers.Add(modi);
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+
+    public void LoadConsumables()
+    {
+        // Recuperiamo le dimensioni del piano
+        float planeLength = plane_consumables.GetComponent<Renderer>().bounds.size.x;
+
+        // Verifichiamo che lo spazio disponibile sia sufficiente per includere il padding tra i consumables
+        float padding = 0.1f;
+        int numberOfConsumables = Player.PConsumables.Count;
+        Debug.Log("Consumabili da istanziare " + numberOfConsumables);
+        float totalRequiredSpace = numberOfConsumables * padding;
+        if (planeLength < totalRequiredSpace)
+        {
+            Debug.LogError("Non c'è abbastanza spazio per posizionare i consumables con il padding richiesto.");
+            return;
+        }
+
+        // Calcoliamo la distanza tra ogni manuale (incluso il padding) sull'asse X
+        float spacing = (planeLength - (padding * (numberOfConsumables - 1))) / (numberOfConsumables + 1);  // +1 per evitare di posizionare manuali fuori dal bordo
+
+        // Recuperiamo la posizione di partenza del piano
+        Vector3 planeStartPosition = plane_consumables.transform.position;
+        float planeMinX = planeStartPosition.x - planeLength / 2;
+
+        int i = 0;
+        foreach (ItemData consumable in Player.PConsumables)
+        {
+            if (consumable != null)
+            {
+                ScriptableItem scriptableConsum = consumable.scriptableItem;
+                // Calcoliamo la posizione in cui piazzare l'oggetto
+                Vector3 position = new Vector3(
+                    planeMinX + spacing * (i + 1) + padding * i,  // Posizionamento lungo l'asse X con padding
+                    planeStartPosition.y,                        // Stessa altezza Y del piano
+                    planeStartPosition.z                         // Stessa posizione Z del piano
+                );
+                // Creiamo una leggera rotazione casuale sull'asse Y
+                Quaternion rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
+                // Istanziamo il manuale selezionato
+                GameObject obj = Instantiate(scriptableConsum.Prefab, position, rotation);
+
+                Vector3 scale = new Vector3(12, 12, 12);
+                AdjustScale(obj, scale);
+
+                consumables.Add(obj);
+                // Stampa per debug
+                Debug.Log("Selezionato manuale: " + scriptableConsum.name + " alla posizione " + position);
+            }
+            else
+            {
+                Debug.LogError("Consumabile " + i + " nullo");
+            }
+            i++;
+        }
+    }
+    public void AdjustScale(GameObject parentObject, Vector3 scaleMultiplier)
+    {
+        // Cambia la scala dell'oggetto principale
+        parentObject.transform.localScale = Vector3.Scale(parentObject.transform.localScale, scaleMultiplier);
+
+        // Itera attraverso tutti i figli e cambia la loro scala
+        foreach (Transform child in parentObject.transform)
+        {
+            AdjustScale(child.gameObject, scaleMultiplier);
         }
     }
 }

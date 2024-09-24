@@ -30,6 +30,7 @@ public class PlayerManager : MonoBehaviour
         foreach (GameObject go in TemporaryConsumables)
         {
             PConsumables.Add(go.GetComponent<ItemData>());
+            Debug.Log("PConsumables "+go.GetComponent<ItemData>().scriptableItem.Name);
         }
         Debug.Log("PConsumables popolato.");
     }
