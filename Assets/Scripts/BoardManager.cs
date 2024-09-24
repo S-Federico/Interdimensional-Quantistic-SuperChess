@@ -11,19 +11,13 @@ using System.Linq;
 
 public class BoardManager : MonoBehaviour
 {
-    private Turn currentTurn = Turn.Player; 
-    [SerializeField] private GameObject board;         
+    private Turn currentTurn = Turn.Player;
+    [SerializeField] private GameObject board;
     public Array2DInt BoardData;
     public List<GameObject> PiecePrefabs;
     public PieceStatus[,] Pieces;
     private int Riga;
     private int Colonna;
-
-    private Transform planeTransform;                 
-    private float squareSize;                        
-    private int boardSize = 8;                        
-    private GameObject[,] squares;                   
-
     private ChessBoardModel cbm;
 
     private bool showMovesFlag;
@@ -32,17 +26,18 @@ public class BoardManager : MonoBehaviour
     public GameObject selectedPiece;
     private PlayerManager Player;
     public OpponentManager opponent;
+    private BoardBehaviour boardBehaviour;
 
     void Start()
     {
         cbm = new ChessBoardModel();
-        InitializeBoard();
-
         Player = GameObject.FindAnyObjectByType<PlayerManager>();
+        boardBehaviour = board.GetComponent<BoardBehaviour>();
+        boardBehaviour.InitializeBoard();
 
         //prima o poi questa cosa sarà fatta con scriptable object prendendo da una serie finita di opponent, 
         //con le loro formazioni, buff ecc e livello, che fa scalare il tutto, oltre a opening lines e musiche
-        opponent=GameObject.FindAnyObjectByType<OpponentManager>();
+        opponent = GameObject.FindAnyObjectByType<OpponentManager>();
         AssignModifiers();
 
         showMovesFlag = false;
@@ -131,9 +126,9 @@ public class BoardManager : MonoBehaviour
     void HideMoves()
     {
         // Itera su tutte le caselle della scacchiera per nascondere le evidenziazioni
-        for (int x = 0; x < boardSize; x++)
+        for (int x = 0; x < boardBehaviour.BoardSize; x++)
         {
-            for (int y = 0; y < boardSize; y++)
+            for (int y = 0; y < boardBehaviour.BoardSize; y++)
             {
                 GameObject square = GetSquare(x, y);
                 if (square != null)
@@ -168,7 +163,7 @@ public class BoardManager : MonoBehaviour
                     // Check if is attack
                     if (pieceStatus != null && selectedPiece != null && pieceStatus.PieceColor == PieceColor.Black)
                     {
-                        HandleSquareClick(squares[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y].GetComponent<BoardSquare>());
+                        HandleSquareClick(boardBehaviour.squares[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y].GetComponent<BoardSquare>());
                     }
                     else if (pieceStatus.PieceColor == PieceColor.White)
                     {
@@ -192,81 +187,10 @@ public class BoardManager : MonoBehaviour
 
     public GameObject GetSquare(int x, int y)
     {
-        return GameObject.Find($"Square_{x}_{y}");
+        return boardBehaviour.GetSquare(x, y);
     }
 
-    // Metodo per inizializzare il piano di gioco
-    void InitializeBoard()
-    {
-        if (board != null)
-        {
-            planeTransform = board.transform.Find("Plane");
-            if (planeTransform != null)
-            {
-                // Calcola la dimensione delle caselle in base alle dimensioni del piano
-                squareSize = planeTransform.localScale.x * 10 / boardSize; // La scala del piano moltiplicata per 10 poich� il piano standard di Unity � di 10 unit�
-            }
-            else
-            {
-                Debug.LogError("Plane non trovato come figlio di Board!");
-            }
-        }
-        else
-        {
-            Debug.LogError("Board non assegnato!");
-        }
 
-        squares = new GameObject[boardSize, boardSize];
-
-        for (int x = 0; x < boardSize; x++)
-        {
-            for (int y = 0; y < boardSize; y++)
-            {
-                // Crea un nuovo GameObject piano
-                GameObject newSquare = GameObject.CreatePrimitive(PrimitiveType.Plane);
-
-                // Add tag to square
-                newSquare.tag = Constants.SQUARE_TAG;
-
-                // Add component to square
-                BoardSquare boardSquare = newSquare.AddComponent<BoardSquare>();
-                boardSquare.Position = new Vector2(x, y);
-
-                // Imposta la scala del piano in base alla dimensione della casella
-                newSquare.transform.localScale = new Vector3(squareSize / 10f, 1f, squareSize / 10f);
-
-                // Calcola la posizione della casella rispetto al piano
-                Vector3 squarePosition = new Vector3(
-                    x * squareSize + planeTransform.position.x - planeTransform.localScale.x * 5 + squareSize / 2,
-                    planeTransform.position.y + 0.0001f,
-                    y * squareSize + planeTransform.position.z - planeTransform.localScale.z * 5 + squareSize / 2
-                );
-
-                // Posiziona la casella nella posizione corretta
-                newSquare.transform.position = squarePosition;
-
-                // Assegna un nome alla casella basato sulla posizione
-                newSquare.name = $"Square_{x}_{y}";
-
-                // Rimuovi o disabilita il MeshRenderer per rendere il piano invisibile
-                MeshRenderer renderer = newSquare.GetComponent<MeshRenderer>();
-                if (renderer != null)
-                {
-                    renderer.enabled = false;
-                }
-
-                // Imposta il nuovo piano come figlio del piano principale
-                newSquare.transform.parent = board.transform;
-
-                // Salva la casella nell'array per futuri riferimenti
-                squares[x, y] = newSquare;
-            }
-        }
-        if (planeTransform != null)
-        {
-            Destroy(planeTransform.gameObject);
-        }
-    }
 
     public PieceStatus[,] LoadBoardFromBoardData()
     {
@@ -349,7 +273,7 @@ public class BoardManager : MonoBehaviour
             attacker.Position = target.Position;
 
             // Phisical movement
-            attacker.transform.position = squares[(int)target.Position.x, (int)target.Position.y].transform.position;
+            attacker.transform.position = boardBehaviour.squares[(int)target.Position.x, (int)target.Position.y].transform.position;
 
             // Delete target piece
             Destroy(target.gameObject);
@@ -368,7 +292,7 @@ public class BoardManager : MonoBehaviour
         pieceStatus.Position = destination;
 
         // Perform phisical movement
-        piece.transform.position = squares[(int)destination.x, (int)destination.y].transform.position;
+        piece.transform.position = boardBehaviour.squares[(int)destination.x, (int)destination.y].transform.position;
 
     }
 
@@ -410,14 +334,14 @@ public class BoardManager : MonoBehaviour
         foreach (ItemData manual in Player.PManuals)
         {
             ScriptableManual ScriptManual = manual.scriptableItem as ScriptableManual;
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < boardBehaviour.BoardSize; i++)
             {
-                for (int j = 0; j < 8; j++)
+                for (int j = 0; j < boardBehaviour.BoardSize; j++)
                 {
-                    if (ScriptManual.ApplicationMatrix.GetCell(i,j) == 1)
+                    if (ScriptManual.ApplicationMatrix.GetCell(i, j) == 1)
                     {
                         //TODO: Implementarlo per tutta la lista di modifier del manuale (ogni manuale ne può avere più di uno i guess)
-                        GetSquare(i,j).GetComponent<BoardSquare>().ManualsModifiers.Add(manual.scriptableItem.Modifier);
+                        GetSquare(i, j).GetComponent<BoardSquare>().ManualsModifiers.Add(manual.scriptableItem.Modifier);
                     }
                 }
             }
