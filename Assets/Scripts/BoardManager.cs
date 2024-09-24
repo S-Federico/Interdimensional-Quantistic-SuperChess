@@ -473,10 +473,12 @@ public class BoardManager : MonoBehaviour
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (ScriptManual.ApplicationMatrix.GetCell(i,j) == 1)
+                    if (ScriptManual.ApplicationMatrix.GetCell(j, i) == 1)
                     {
-                        //TODO: Implementarlo per tutta la lista di modifier del manuale (ogni manuale ne può avere più di uno i guess)
-                        GetSquare(i,j).GetComponent<BoardSquare>().ManualsModifiers.Add(manual.scriptableItem.Modifier);
+                        foreach (ScriptableStatusModifier modi in manual.scriptableItem.Modifiers)
+                        {
+                            GetSquare(i, j).GetComponent<BoardSquare>().ManualsModifiers.Add(modi);
+                        }
                     }
                 }
             }

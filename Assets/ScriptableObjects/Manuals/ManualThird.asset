@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39e73f42bae1d6045a510629b5240178, type: 3}
   m_Name: ManualThird
   m_EditorClassIdentifier: 
-  Name: TerzoManual
+  Name: C_manual
   Prefab: {fileID: 140880, guid: e9155916723d2f541a53f1db112851c8, type: 3}
   Price: 30
-  Modifier: {fileID: 11400000, guid: 40e3edb5d0d0922459426350a11952db, type: 2}
+  Modifiers:
+  - {fileID: 11400000, guid: 40e3edb5d0d0922459426350a11952db, type: 2}
   ApplicationMatrix:
     gridSize: {x: 8, y: 8}
     cellSize: {x: 32, y: 16}
