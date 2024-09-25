@@ -213,10 +213,21 @@ public class BoardManager : MonoBehaviour
                 GameObject obj = GetPieceFromId(BoardData.GetCell(j, i));
                 if (obj != null)
                 {
-                    obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
                     PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
-                    pieceStatus.Position = new Vector2(i, j);
-                    result[i, j] = pieceStatus;
+                    // Here get PieceStatus from prefab from inspector. Then build PieceData from it and store in 
+                    // PlayerInfo. In this way it can be read from when the game starts
+                    if (pieceStatus.PieceColor == PieceColor.White)
+                    {
+                        GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces.Add(PieceData.FromPieceStatus(pieceStatus));
+                    }
+                    // If the piece is black, instantiate directly in board
+                    else
+                    {
+                        obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                        pieceStatus.Position = new Vector2(i, j);
+                        result[i, j] = pieceStatus;
+                    }
+
                 }
             }
         }

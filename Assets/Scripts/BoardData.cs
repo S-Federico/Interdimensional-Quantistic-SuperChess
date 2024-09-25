@@ -135,4 +135,16 @@ public class PieceData
     {
         return HashCode.Combine(PieceType, Hp, Attack, PieceColor, ID, Position[0], Position[1], MovementMatrix);
     }
+
+    public static PieceData FromPieceStatus(PieceStatus pieceStatus) {
+        return new PieceData(
+            pieceStatus.PieceType,
+            pieceStatus.BaseHp,
+            pieceStatus.BaseAttack,
+            pieceStatus.PieceColor,
+            pieceStatus.ID,
+            pieceStatus.Position,
+            pieceStatus.MovementMatrix
+        );
+    }
 }

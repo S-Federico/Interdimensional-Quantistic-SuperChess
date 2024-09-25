@@ -9,7 +9,7 @@ using System;
 
 public class GameManager : Singleton<GameManager>
 {
-    private GameInfo gameInfo;
+    public GameInfo GameInfo;
     private bool isPaused = false;
     private bool isGameOver = false;
     
@@ -42,13 +42,13 @@ public class GameManager : Singleton<GameManager>
 
     public void NewGame(GameInfo gameInfo)
     {
-        this.gameInfo = gameInfo;
+        this.GameInfo = gameInfo;
         StartCoroutine(NewGameCoroutine("SampleScene"));
     }
 
     public void ContinueGame(GameInfo gameInfo)
     {
-        this.gameInfo = gameInfo;
+        this.GameInfo = gameInfo;
         StartCoroutine(LoadSceneAndContinue("SampleScene"));
     }
 
@@ -85,7 +85,7 @@ public class GameManager : Singleton<GameManager>
 
         // Chiama GetBoardData() e controlla se il risultato è valido
         BoardData boardStatus = boardManager.GetBoardData();
-        this.gameInfo.BoardData = boardStatus;
+        this.GameInfo.BoardData = boardStatus;
         if (boardStatus == null)
         {
             Debug.LogError("boardConfig è null!");
@@ -96,7 +96,7 @@ public class GameManager : Singleton<GameManager>
         // File.WriteAllText(SaveFilePath, "");
 
         // string json = JsonConvert.SerializeObject(boardStatus, Formatting.Indented); // Usa JSON.NET
-        SaveManager.Instance.Save(gameInfo, this.gameInfo.ProfileName);
+        SaveManager.Instance.Save(GameInfo, this.GameInfo.ProfileName);
 
         // //Queste righe servono perché potremmo cambiare cose nel progetto e inserire nello stato 
         // //da salvare oggetti non serializzabili. Questo serve a debuggare questa cosa, lo toglieremo
@@ -118,7 +118,7 @@ public class GameManager : Singleton<GameManager>
             return;
         }
 
-        boardManager.BuildFromData(this.gameInfo.BoardData);
+        boardManager.BuildFromData(this.GameInfo.BoardData);
     }
 
     public void GameOver()
