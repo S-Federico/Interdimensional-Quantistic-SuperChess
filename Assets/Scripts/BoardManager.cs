@@ -397,8 +397,8 @@ public class BoardManager : MonoBehaviour
                 // Istanziamo il manuale selezionato
                 GameObject obj = Instantiate(scriptableConsum.Prefab, position, rotation);
 
-                Vector3 scale = new Vector3(12, 12, 12);
-                AdjustScale(obj, scale);
+                Vector3 scale = new Vector3(20, 20, 20);
+                obj.transform.localScale = Vector3.Scale(obj.transform.localScale, scale);
 
                 consumables.Add(obj);
                 // Stampa per debug
@@ -409,17 +409,6 @@ public class BoardManager : MonoBehaviour
                 Debug.LogError("Consumabile " + i + " nullo");
             }
             i++;
-        }
-    }
-    public void AdjustScale(GameObject parentObject, Vector3 scaleMultiplier)
-    {
-        // Cambia la scala dell'oggetto principale
-        parentObject.transform.localScale = Vector3.Scale(parentObject.transform.localScale, scaleMultiplier);
-
-        // Itera attraverso tutti i figli e cambia la loro scala
-        foreach (Transform child in parentObject.transform)
-        {
-            AdjustScale(child.gameObject, scaleMultiplier);
         }
     }
 }
