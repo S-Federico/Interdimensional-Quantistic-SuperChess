@@ -11,43 +11,43 @@ using System.Linq;
 
 public class BoardManager : MonoBehaviour
 {
-    private Turn currentTurn = Turn.Player; // Iniziamo col turno del giocatore
-    private ChessAI ai; // Aggiungi questa dichiarazione in cima
-
-
-    [SerializeField] private GameObject board;         // Riferimento al GameObject "Board" che contiene il piano
+    private Turn currentTurn = Turn.Player;
+    [SerializeField] private GameObject board;
     public Array2DInt BoardData;
     public List<GameObject> PiecePrefabs;
-    private PieceStatus[,] Pieces;
+    public PieceStatus[,] Pieces;
     private int Riga;
     private int Colonna;
-
-    private Transform planeTransform;                 // Riferimento al Transform del Piano
-    private float squareSize;                         // Dimensione di una singola casella
-    private int boardSize = 8;                        // Dimensione della scacchiera (8x8)
-    private GameObject[,] squares;                    // Array bidimensionale per memorizzare le caselle
-
     private ChessBoardModel cbm;
 
     private bool showMovesFlag;
-    private bool highlightedFlag;
     private bool alreadyExcecuting;
 
     public GameObject selectedPiece;
+    private PlayerManager Player;
+    public OpponentManager opponent;
+    private BoardBehaviour boardBehaviour;
+    public GameObject plane_consumables;
+    public List<GameObject> consumables = new List<GameObject>();
 
     void Start()
     {
         cbm = new ChessBoardModel();
-        ai = new ChessAI(cbm); // Inizializza l'IA con il modello della scacchiera
-        InitializeBoard();
+        Player = GameObject.FindAnyObjectByType<PlayerManager>();
+        boardBehaviour = board.GetComponent<BoardBehaviour>();
+        boardBehaviour.InitializeBoard();
+
+        //prima o poi questa cosa sarà fatta con scriptable object prendendo da una serie finita di opponent, 
+        //con le loro formazioni, buff ecc e livello, che fa scalare il tutto, oltre a opening lines e musiche
+        opponent = GameObject.FindAnyObjectByType<OpponentManager>();
+        AssignModifiers();
+
+        LoadConsumables();
 
         showMovesFlag = false;
         alreadyExcecuting = false;
 
-        // Questa riga di codice carica i pezzi da inspector
-        //Pieces = LoadBoardFromBoardData();
     }
-
 
     void Update()
     {
@@ -73,63 +73,16 @@ public class BoardManager : MonoBehaviour
             if (!alreadyExcecuting)
             {
                 alreadyExcecuting = true;
-                ExecuteAITurn();
+                opponent.ExecuteAITurn(Pieces);
+                currentTurn = Turn.Player;
             }
         }
 
         showMovesFlag = false;
     }
-    private void ExecuteAITurn()
-    {
-        // Calcola la migliore mossa con l'IA
-        int[] bestMove = ai.GetBestMoveFromPosition(Pieces, 4); // Imposta la profondità desiderata (es. 3)
-        if (bestMove == null || bestMove.Length != 4)
-        {
-            Debug.Log("Nessuna mossa valida trovata dall'IA.");
-            // Gestire la fine del gioco o lo stallo
-            return;
-        }
-
-        if (bestMove.Length == 4)
-        {
-            int startX = bestMove[0];
-            int startY = bestMove[1];
-            int endX = bestMove[2];
-            int endY = bestMove[3];
-
-            Debug.Log($"Start=({startX},{startY})  Finish=({endX},{endY})");
-
-            PieceStatus movingPiece = Pieces[startX, startY];
-
-            SelectPiece(movingPiece.gameObject);
-            if (Pieces[endX, endY] == null)
-            {
-                MovePiece(selectedPiece, new Vector2(endX, endY));
-            }
-            else
-            {
-                AttackPiece(movingPiece, Pieces[endX, endY]);
-            }
-
-            selectedPiece = null;
-
-            currentTurn = Turn.Player;
-        }
-
-        CleanTempObjects();
-    }
-
-    private void CleanTempObjects()
-    {
-        foreach (GameObject toDestroy in ai.ToDestroy)
-        {
-            Destroy(toDestroy);
-        }
-    }
 
     void HighlightMoves()
     {
-
         //int[] coord = GetPositionFromPiece(selectedPiece);
         PieceStatus pieceStatus = selectedPiece.GetComponent<PieceStatus>();
 
@@ -177,9 +130,9 @@ public class BoardManager : MonoBehaviour
     void HideMoves()
     {
         // Itera su tutte le caselle della scacchiera per nascondere le evidenziazioni
-        for (int x = 0; x < boardSize; x++)
+        for (int x = 0; x < boardBehaviour.BoardSize; x++)
         {
-            for (int y = 0; y < boardSize; y++)
+            for (int y = 0; y < boardBehaviour.BoardSize; y++)
             {
                 GameObject square = GetSquare(x, y);
                 if (square != null)
@@ -214,7 +167,7 @@ public class BoardManager : MonoBehaviour
                     // Check if is attack
                     if (pieceStatus != null && selectedPiece != null && pieceStatus.PieceColor == PieceColor.Black)
                     {
-                        HandleSquareClick(squares[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y].GetComponent<BoardSquare>());
+                        HandleSquareClick(boardBehaviour.squares[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y].GetComponent<BoardSquare>());
                     }
                     else if (pieceStatus.PieceColor == PieceColor.White)
                     {
@@ -236,94 +189,12 @@ public class BoardManager : MonoBehaviour
         //highlightedFlag = selectedPiece != null;
     }
 
-
-    public void SetShowMovesFlag(bool value)
+    public GameObject GetSquare(int x, int y)
     {
-        showMovesFlag = value;
+        return boardBehaviour.GetSquare(x, y);
     }
 
-    GameObject GetSquare(int x, int y)
-    {
-        return GameObject.Find($"Square_{x}_{y}");
-    }
 
-    // Metodo per inizializzare il piano di gioco
-    void InitializeBoard()
-    {
-        if (board != null)
-        {
-            planeTransform = board.transform.Find("Plane");
-            if (planeTransform != null)
-            {
-                // Calcola la dimensione delle caselle in base alle dimensioni del piano
-                squareSize = planeTransform.localScale.x * 10 / boardSize; // La scala del piano moltiplicata per 10 poich� il piano standard di Unity � di 10 unit�
-            }
-            else
-            {
-                Debug.LogError("Plane non trovato come figlio di Board!");
-            }
-        }
-        else
-        {
-            Debug.LogError("Board non assegnato!");
-        }
-
-        squares = new GameObject[boardSize, boardSize];
-
-        for (int x = 0; x < boardSize; x++)
-        {
-            for (int y = 0; y < boardSize; y++)
-            {
-                // Crea un nuovo GameObject piano
-                GameObject newSquare = GameObject.CreatePrimitive(PrimitiveType.Plane);
-
-                // Add tag to square
-                newSquare.tag = Constants.SQUARE_TAG;
-
-                // Add component to square
-                BoardSquare boardSquare = newSquare.AddComponent<BoardSquare>();
-                boardSquare.Position = new Vector2(x, y);
-
-                // Imposta la scala del piano in base alla dimensione della casella
-                newSquare.transform.localScale = new Vector3(squareSize / 10f, 1f, squareSize / 10f);
-
-                // Calcola la posizione della casella rispetto al piano
-                Vector3 squarePosition = new Vector3(
-                    x * squareSize + planeTransform.position.x - planeTransform.localScale.x * 5 + squareSize / 2,
-                    planeTransform.position.y + 0.0001f,
-                    y * squareSize + planeTransform.position.z - planeTransform.localScale.z * 5 + squareSize / 2
-                );
-
-                // Posiziona la casella nella posizione corretta
-                newSquare.transform.position = squarePosition;
-
-                // Assegna un nome alla casella basato sulla posizione
-                newSquare.name = $"Square_{x}_{y}";
-
-                // Rimuovi o disabilita il MeshRenderer per rendere il piano invisibile
-                MeshRenderer renderer = newSquare.GetComponent<MeshRenderer>();
-                if (renderer != null)
-                {
-                    renderer.enabled = false;
-                }
-
-                // Imposta il nuovo piano come figlio del piano principale
-                newSquare.transform.parent = board.transform;
-
-                // Salva la casella nell'array per futuri riferimenti
-                squares[x, y] = newSquare;
-            }
-        }
-
-        if (planeTransform != null)
-        {
-            Destroy(planeTransform.gameObject);
-        }
-        else
-        {
-            Debug.LogError("Plane non trovato per la distruzione!");
-        }
-    }
 
     public PieceStatus[,] LoadBoardFromBoardData()
     {
@@ -396,9 +267,8 @@ public class BoardManager : MonoBehaviour
     }
 
 
-    private void AttackPiece(PieceStatus attacker, PieceStatus target)
+    public void AttackPiece(PieceStatus attacker, PieceStatus target)
     {
-
         target.TakeDamage(attacker.Attack);
         if (target.Hp <= 0)
         {
@@ -407,7 +277,7 @@ public class BoardManager : MonoBehaviour
             attacker.Position = target.Position;
 
             // Phisical movement
-            attacker.transform.position = squares[(int)target.Position.x, (int)target.Position.y].transform.position;
+            attacker.transform.position = boardBehaviour.squares[(int)target.Position.x, (int)target.Position.y].transform.position;
 
             // Delete target piece
             Destroy(target.gameObject);
@@ -415,7 +285,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void MovePiece(GameObject piece, Vector2 destination)
+    public void MovePiece(GameObject piece, Vector2 destination)
     {
         if (piece == null || destination == null) return;
         PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
@@ -426,7 +296,7 @@ public class BoardManager : MonoBehaviour
         pieceStatus.Position = destination;
 
         // Perform phisical movement
-        piece.transform.position = squares[(int)destination.x, (int)destination.y].transform.position;
+        piece.transform.position = boardBehaviour.squares[(int)destination.x, (int)destination.y].transform.position;
 
     }
 
@@ -437,7 +307,7 @@ public class BoardManager : MonoBehaviour
 
     public void BuildFromData(BoardData bData)
     {
-        if (bData!=null)
+        if (bData != null)
         {
             this.currentTurn = bData.currentTurn;
 
@@ -448,7 +318,7 @@ public class BoardManager : MonoBehaviour
             {
                 for (int j = 0; j < Colonna; j++)
                 {
-                    if (bData.piecesData[i,j] == null) continue;
+                    if (bData.piecesData[i, j] == null) continue;
                     GameObject obj = GetPieceFromId(bData.piecesData[i, j].ID);
                     if (obj != null)
                     {
@@ -463,7 +333,82 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public bool IsGameOver() {
-        return ai.isGameOver();
+    public void AssignModifiers()
+    {
+        foreach (ItemData manual in Player.PManuals)
+        {
+            if (manual != null)
+            {
+                ScriptableManual ScriptManual = manual.scriptableItem as ScriptableManual;
+                for (int i = 0; i < boardBehaviour.BoardSize; i++)
+                {
+                    for (int j = 0; j < boardBehaviour.BoardSize; j++)
+                    {
+                        if (ScriptManual.ApplicationMatrix.GetCell(j, i) == 1)
+                        {
+                            foreach (ScriptableStatusModifier modi in manual.scriptableItem.Modifiers)
+                            {
+                                GetSquare(i, j).GetComponent<BoardSquare>().ManualsModifiers.Add(modi);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void LoadConsumables()
+    {
+        // Recuperiamo le dimensioni del piano
+        float planeLength = plane_consumables.GetComponent<Renderer>().bounds.size.x;
+
+        // Verifichiamo che lo spazio disponibile sia sufficiente per includere il padding tra i consumables
+        float padding = 0.1f;
+        int numberOfConsumables = Player.PConsumables.Count;
+        Debug.Log("Consumabili da istanziare " + numberOfConsumables);
+        float totalRequiredSpace = numberOfConsumables * padding;
+        if (planeLength < totalRequiredSpace)
+        {
+            Debug.LogError("Non c'è abbastanza spazio per posizionare i consumables con il padding richiesto.");
+            return;
+        }
+
+        // Calcoliamo la distanza tra ogni manuale (incluso il padding) sull'asse X
+        float spacing = (planeLength - (padding * (numberOfConsumables - 1))) / (numberOfConsumables + 1);  // +1 per evitare di posizionare manuali fuori dal bordo
+
+        // Recuperiamo la posizione di partenza del piano
+        Vector3 planeStartPosition = plane_consumables.transform.position;
+        float planeMinX = planeStartPosition.x - planeLength / 2;
+
+        int i = 0;
+        foreach (ItemData consumable in Player.PConsumables)
+        {
+            if (consumable != null)
+            {
+                ScriptableItem scriptableConsum = consumable.scriptableItem;
+                // Calcoliamo la posizione in cui piazzare l'oggetto
+                Vector3 position = new Vector3(
+                    planeMinX + spacing * (i + 1) + padding * i,  // Posizionamento lungo l'asse X con padding
+                    planeStartPosition.y,                        // Stessa altezza Y del piano
+                    planeStartPosition.z                         // Stessa posizione Z del piano
+                );
+                // Creiamo una leggera rotazione casuale sull'asse Y
+                Quaternion rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
+                // Istanziamo il manuale selezionato
+                GameObject obj = Instantiate(scriptableConsum.Prefab, position, rotation);
+
+                Vector3 scale = new Vector3(20, 20, 20);
+                obj.transform.localScale = Vector3.Scale(obj.transform.localScale, scale);
+
+                consumables.Add(obj);
+                // Stampa per debug
+                Debug.Log("Selezionato manuale: " + scriptableConsum.name + " alla posizione " + position);
+            }
+            else
+            {
+                Debug.LogError("Consumabile " + i + " nullo");
+            }
+            i++;
+        }
     }
 }

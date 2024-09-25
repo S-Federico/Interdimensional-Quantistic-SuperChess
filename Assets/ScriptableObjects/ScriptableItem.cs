@@ -7,5 +7,6 @@ public class ScriptableItem : ScriptableObject
     public string Name;
     public GameObject Prefab;  
     public int Price;
+    public List<ScriptableStatusModifier> Modifiers;
 
 }
