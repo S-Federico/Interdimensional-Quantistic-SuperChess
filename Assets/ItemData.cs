@@ -9,7 +9,6 @@ using UnityEngine.UIElements;
 public class ItemData : MonoBehaviour, IClickable
 {
     public ScriptableItem scriptableItem;
-
     public bool bought;
     public bool selected;
     public bool alreadyElevated;
@@ -19,6 +18,7 @@ public class ItemData : MonoBehaviour, IClickable
     public GameObject priceTag;
     public GameObject sellTag;
     public GameObject useTag;
+    public bool shopScaling;
 
     //Ancore per i bottoni
     Vector3 bottomLeft;
@@ -89,6 +89,11 @@ public class ItemData : MonoBehaviour, IClickable
 
     public void Update()
     {
+        if (!shopScaling)
+        {
+            SetScale(10f);
+            shopScaling = true;
+        }
         if (selected)
         {
             if (!alreadyElevated)
@@ -109,6 +114,13 @@ public class ItemData : MonoBehaviour, IClickable
 
         }
     }
+
+    public void SetScale(float scaleFactor)
+    {
+        transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+        transform.localRotation = Quaternion.Euler(0, -90, 0);
+    }
+
     public void DeElevateItem()
     {
         Vector3 p = this.gameObject.transform.position;
@@ -116,6 +128,7 @@ public class ItemData : MonoBehaviour, IClickable
         this.gameObject.transform.position = newP;
         Debug.Log($"Deelevated to {newP.y}");
     }
+
     public void HideTags()
     {
         Debug.Log($"Price hidden");
@@ -124,6 +137,7 @@ public class ItemData : MonoBehaviour, IClickable
         useTag.SetActive(false);
         priceTag.SetActive(false);
     }
+
     public void ElevateItem()
     {
         Vector3 p = this.gameObject.transform.position;
@@ -131,6 +145,7 @@ public class ItemData : MonoBehaviour, IClickable
         this.gameObject.transform.position = newP;
         Debug.Log($"Elevated to{newP.y}");
     }
+
     public void ShowTags()
     {
         Debug.Log($"Price: {scriptableItem.Price}");
@@ -199,7 +214,6 @@ public class ItemData : MonoBehaviour, IClickable
         Debug.Log($"Item {scriptableItem.Name} used!");
         Destroy(this.gameObject);
     }
-
 }
 
 

@@ -29,10 +29,10 @@ public class PlayerManager : MonoBehaviour
         Debug.Log("PManuals popolato.");
         foreach (GameObject go in TemporaryConsumables)
         {
+            go.GetComponent<ItemData>().bought = true;
             PConsumables.Add(go.GetComponent<ItemData>());
-            Debug.Log("PConsumables "+go.GetComponent<ItemData>().scriptableItem.Name);
+            Debug.Log("PConsumables " + go.GetComponent<ItemData>().scriptableItem.Name);
         }
         Debug.Log("PConsumables popolato.");
     }
-
 }

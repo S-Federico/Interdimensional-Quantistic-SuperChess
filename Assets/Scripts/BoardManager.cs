@@ -126,7 +126,6 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-
     void HideMoves()
     {
         // Itera su tutte le caselle della scacchiera per nascondere le evidenziazioni
@@ -193,8 +192,6 @@ public class BoardManager : MonoBehaviour
     {
         return boardBehaviour.GetSquare(x, y);
     }
-
-
 
     public PieceStatus[,] LoadBoardFromBoardData()
     {
@@ -265,7 +262,6 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
-
 
     public void AttackPiece(PieceStatus attacker, PieceStatus target)
     {
@@ -373,7 +369,7 @@ public class BoardManager : MonoBehaviour
             return;
         }
 
-        // Calcoliamo la distanza tra ogni manuale (incluso il padding) sull'asse X
+        // Calcoliamo la distanza tra ogni consumable (incluso il padding) sull'asse X
         float spacing = (planeLength - (padding * (numberOfConsumables - 1))) / (numberOfConsumables + 1);  // +1 per evitare di posizionare manuali fuori dal bordo
 
         // Recuperiamo la posizione di partenza del piano
@@ -392,17 +388,14 @@ public class BoardManager : MonoBehaviour
                     planeStartPosition.y,                        // Stessa altezza Y del piano
                     planeStartPosition.z                         // Stessa posizione Z del piano
                 );
-                // Creiamo una leggera rotazione casuale sull'asse Y
-                Quaternion rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
-                // Istanziamo il manuale selezionato
+                // Istanziamo il consumable selezionato
+                Quaternion rotation = Quaternion.Euler(0, 0, 0);
                 GameObject obj = Instantiate(scriptableConsum.Prefab, position, rotation);
-
-                Vector3 scale = new Vector3(20, 20, 20);
-                obj.transform.localScale = Vector3.Scale(obj.transform.localScale, scale);
-
+                obj.GetComponent<ItemData>().shopScaling = false;
                 consumables.Add(obj);
+
                 // Stampa per debug
-                Debug.Log("Selezionato manuale: " + scriptableConsum.name + " alla posizione " + position);
+                Debug.Log("Selezionato consumable: " + scriptableConsum.name + " alla posizione " + position);
             }
             else
             {
