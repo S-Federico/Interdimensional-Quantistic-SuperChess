@@ -66,7 +66,7 @@ public class ItemData : MonoBehaviour, IClickable
 
 
         SetButton(buyTag, bottomLeft, ButtonType.Buy, "Buy");
-        SetButton(sellTag, bottomLeft, ButtonType.Sell, $"Sell ({sellprice}$)");
+        SetButton(sellTag, bottomLeft, ButtonType.Sell, $"Sell {sellprice}$");
         SetButton(useTag, bottomRight, ButtonType.Use, "Use");
         SetButton(priceTag, bottomRight, ButtonType.PriceTag, $"{scriptableItem.Price}$");
     }
@@ -93,6 +93,7 @@ public class ItemData : MonoBehaviour, IClickable
         {
             SetScale(10f);
             shopScaling = true;
+            el = 1f;
         }
         if (selected)
         {
@@ -148,7 +149,6 @@ public class ItemData : MonoBehaviour, IClickable
 
     public void ShowTags()
     {
-        Debug.Log($"Price: {scriptableItem.Price}");
         if (bought)
         {
             sellTag.SetActive(true);

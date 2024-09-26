@@ -28,7 +28,7 @@ public class BoardManager : MonoBehaviour
     public OpponentManager opponent;
     private BoardBehaviour boardBehaviour;
     public GameObject plane_consumables;
-    public List<GameObject> consumables = new List<GameObject>();
+    public List<GameObject> consumables;
 
     void Start()
     {

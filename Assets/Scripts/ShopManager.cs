@@ -51,7 +51,7 @@ public class ShopManager : MonoBehaviour
         SelectRandomConsumables(scriptableConsumableList.Count, 0.1f);
         LoadScriptableObjects<ScriptablePiece>("Assets/ScriptableObjects/Pieces", scriptablePieceList);
         SelectRandomPieces(scriptablePieceList.Count, 0.1f);
-        player= GameObject.Find("Player").GetComponent<PlayerManager>();
+        player = GameObject.Find("Player").GetComponent<PlayerManager>();
 
     }
 
@@ -59,18 +59,20 @@ public class ShopManager : MonoBehaviour
     {
         if (item != null)
         {
-            if(CanBeBought(item)){
-                player.Money-=item.scriptableItem.Price;
+            if (CanBeBought(item))
+            {
+                player.Money -= item.scriptableItem.Price;
                 //istanzia nell'inventario del player
                 player.inventory.Add(item);
-                item.bought=true;
+                item.bought = true;
                 //cambia la transform (prima o poi sarà responsabilità del player o dell'inventario stesso)
-                item.gameObject.transform.position=GameObject.Find("PlayerInventory").transform.position;
+                item.gameObject.transform.position = GameObject.Find("PlayerInventory").transform.position;
             }
         }
     }
 
-    public bool CanBeBought(ItemData item){
+    public bool CanBeBought(ItemData item)
+    {
         if (item != null)
         {
             if (player.Money >= item.scriptableItem.Price)
@@ -174,6 +176,7 @@ public class ShopManager : MonoBehaviour
             // Istanziamo il manuale selezionato
             GameObject obj = Instantiate(selectedManual.Prefab, position, rotation);
             ItemData item = obj.GetComponent<ItemData>();
+            item.shopScaling = true;
             if (item != null)
             {
                 item.scriptableItem = selectedManual;
@@ -219,6 +222,7 @@ public class ShopManager : MonoBehaviour
             );
             GameObject obj = Instantiate(selectedConsumable.Prefab, position, Quaternion.identity);
             ItemData item = obj.GetComponent<ItemData>();
+            item.shopScaling = true;
             if (item != null)
             {
                 item.scriptableItem = selectedConsumable;
@@ -271,6 +275,7 @@ public class ShopManager : MonoBehaviour
             );
             GameObject obj = Instantiate(selectedPiece.Prefab, position, Quaternion.identity);
             ItemData item = obj.GetComponent<ItemData>();
+            item.shopScaling = true;
             if (item != null)
             {
                 item.scriptableItem = selectedPiece;
