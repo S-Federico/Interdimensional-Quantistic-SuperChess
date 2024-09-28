@@ -9,12 +9,15 @@ using System;
 
 public class GameManager : Singleton<GameManager>
 {
+    public static int MAX_LEVEL = 3;
+
+
     public GameInfo GameInfo;
     private bool isPaused = false;
     private bool isGameOver = false;
-    
-    public bool IsGameOver{get => isGameOver; set => isGameOver = value;} 
-    public bool IsPaused { get => isPaused; set => isPaused = value;}
+
+    public bool IsGameOver { get => isGameOver; set => isGameOver = value; }
+    public bool IsPaused { get => isPaused; set => isPaused = value; }
 
     void Awake()
     {
@@ -124,5 +127,15 @@ public class GameManager : Singleton<GameManager>
 
         // Give money
         this.GameInfo.PlayerInfo.Money += 2 * GameInfo.currentLevel * GameInfo.currentStage;
+    }
+
+    internal void AdvanceLevel()
+    {
+        GameInfo.currentStage++;
+        if (GameInfo.currentStage == MAX_LEVEL + 1)
+        {
+            GameInfo.currentLevel += 1;
+            GameInfo.currentStage = 1;
+        }
     }
 }
