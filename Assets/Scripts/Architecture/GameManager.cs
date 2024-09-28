@@ -38,6 +38,7 @@ public class GameManager : Singleton<GameManager>
 
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
         boardManager.LoadBoardFromBoardData();
+        boardManager.InitializePiecesPlanes();
     }
 
     public void NewGame(GameInfo gameInfo)

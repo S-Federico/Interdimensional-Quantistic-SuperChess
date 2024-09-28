@@ -1794,6 +1794,8 @@ MonoBehaviour:
   selectedPiece: {fileID: 0}
   opponent: {fileID: 0}
   plane_consumables: {fileID: 44312168}
+  playerPiecesPlane: {fileID: 1460839057}
+  opponentPiecesPlane: {fileID: 123155751}
   consumables: []
 --- !u!4 &965710760
 Transform:

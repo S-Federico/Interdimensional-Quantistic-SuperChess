@@ -28,6 +28,9 @@ public class BoardManager : MonoBehaviour
     public OpponentManager opponent;
     private BoardBehaviour boardBehaviour;
     public GameObject plane_consumables;
+    public GameObject playerPiecesPlane;
+    public GameObject opponentPiecesPlane;
+
     public List<GameObject> consumables = new List<GameObject>();
 
     void Start()
@@ -218,14 +221,36 @@ public class BoardManager : MonoBehaviour
                     // PlayerInfo. In this way it can be read from when the game starts
                     if (pieceStatus.PieceColor == PieceColor.White)
                     {
-                        GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces.Add(PieceData.FromPieceStatus(pieceStatus));
+                        if (pieceStatus.PieceType == PieceType.King)
+                        {
+                            obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                            pieceStatus.Position = new Vector2(i, j);
+                            result[i, j] = pieceStatus;
+                        }
+                        else
+                        {
+                            GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces.Add(PieceData.FromPieceStatus(pieceStatus));
+                            Debug.Log("Added " + pieceStatus.PieceColor + " " + pieceStatus.PieceType + " to player");
+                            Debug.Log(" playerPieces: " + GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces.Count);
+
+                        }
                     }
                     // If the piece is black, instantiate directly in board
                     else
                     {
-                        obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
-                        pieceStatus.Position = new Vector2(i, j);
-                        result[i, j] = pieceStatus;
+                        if (pieceStatus.PieceType == PieceType.King)
+                        {
+                            obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                            pieceStatus.Position = new Vector2(i, j);
+                            result[i, j] = pieceStatus;
+                        }
+                        else
+                        {
+                            opponent.pieces.Add(pieceStatus);
+                            Debug.Log("Added " + pieceStatus.PieceColor + " " + pieceStatus.PieceType + " to opponent");
+                            Debug.Log(" opponent pieces: " + opponent.pieces.Count);
+
+                        }
                     }
 
                 }
@@ -422,4 +447,91 @@ public class BoardManager : MonoBehaviour
             i++;
         }
     }
+
+
+    public void InitializePiecesPlanes()
+    {
+
+        int npieces = 10;
+
+        // Seleziona i pezzi del giocatore e dell'avversario
+        List<PieceData> playerPieces = Utility.SelectCurrentMatchPieces(npieces, GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces);
+        List<PieceStatus> opponentPieces = Utility.SelectCurrentMatchPieces(npieces, opponent.pieces);
+        List<PieceStatus> actualOpponentPieces = new List<PieceStatus>();
+        List<PieceStatus> actualPlayerPieces = new List<PieceStatus>();
+
+        // Ottieni le dimensioni dei piani
+        Vector3 playerPlaneSize = playerPiecesPlane.GetComponent<Renderer>().bounds.size;
+        Vector3 opponentPlaneSize = opponentPiecesPlane.GetComponent<Renderer>().bounds.size;
+
+        float padding = playerPlaneSize.z / 12;
+        float playerPieceSpacingz = (playerPlaneSize.z - padding) / (npieces / 2);
+        float opponentPieceSpacingz = (opponentPlaneSize.z - padding) / (npieces / 2);
+
+        float pieceY = playerPiecesPlane.transform.position.y; // Assume che i piani siano su un'asse Y fissa
+        float xoffset = playerPlaneSize.x / 4;
+
+        for (int i = 0; i < playerPieces.Count; i++)
+        {
+            float pieceX;
+            float pieceZ;
+            PieceData p = playerPieces.ElementAt(i);
+            if (i < (playerPieces.Count / 2))
+            {
+                pieceZ = (playerPieceSpacingz/2)+(i * playerPieceSpacingz) + playerPiecesPlane.transform.position.z - (playerPlaneSize.z / 2)+(padding/2);
+                pieceX = playerPiecesPlane.transform.position.x + xoffset;
+            }
+            else
+            {
+                pieceZ = (playerPieceSpacingz/2)+((i -(playerPieces.Count / 2))* playerPieceSpacingz) + playerPiecesPlane.transform.position.z - (playerPlaneSize.z / 2)+(padding/2);
+                pieceX = playerPiecesPlane.transform.position.x - xoffset;
+            }
+            if (p != null)
+            {
+                GameObject obj = GetPieceFromId(p.ID);
+                if (obj != null)
+                {
+                    obj = Instantiate(obj, new Vector3(pieceX, pieceY, pieceZ), Quaternion.identity);
+                    PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
+                    pieceStatus.BuildFromData(p);
+                    actualPlayerPieces.Add(pieceStatus);
+                }
+            }
+        }
+
+        pieceY = opponentPiecesPlane.transform.position.y; // Assume che i piani siano su un'asse Y fissa
+
+        for (int i = 0; i < opponentPieces.Count; i++)
+        {
+            PieceStatus p = opponentPieces.ElementAt(i);
+
+            float pieceX;
+            float pieceZ;
+            if (i < (opponentPieces.Count / 2))
+            {
+                pieceX = opponentPiecesPlane.transform.position.x + xoffset;
+                pieceZ = (opponentPieceSpacingz/2)+(i * opponentPieceSpacingz) + opponentPiecesPlane.transform.position.z - (opponentPlaneSize.z / 2)+(padding/2);
+            }
+            else
+            {
+                pieceX = opponentPiecesPlane.transform.position.x - xoffset;
+                pieceZ = (opponentPieceSpacingz/2)+((i-(opponentPieces.Count / 2)) * opponentPieceSpacingz) + opponentPiecesPlane.transform.position.z - (opponentPlaneSize.z / 2)+(padding/2);
+            }
+            GameObject obj = GetPieceFromId(p.ID);
+
+            if (obj != null)
+            {
+                obj = Instantiate(obj, new Vector3(pieceX, pieceY, pieceZ), Quaternion.identity);
+                p = obj.GetComponent<PieceStatus>();
+                p.Position = new Vector2();
+                actualOpponentPieces.Add(p);
+            }
+        }
+
+        Player.pieces = actualPlayerPieces;
+        opponent.pieces = actualOpponentPieces;
+
+    }
+
+
 }
