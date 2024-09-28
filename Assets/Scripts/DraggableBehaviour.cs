@@ -9,9 +9,10 @@ using UnityEngine.InputSystem;
 public class DraggableBehaviour : MonoBehaviour, IDraggable
 {
     public bool isDragging = false;
+    public float elevation=0.5f;
     private Camera mainCamera;
 
-    private Vector3 oldPosition;
+    public Vector3 oldPosition;
 
     public bool isDraggable;
 
@@ -26,12 +27,24 @@ public class DraggableBehaviour : MonoBehaviour, IDraggable
     public void OnDragEnd()
     {
         isDragging = false;
-        transform.position = oldPosition;
+        if (TryGetComponent<ItemData>(out ItemData itemDataComponent))
+        {
+            //itemDataComponent.OnDragEnd();
+        }
+        else if (TryGetComponent<PieceStatus>(out PieceStatus pieceStatusComponent))
+        {
+            pieceStatusComponent.OnDragEnd();
+        }
+        else
+        {
+            Debug.LogWarning("Né ItemData né PieceStatus sono stati trovati sul GameObject!");
+        }
     }
 
     public void OnDragStart()
     {
         oldPosition=transform.position;
+        transform.position=new Vector3(transform.position.x,transform.position.y+elevation,transform.position.z);
         isDragging = true;
     }
 

@@ -26,7 +26,7 @@ public class PieceStatus : MonoBehaviour, IClickable
         }
     }
 
-    public int BaseHp {get => this.baseHp;}
+    public int BaseHp { get => this.baseHp; }
 
     public int Attack
     {
@@ -40,7 +40,7 @@ public class PieceStatus : MonoBehaviour, IClickable
         }
     }
 
-    public int BaseAttack {get => this.baseAttack;}
+    public int BaseAttack { get => this.baseAttack; }
 
     public int NumberOfMoves
     {
@@ -54,7 +54,7 @@ public class PieceStatus : MonoBehaviour, IClickable
         }
     }
 
-    public int BaseNumberOfMoves {get => this.baseNumberOfMoves;}
+    public int BaseNumberOfMoves { get => this.baseNumberOfMoves; }
 
     public int DamageTaken = 0;
     public bool cloaked = false;
@@ -128,8 +128,11 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     private void CellModifiersCheck()
     {
-        GameObject cell = boardManager.GetSquare((int)Position.x, (int)Position.y);
-        if (cell.GetComponent<BoardSquare>().ManualsModifiers != null)
+        GameObject cell = null;
+        if(boardManager!=null){
+            boardManager.GetSquare((int)Position.x, (int)Position.y);
+        }
+        if (cell!= null && cell.GetComponent<BoardSquare>().ManualsModifiers != null)
         {
             CellModifiers = cell.GetComponent<BoardSquare>().ManualsModifiers;
         }
@@ -243,4 +246,38 @@ public class PieceStatus : MonoBehaviour, IClickable
         boardManager.SelectPiece(this.gameObject);
     }
 
+    public BoardSquare GetSquareBelow()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit))
+        {
+            // Controlla se l'oggetto ha il componente BoardSquare
+            BoardSquare boardSquare = hit.collider.gameObject.GetComponent<BoardSquare>();
+            if (boardSquare != null)
+            {
+                return boardSquare;  // Restituisce il componente BoardSquare
+            }
+        }
+
+        return null;  // Restituisce null se non è stato trovato
+    }
+
+    public void OnDragEnd()
+    {
+        BoardSquare square = GetSquareBelow();
+        if (square != null & boardManager.currentTurn == Turn.Player)
+        {
+            transform.position = square.gameObject.transform.position;
+            Position = square.Position;
+            if (TryGetComponent<DraggableBehaviour>(out DraggableBehaviour draggableBehaviour))
+            {
+                draggableBehaviour.isDraggable = false;
+                boardManager.PlayerPiecePositioned(this);
+            }
+        }
+        else
+        {
+            transform.position = gameObject.GetComponent<DraggableBehaviour>().oldPosition;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class State
@@ -28,7 +29,7 @@ public class ChessAI
     private PieceStatus bestPiece; // Variabile per salvare il miglior pezzo
     private int bestMoveX, bestMoveY; // Variabili per salvare la miglior mossa
     private List<GameObject> toDestroy;
-    public List<GameObject> ToDestroy {get => toDestroy;}
+    public List<GameObject> ToDestroy { get => toDestroy; }
     public ChessAI(ChessBoardModel cbm)
     {
         Hist = new Stack<State>();
@@ -86,15 +87,21 @@ public class ChessAI
 
                 HashSet<int[]> allowedMoves = cbm.GetPossibleMovesForPiece(piece, copiedBoard);
 
+                string moves = "Moves: " + string.Join(",", allowedMoves.Select(move => $"({move[0]},{move[1]})"));
+
+                Debug.Log($"{allowedMoves.Count} Moves found for black {piece.PieceType}: {moves}");
+
+
+
                 foreach (var move in allowedMoves)
                 {
                     int targetRow = move[0];
                     int targetCol = move[1];
-                    Debug.Log($"Black testing move: ({piece.Position.x}, {piece.Position.y}) -> ({targetRow}, {targetCol})");
+                    //Debug.Log($"Black testing move: ({piece.Position.x}, {piece.Position.y}) -> ({targetRow}, {targetCol})");
 
                     Move(new int[] { (int)piece.Position.x, (int)piece.Position.y, targetRow, targetCol }, copiedBoard);
                     int thisMoveValue = AlphaBeta(depth - 1, !isMax, alpha, beta);
-                    Debug.Log($"Value:{thisMoveValue}");
+                    //Debug.Log($"Value:{thisMoveValue}");
 
                     Undo();
 
@@ -129,11 +136,9 @@ public class ChessAI
                 {
                     int targetRow = move[0];
                     int targetCol = move[1];
-                    Debug.Log($"White testing move: ({piece.Position.x}, {piece.Position.y}) -> ({targetRow}, {targetCol})");
 
                     Move(new int[] { (int)piece.Position.x, (int)piece.Position.y, targetRow, targetCol }, copiedBoard);
                     int thisMoveValue = AlphaBeta(depth - 1, !isMax, alpha, beta);
-                    Debug.Log($"Value:{thisMoveValue}");
 
                     Undo();
 
@@ -270,23 +275,27 @@ public class ChessAI
             int[] move = previousState.lastMove;
             PieceStatus movedPiece = previousState.movedPiece;
             PieceStatus capturedPiece = previousState.capturedPiece;
-            bool hasMoved=previousState.hasMoved;
+            bool hasMoved = previousState.hasMoved;
 
             int startRow = move[0];
             int startCol = move[1];
             int targetRow = move[2];
             int targetCol = move[3];
 
-            if(hasMoved){
-                copiedBoard[startRow,startCol]=movedPiece;
-                movedPiece.Position=new Vector2(startRow,startCol);
-                copiedBoard[targetRow,targetCol]=null;
-                if(capturedPiece != null){
-                    copiedBoard[targetRow,targetCol]=capturedPiece;
-                    capturedPiece.Hp+=movedPiece.Attack;
+            if (hasMoved)
+            {
+                copiedBoard[startRow, startCol] = movedPiece;
+                movedPiece.Position = new Vector2(startRow, startCol);
+                copiedBoard[targetRow, targetCol] = null;
+                if (capturedPiece != null)
+                {
+                    copiedBoard[targetRow, targetCol] = capturedPiece;
+                    capturedPiece.Hp += movedPiece.Attack;
                 }
-            }else{
-                copiedBoard[targetRow,targetCol].Hp+=movedPiece.Attack;
+            }
+            else
+            {
+                copiedBoard[targetRow, targetCol].Hp += movedPiece.Attack;
             }
 
         }

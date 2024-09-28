@@ -11,7 +11,7 @@ using System.Linq;
 
 public class BoardManager : MonoBehaviour
 {
-    private Turn currentTurn = Turn.Player;
+    public Turn currentTurn = Turn.Player;
     [SerializeField] private GameObject board;
     public Array2DInt BoardData;
     public List<GameObject> PiecePrefabs;
@@ -57,7 +57,13 @@ public class BoardManager : MonoBehaviour
         if (currentTurn == Turn.Player)
         {
             alreadyExcecuting = false;
-
+                    foreach (PieceStatus p in Player.pieces)
+        {
+            if (p!=null && p.gameObject.TryGetComponent<DraggableBehaviour>(out DraggableBehaviour draggableBehaviour))
+            {
+                draggableBehaviour.isDraggable = true;
+            }
+        }
             // Gestione input del giocatore
             if (showMovesFlag)
             {
@@ -230,8 +236,6 @@ public class BoardManager : MonoBehaviour
                         else
                         {
                             GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces.Add(PieceData.FromPieceStatus(pieceStatus));
-                            Debug.Log("Added " + pieceStatus.PieceColor + " " + pieceStatus.PieceType + " to player");
-                            Debug.Log(" playerPieces: " + GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces.Count);
 
                         }
                     }
@@ -247,8 +251,6 @@ public class BoardManager : MonoBehaviour
                         else
                         {
                             opponent.pieces.Add(pieceStatus);
-                            Debug.Log("Added " + pieceStatus.PieceColor + " " + pieceStatus.PieceType + " to opponent");
-                            Debug.Log(" opponent pieces: " + opponent.pieces.Count);
 
                         }
                     }
@@ -478,12 +480,12 @@ public class BoardManager : MonoBehaviour
             PieceData p = playerPieces.ElementAt(i);
             if (i < (playerPieces.Count / 2))
             {
-                pieceZ = (playerPieceSpacingz/2)+(i * playerPieceSpacingz) + playerPiecesPlane.transform.position.z - (playerPlaneSize.z / 2)+(padding/2);
+                pieceZ = (playerPieceSpacingz / 2) + (i * playerPieceSpacingz) + playerPiecesPlane.transform.position.z - (playerPlaneSize.z / 2) + (padding / 2);
                 pieceX = playerPiecesPlane.transform.position.x + xoffset;
             }
             else
             {
-                pieceZ = (playerPieceSpacingz/2)+((i -(playerPieces.Count / 2))* playerPieceSpacingz) + playerPiecesPlane.transform.position.z - (playerPlaneSize.z / 2)+(padding/2);
+                pieceZ = (playerPieceSpacingz / 2) + ((i - (playerPieces.Count / 2)) * playerPieceSpacingz) + playerPiecesPlane.transform.position.z - (playerPlaneSize.z / 2) + (padding / 2);
                 pieceX = playerPiecesPlane.transform.position.x - xoffset;
             }
             if (p != null)
@@ -510,12 +512,12 @@ public class BoardManager : MonoBehaviour
             if (i < (opponentPieces.Count / 2))
             {
                 pieceX = opponentPiecesPlane.transform.position.x + xoffset;
-                pieceZ = (opponentPieceSpacingz/2)+(i * opponentPieceSpacingz) + opponentPiecesPlane.transform.position.z - (opponentPlaneSize.z / 2)+(padding/2);
+                pieceZ = (opponentPieceSpacingz / 2) + (i * opponentPieceSpacingz) + opponentPiecesPlane.transform.position.z - (opponentPlaneSize.z / 2) + (padding / 2);
             }
             else
             {
                 pieceX = opponentPiecesPlane.transform.position.x - xoffset;
-                pieceZ = (opponentPieceSpacingz/2)+((i-(opponentPieces.Count / 2)) * opponentPieceSpacingz) + opponentPiecesPlane.transform.position.z - (opponentPlaneSize.z / 2)+(padding/2);
+                pieceZ = (opponentPieceSpacingz / 2) + ((i - (opponentPieces.Count / 2)) * opponentPieceSpacingz) + opponentPiecesPlane.transform.position.z - (opponentPlaneSize.z / 2) + (padding / 2);
             }
             GameObject obj = GetPieceFromId(p.ID);
 
@@ -533,5 +535,18 @@ public class BoardManager : MonoBehaviour
 
     }
 
+    public void PlayerPiecePositioned(PieceStatus piece)
+    {
 
+        Pieces[(int)piece.Position.x, (int)piece.Position.y] = piece;
+        piece=null;
+        currentTurn = Turn.AI;
+        foreach (PieceStatus p in Player.pieces)
+        {
+            if (p!=null && p.gameObject.TryGetComponent<DraggableBehaviour>(out DraggableBehaviour draggableBehaviour))
+            {
+                draggableBehaviour.isDraggable = false;
+            }
+        }
+    }
 }
