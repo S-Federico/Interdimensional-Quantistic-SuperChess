@@ -189,6 +189,7 @@ public class ItemData : MonoBehaviour, IClickable
                 if (player != null)
                 {
                     player.Money += scriptableItem.Price / 2;
+                    player.RemoveItem(this);
                     Destroy(this.gameObject);
                 }
                 else
@@ -212,6 +213,8 @@ public class ItemData : MonoBehaviour, IClickable
     public void UseItem()
     {
         Debug.Log($"Item {scriptableItem.Name} used!");
+        PlayerManager player = GameObject.Find("Player").GetComponent<PlayerManager>();
+        player.RemoveItem(this);
         Destroy(this.gameObject);
     }
 }
