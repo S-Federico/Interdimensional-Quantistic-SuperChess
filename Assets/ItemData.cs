@@ -194,7 +194,6 @@ public class ItemData : MonoBehaviour, IClickable
         Debug.Log($"Item {scriptableItem.Name} used!");
         Destroy(this.gameObject);
     }
-
 }
 
 

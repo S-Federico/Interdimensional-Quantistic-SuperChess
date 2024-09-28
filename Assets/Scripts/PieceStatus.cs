@@ -236,4 +236,5 @@ public class PieceStatus : MonoBehaviour, IClickable
     {
         boardManager.SelectPiece(this.gameObject);
     }
+
 }

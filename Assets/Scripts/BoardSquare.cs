@@ -20,4 +20,5 @@ public class BoardSquare : MonoBehaviour, IClickable
     {
         boardManager.HandleSquareClick(this);
     }
+
 }
