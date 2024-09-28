@@ -27,6 +27,8 @@ public class BoardManager : MonoBehaviour
     private PlayerManager Player;
     public OpponentManager opponent;
     private BoardBehaviour boardBehaviour;
+    public GameObject plane_consumables;
+    public List<GameObject> consumables = new List<GameObject>();
 
     void Start()
     {
@@ -39,6 +41,8 @@ public class BoardManager : MonoBehaviour
         //con le loro formazioni, buff ecc e livello, che fa scalare il tutto, oltre a opening lines e musiche
         opponent = GameObject.FindAnyObjectByType<OpponentManager>();
         AssignModifiers();
+
+        LoadConsumables();
 
         showMovesFlag = false;
         alreadyExcecuting = false;
@@ -209,10 +213,21 @@ public class BoardManager : MonoBehaviour
                 GameObject obj = GetPieceFromId(BoardData.GetCell(j, i));
                 if (obj != null)
                 {
-                    obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
                     PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
-                    pieceStatus.Position = new Vector2(i, j);
-                    result[i, j] = pieceStatus;
+                    // Here get PieceStatus from prefab from inspector. Then build PieceData from it and store in 
+                    // PlayerInfo. In this way it can be read from when the game starts
+                    if (pieceStatus.PieceColor == PieceColor.White)
+                    {
+                        GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces.Add(PieceData.FromPieceStatus(pieceStatus));
+                    }
+                    // If the piece is black, instantiate directly in board
+                    else
+                    {
+                        obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                        pieceStatus.Position = new Vector2(i, j);
+                        result[i, j] = pieceStatus;
+                    }
+
                 }
             }
         }
@@ -333,18 +348,78 @@ public class BoardManager : MonoBehaviour
     {
         foreach (ItemData manual in Player.PManuals)
         {
-            ScriptableManual ScriptManual = manual.scriptableItem as ScriptableManual;
-            for (int i = 0; i < boardBehaviour.BoardSize; i++)
+            if (manual != null)
             {
-                for (int j = 0; j < boardBehaviour.BoardSize; j++)
+                ScriptableManual ScriptManual = manual.scriptableItem as ScriptableManual;
+                for (int i = 0; i < boardBehaviour.BoardSize; i++)
                 {
-                    if (ScriptManual.ApplicationMatrix.GetCell(i, j) == 1)
+                    for (int j = 0; j < boardBehaviour.BoardSize; j++)
                     {
-                        //TODO: Implementarlo per tutta la lista di modifier del manuale (ogni manuale ne può avere più di uno i guess)
-                        GetSquare(i, j).GetComponent<BoardSquare>().ManualsModifiers.Add(manual.scriptableItem.Modifier);
+                        if (ScriptManual.ApplicationMatrix.GetCell(j, i) == 1)
+                        {
+                            foreach (ScriptableStatusModifier modi in manual.scriptableItem.Modifiers)
+                            {
+                                GetSquare(i, j).GetComponent<BoardSquare>().ManualsModifiers.Add(modi);
+                            }
+                        }
                     }
                 }
             }
+        }
+    }
+
+    public void LoadConsumables()
+    {
+        // Recuperiamo le dimensioni del piano
+        float planeLength = plane_consumables.GetComponent<Renderer>().bounds.size.x;
+
+        // Verifichiamo che lo spazio disponibile sia sufficiente per includere il padding tra i consumables
+        float padding = 0.1f;
+        int numberOfConsumables = Player.PConsumables.Count;
+        Debug.Log("Consumabili da istanziare " + numberOfConsumables);
+        float totalRequiredSpace = numberOfConsumables * padding;
+        if (planeLength < totalRequiredSpace)
+        {
+            Debug.LogError("Non c'è abbastanza spazio per posizionare i consumables con il padding richiesto.");
+            return;
+        }
+
+        // Calcoliamo la distanza tra ogni manuale (incluso il padding) sull'asse X
+        float spacing = (planeLength - (padding * (numberOfConsumables - 1))) / (numberOfConsumables + 1);  // +1 per evitare di posizionare manuali fuori dal bordo
+
+        // Recuperiamo la posizione di partenza del piano
+        Vector3 planeStartPosition = plane_consumables.transform.position;
+        float planeMinX = planeStartPosition.x - planeLength / 2;
+
+        int i = 0;
+        foreach (ItemData consumable in Player.PConsumables)
+        {
+            if (consumable != null)
+            {
+                ScriptableItem scriptableConsum = consumable.scriptableItem;
+                // Calcoliamo la posizione in cui piazzare l'oggetto
+                Vector3 position = new Vector3(
+                    planeMinX + spacing * (i + 1) + padding * i,  // Posizionamento lungo l'asse X con padding
+                    planeStartPosition.y,                        // Stessa altezza Y del piano
+                    planeStartPosition.z                         // Stessa posizione Z del piano
+                );
+                // Creiamo una leggera rotazione casuale sull'asse Y
+                Quaternion rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
+                // Istanziamo il manuale selezionato
+                GameObject obj = Instantiate(scriptableConsum.Prefab, position, rotation);
+
+                Vector3 scale = new Vector3(20, 20, 20);
+                obj.transform.localScale = Vector3.Scale(obj.transform.localScale, scale);
+
+                consumables.Add(obj);
+                // Stampa per debug
+                Debug.Log("Selezionato manuale: " + scriptableConsum.name + " alla posizione " + position);
+            }
+            else
+            {
+                Debug.LogError("Consumabile " + i + " nullo");
+            }
+            i++;
         }
     }
 }

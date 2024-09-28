@@ -163,17 +163,21 @@ public class ItemData : MonoBehaviour, IClickable
             case ButtonType.Buy:
                 ToggleSelected();
                 ShopManager shop = FindAnyObjectByType<ShopManager>();
-                if (shop != null){
+                if (shop != null)
+                {
                     shop.BuyItem(this);
                 }
                 break;
             case ButtonType.Sell:
                 ToggleSelected();
-                PlayerManager player= GameObject.Find("Player").GetComponent<PlayerManager>();
-                if (player != null){
-                    player.Money+=scriptableItem.Price / 2;
+                PlayerManager player = GameObject.Find("Player").GetComponent<PlayerManager>();
+                if (player != null)
+                {
+                    player.Money += scriptableItem.Price / 2;
                     Destroy(this.gameObject);
-                }else{
+                }
+                else
+                {
                     Debug.Log("Player null!");
                 }
                 break;
@@ -190,7 +194,8 @@ public class ItemData : MonoBehaviour, IClickable
         }
     }
 
-    public void UseItem(){
+    public void UseItem()
+    {
         Debug.Log($"Item {scriptableItem.Name} used!");
         Destroy(this.gameObject);
     }

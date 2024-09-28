@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: FirstConsumable
   m_EditorClassIdentifier: 
   Name: DamageUp
-  Prefab: {fileID: 1304660386900934, guid: bd7dc9dc7bc1498469cf9289744f30c3, type: 3}
+  Prefab: {fileID: 176050, guid: e157f164f99d6e045b0cd37281b7c2f1, type: 3}
   Price: 2
+  Modifiers:
+  - {fileID: 11400000, guid: a4ec869793eb27348aab5b8d8d4f3cac, type: 2}

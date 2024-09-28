@@ -26,6 +26,8 @@ public class PieceStatus : MonoBehaviour, IClickable
         }
     }
 
+    public int BaseHp {get => this.baseHp;}
+
     public int Attack
     {
         get
@@ -38,6 +40,8 @@ public class PieceStatus : MonoBehaviour, IClickable
         }
     }
 
+    public int BaseAttack {get => this.baseAttack;}
+
     public int NumberOfMoves
     {
         get
@@ -49,6 +53,8 @@ public class PieceStatus : MonoBehaviour, IClickable
             baseNumberOfMoves = value;
         }
     }
+
+    public int BaseNumberOfMoves {get => this.baseNumberOfMoves;}
 
     public int DamageTaken = 0;
     public bool cloaked = false;
