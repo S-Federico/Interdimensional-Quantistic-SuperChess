@@ -71,7 +71,7 @@ public class ChessAI
     private int AlphaBeta(int depth, bool isMax, int alpha, int beta)
     {
         // Se la profondità è 0 o il gioco è finito
-        if (depth == 0 || isGameOver())
+        if (depth == 0 || IsGameOver(copiedBoard))
         {
             return StaticEvaluationFunction();
         }
@@ -177,11 +177,11 @@ public class ChessAI
         return TotalScore;
     }
 
-    public bool isGameOver()
+    public static bool IsGameOver(PieceStatus[,] board)
     {
         int kingCount = 0;
 
-        foreach (PieceStatus piece in copiedBoard)
+        foreach (PieceStatus piece in board)
         {
             if (piece != null && piece.PieceType == PieceType.King)
             {

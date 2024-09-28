@@ -13,12 +13,8 @@ public class GameManager : Singleton<GameManager>
     private bool isPaused = false;
     private bool isGameOver = false;
     
-    public bool IsGameOver{get => isGameOver;} 
+    public bool IsGameOver{get => isGameOver; set => isGameOver = value;} 
     public bool IsPaused { get => isPaused; set => isPaused = value;}
-    public void Start()
-    {
-
-    }
 
     void Awake()
     {
@@ -71,6 +67,7 @@ public class GameManager : Singleton<GameManager>
     {
         // When game restarts, load the main menu scene
         SceneManager.LoadScene("Menu");
+        isGameOver = false;
     }
 
 
@@ -119,10 +116,5 @@ public class GameManager : Singleton<GameManager>
         }
 
         boardManager.BuildFromData(this.GameInfo.BoardData);
-    }
-
-    public void GameOver()
-    {
-        this.isGameOver = true;
     }
 }

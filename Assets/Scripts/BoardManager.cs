@@ -51,6 +51,7 @@ public class BoardManager : MonoBehaviour
 
     void Update()
     {
+        GameManager.Instance.IsGameOver = ChessAI.IsGameOver(Pieces);
         if (currentTurn == Turn.Player)
         {
             alreadyExcecuting = false;
