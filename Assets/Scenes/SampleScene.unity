@@ -1043,7 +1043,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 129635359}
         m_TargetAssemblyTypeName: GameUI, Assembly-CSharp
-        m_MethodName: HideGameMenu
+        m_MethodName: GoToShop
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1176,7 +1176,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 129635359}
         m_TargetAssemblyTypeName: GameUI, Assembly-CSharp
-        m_MethodName: BackToMainMenu
+        m_MethodName: GoToNextLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2184,7 +2184,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1426559823
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -117,4 +117,12 @@ public class GameManager : Singleton<GameManager>
 
         boardManager.BuildFromData(this.GameInfo.BoardData);
     }
+
+    internal void GameOver()
+    {
+        this.isGameOver = true;
+
+        // Give money
+        this.GameInfo.PlayerInfo.Money += 2 * GameInfo.currentLevel * GameInfo.currentStage;
+    }
 }
