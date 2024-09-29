@@ -117,6 +117,8 @@ public class ChessBoardModel
                                 disconnectedMoves.Add(new int[] { newRiga, newColonna, 2 }); // ZIO PICCIONE
                         }
                     }
+
+
                 }
             }
         }
@@ -125,6 +127,10 @@ public class ChessBoardModel
         moves = CleanDisconnectedMoves(moves, riga, colonna, board);
         moves.UnionWith(disconnectedMoves);
 
+
+        string m = "Moves: " + string.Join(",", moves.Select(move => $"({move[0]},{move[1]})"));
+
+        Debug.Log($"{moves.Count} Moves found for {piece.PieceType}: {m}");
         return moves;
     }
 
@@ -181,21 +187,24 @@ public class ChessBoardModel
 
     private HashSet<int[]> CleanDisconnectedMoves(HashSet<int[]> moves, int rigaPezzo, int colonnaPezzo, PieceStatus[,] board)
     {
-        HashSet<int[]> connectedMoves = new HashSet<int[]>();
+        // Converti il set di mosse da int[] a tuple
+        HashSet<(int, int, int)> movesTuple = new HashSet<(int, int, int)>(
+            moves.Select(m => (m[0], m[1], m[2]))
+        );
+
+        HashSet<(int, int, int)> connectedMoves = new HashSet<(int, int, int)>();
         HashSet<(int, int)> esplorate = new HashSet<(int, int)>();
         Queue<(int, int)> daEsplorare = new Queue<(int, int)>();
 
         // Iniziamo l'esplorazione dalla posizione del pezzo
         daEsplorare.Enqueue((rigaPezzo, colonnaPezzo));
+        esplorate.Add((rigaPezzo, colonnaPezzo)); // Aggiorna esplorate qui
 
         while (daEsplorare.Count > 0)
         {
             var mossaCorrente = daEsplorare.Dequeue();
             int rigaCorrente = mossaCorrente.Item1;
             int colonnaCorrente = mossaCorrente.Item2;
-
-            // Aggiungi la mossa corrente al set delle esplorate
-            esplorate.Add(mossaCorrente);
 
             // Esplora le celle adiacenti
             for (int i = -1; i <= 1; i++)
@@ -206,23 +215,24 @@ public class ChessBoardModel
                     int newCol = colonnaCorrente + j;
 
                     // Cerca una mossa di tipo movimento (tipo = 1) nel set moves
-                    if (moves.Any(m => m[0] == newRow && m[1] == newCol && m[2] == 1) && !esplorate.Contains((newRow, newCol)))
+                    if (movesTuple.Contains((newRow, newCol, 1)) && !esplorate.Contains((newRow, newCol)))
                     {
+                        esplorate.Add((newRow, newCol)); // Aggiorna esplorate
                         daEsplorare.Enqueue((newRow, newCol));
-                        connectedMoves.Add(new int[] { newRow, newCol, 1 });
+                        connectedMoves.Add((newRow, newCol, 1));
                     }
                 }
             }
         }
 
         // Aggiungi le mosse di attacco che sono connesse tramite movimenti
-        foreach (var move in moves)
+        foreach (var move in movesTuple)
         {
-            if (move[2] == 2) // È una mossa di attacco
+            if (move.Item3 == 2) // È una mossa di attacco
             {
                 // Verifica se la mossa di attacco è adiacente a una mossa di movimento connessa 
-                bool isConnected = connectedMoves.Any(m => Math.Abs(m[0] - move[0]) <= 1 && Math.Abs(m[1] - move[1]) <= 1)
-                                || (Math.Abs(rigaPezzo - move[0]) <= 1 && Math.Abs(colonnaPezzo - move[1]) <= 1);
+                bool isConnected = connectedMoves.Any(m => Math.Abs(m.Item1 - move.Item1) <= 1 && Math.Abs(m.Item2 - move.Item2) <= 1)
+                                || (Math.Abs(rigaPezzo - move.Item1) <= 1 && Math.Abs(colonnaPezzo - move.Item2) <= 1);
 
                 if (isConnected)
                 {
@@ -231,9 +241,15 @@ public class ChessBoardModel
             }
         }
 
+        // Converti il set di mosse connesse da tuple a int[]
+        HashSet<int[]> result = new HashSet<int[]>(
+            connectedMoves.Select(m => new int[] { m.Item1, m.Item2, m.Item3 })
+        );
 
-        return connectedMoves;
+        return result;
     }
+
+
 
     public bool HasStatusEffect(PieceStatus piece, StatusEffectType statusEffect)
     {

@@ -57,13 +57,13 @@ public class BoardManager : MonoBehaviour
         if (currentTurn == Turn.Player)
         {
             alreadyExcecuting = false;
-                    foreach (PieceStatus p in Player.pieces)
-        {
-            if (p!=null && p.gameObject.TryGetComponent<DraggableBehaviour>(out DraggableBehaviour draggableBehaviour))
+            foreach (PieceStatus p in Player.pieces)
             {
-                draggableBehaviour.isDraggable = true;
+                if (p != null && p.gameObject.TryGetComponent<DraggableBehaviour>(out DraggableBehaviour draggableBehaviour))
+                {
+                    draggableBehaviour.isDraggable = true;
+                }
             }
-        }
             // Gestione input del giocatore
             if (showMovesFlag)
             {
@@ -161,11 +161,9 @@ public class BoardManager : MonoBehaviour
     {
         if (piece != null)
         {
-            Debug.Log("Pezzo non nullo");
             //Deselect piece if is selected while is still selected
             if (selectedPiece == piece)
             {
-                Debug.Log("Deselect piece");
                 selectedPiece = null;
             }
             else
@@ -195,7 +193,6 @@ public class BoardManager : MonoBehaviour
         }
         HideMoves();
         showMovesFlag = true;
-        //highlightedFlag = selectedPiece != null;
     }
 
     public GameObject GetSquare(int x, int y)
@@ -327,14 +324,35 @@ public class BoardManager : MonoBehaviour
     {
         if (piece == null || destination == null) return;
         PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
-
+        if (pieceStatus == null)
+        {
+            Debug.Log("Piecestatus nullo");
+        }
         // Perform logical movement
         Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] = null;
+        if (Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] != null)
+        {
+            Debug.Log("Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] dovrebbe essere nullo ma non lo è!");
+        }
         Pieces[(int)destination.x, (int)destination.y] = pieceStatus;
+        if (Pieces[(int)destination.x, (int)destination.y] == null)
+        {
+            Debug.Log("Pieces[(int)destination.x, (int)destination.y] dovrebbe non essere nullo ma lo è!");
+        }
         pieceStatus.Position = destination;
+        if (pieceStatus.Position != destination)
+        {
+            Debug.Log("posizione del piecestatus è diverso da destinazione!");
+        }
+        Vector3 newp=boardBehaviour.squares[(int)destination.x, (int)destination.y].transform.position;
+        Debug.Log($"piece.transform.position= {piece.transform.position.x},{piece.transform.position.y},{piece.transform.position.z}");
+        Debug.Log($"newp= {newp.x},{newp.y},{newp.z}");
+        Debug.Log($"newp= {destination.x},{destination.y}");
 
         // Perform phisical movement
-        piece.transform.position = boardBehaviour.squares[(int)destination.x, (int)destination.y].transform.position;
+        piece.transform.position = boardBehaviour.GetSquare((int)destination.x, (int)destination.y).transform.position;
+        Debug.Log($"piece.transform.position= {piece.transform.position.x},{piece.transform.position.y},{piece.transform.position.z}");
+
 
     }
 
@@ -539,11 +557,11 @@ public class BoardManager : MonoBehaviour
     {
 
         Pieces[(int)piece.Position.x, (int)piece.Position.y] = piece;
-        piece=null;
+        piece = null;
         currentTurn = Turn.AI;
         foreach (PieceStatus p in Player.pieces)
         {
-            if (p!=null && p.gameObject.TryGetComponent<DraggableBehaviour>(out DraggableBehaviour draggableBehaviour))
+            if (p != null && p.gameObject.TryGetComponent<DraggableBehaviour>(out DraggableBehaviour draggableBehaviour))
             {
                 draggableBehaviour.isDraggable = false;
             }

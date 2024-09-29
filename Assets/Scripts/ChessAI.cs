@@ -87,11 +87,6 @@ public class ChessAI
 
                 HashSet<int[]> allowedMoves = cbm.GetPossibleMovesForPiece(piece, copiedBoard);
 
-                string moves = "Moves: " + string.Join(",", allowedMoves.Select(move => $"({move[0]},{move[1]})"));
-
-                Debug.Log($"{allowedMoves.Count} Moves found for black {piece.PieceType}: {moves}");
-
-
 
                 foreach (var move in allowedMoves)
                 {

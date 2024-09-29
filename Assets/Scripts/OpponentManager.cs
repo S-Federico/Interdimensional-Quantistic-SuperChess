@@ -6,15 +6,15 @@ using UnityEngine;
 public class OpponentManager : MonoBehaviour
 {
     public List<PieceStatus> pieces;
-    private ChessAI ai; 
+    private ChessAI ai;
     private ChessBoardModel cbm;
     public BoardManager boardManager;
 
     public void Start()
     {
-                cbm = new ChessBoardModel();
-                ai = new ChessAI(cbm); 
-                boardManager = GameObject.FindAnyObjectByType<BoardManager>();
+        cbm = new ChessBoardModel();
+        ai = new ChessAI(cbm);
+        boardManager = GameObject.FindAnyObjectByType<BoardManager>();
 
     }
 
@@ -35,6 +35,12 @@ public class OpponentManager : MonoBehaviour
             int startY = bestMove[1];
             int endX = bestMove[2];
             int endY = bestMove[3];
+
+            HashSet<int[]> allowedMoves = cbm.GetPossibleMovesForPiece(Pieces[startX,startY], Pieces);
+
+            string moves = "Moves: " + string.Join(",", allowedMoves.Select(move => $"({move[0]},{move[1]})"));
+
+            Debug.Log($"{allowedMoves.Count} Moves found for {Pieces[startX,startY].PieceColor} {Pieces[startX,startY].PieceType}: {moves}");
 
             Debug.Log($"Start=({startX},{startY})  Finish=({endX},{endY})");
 
