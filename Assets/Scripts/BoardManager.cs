@@ -561,7 +561,7 @@ public class BoardManager : MonoBehaviour
     {
 
         Pieces[(int)piece.Position.x, (int)piece.Position.y] = piece;
-        piece = null;
+        Player.pieces.Remove(piece);
         currentTurn = Turn.AI;
         foreach (PieceStatus p in Player.pieces)
         {

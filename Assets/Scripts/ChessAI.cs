@@ -22,6 +22,8 @@ public class State
 public class ChessAI
 {
     PieceStatus[,] copiedBoard;
+    List<PieceStatus> copiedOpoonentAvaiblePieces;
+    List<PieceStatus> copiedPlayerAvaiblePieces;
     private Stack<State> Hist;
     private int maxDepth;
     private int winningValue = 0;
@@ -115,6 +117,8 @@ public class ChessAI
                     if (beta <= alpha) break;
                 }
             }
+
+
             return hValue;
         }
         else // Turno del giocatore (pezzi bianchi)
