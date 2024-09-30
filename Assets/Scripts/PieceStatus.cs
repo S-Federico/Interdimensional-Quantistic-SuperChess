@@ -129,10 +129,11 @@ public class PieceStatus : MonoBehaviour, IClickable
     private void CellModifiersCheck()
     {
         GameObject cell = null;
-        if(boardManager!=null){
+        if (boardManager != null)
+        {
             boardManager.GetSquare((int)Position.x, (int)Position.y);
         }
-        if (cell!= null && cell.GetComponent<BoardSquare>().ManualsModifiers != null)
+        if (cell != null && cell.GetComponent<BoardSquare>().ManualsModifiers != null)
         {
             CellModifiers = cell.GetComponent<BoardSquare>().ManualsModifiers;
         }
@@ -265,7 +266,9 @@ public class PieceStatus : MonoBehaviour, IClickable
     public void OnDragEnd()
     {
         BoardSquare square = GetSquareBelow();
-        if (square != null & boardManager.currentTurn == Turn.Player)
+        Debug.Log($"Trying to place piece in ({square.Position.x},{square.Position.y}): {boardManager.CanPlacePiece(this)}");
+
+        if (boardManager.CanPlacePiece(this) && square != null)
         {
             transform.position = square.gameObject.transform.position;
             Position = square.Position;

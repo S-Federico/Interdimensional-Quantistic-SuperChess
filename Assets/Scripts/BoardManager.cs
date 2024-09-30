@@ -344,7 +344,7 @@ public class BoardManager : MonoBehaviour
         {
             Debug.Log("posizione del piecestatus è diverso da destinazione!");
         }
-        Vector3 newp=boardBehaviour.squares[(int)destination.x, (int)destination.y].transform.position;
+        Vector3 newp = boardBehaviour.squares[(int)destination.x, (int)destination.y].transform.position;
         Debug.Log($"piece.transform.position= {piece.transform.position.x},{piece.transform.position.y},{piece.transform.position.z}");
         Debug.Log($"newp= {newp.x},{newp.y},{newp.z}");
         Debug.Log($"newp= {destination.x},{destination.y}");
@@ -355,7 +355,53 @@ public class BoardManager : MonoBehaviour
 
 
     }
+    public bool CanPlacePiece(PieceStatus piece)
+    {
+        if (piece == null)
+        {
+            return false;
+        }
+        BoardSquare placement = piece.GetSquareBelow();
+        if (placement != null)
+        {
+            if (GetAllowedPlacements().Contains(placement))
+            {
+                if ((piece.PieceColor == PieceColor.Black && currentTurn == Turn.AI) || (piece.PieceColor == PieceColor.White && currentTurn == Turn.Player))
+                    return true;
+            }
+        }
+        return false;
+    }
 
+    public List<BoardSquare> GetAllowedPlacements()
+    {
+        List<BoardSquare> allowedPlacements = new List<BoardSquare>();
+
+        if (currentTurn == Turn.AI)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (Pieces[i, j] == null)
+                        allowedPlacements.Add(GetSquare(i, j).GetComponent<BoardSquare>());
+                }
+            }
+        }
+        else
+        {
+            for (int i = 6; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (Pieces[i, j] == null)
+                        allowedPlacements.Add(GetSquare(i, j).GetComponent<BoardSquare>());
+                }
+            }
+        }
+
+        return allowedPlacements;
+    }
     public BoardData GetBoardData()
     {
         return new BoardData(currentTurn, Pieces);
