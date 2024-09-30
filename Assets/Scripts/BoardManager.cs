@@ -67,7 +67,7 @@ public class BoardManager : MonoBehaviour
             // Gestione input del giocatore
             if (showMovesFlag)
             {
-                if (selectedPiece != null && selectedPiece.GetComponent<PieceStatus>().Position!=new Vector2(-1f,-1f))
+                if (selectedPiece != null && selectedPiece.GetComponent<PieceStatus>().Position != new Vector2(-1f, -1f))
                 {
                     HighlightMoves();
                 }
@@ -227,6 +227,7 @@ public class BoardManager : MonoBehaviour
                         if (pieceStatus.PieceType == PieceType.King)
                         {
                             obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                            pieceStatus = obj.GetComponent<PieceStatus>();
                             pieceStatus.Position = new Vector2(i, j);
                             result[i, j] = pieceStatus;
                         }
@@ -242,13 +243,13 @@ public class BoardManager : MonoBehaviour
                         if (pieceStatus.PieceType == PieceType.King)
                         {
                             obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                            pieceStatus = obj.GetComponent<PieceStatus>();
                             pieceStatus.Position = new Vector2(i, j);
                             result[i, j] = pieceStatus;
                         }
                         else
                         {
                             opponent.pieces.Add(pieceStatus);
-
                         }
                     }
 
@@ -326,7 +327,7 @@ public class BoardManager : MonoBehaviour
         PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
         // Perform logical movement
         Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] = null;
- 
+
         Pieces[(int)destination.x, (int)destination.y] = pieceStatus;
 
         pieceStatus.Position = destination;
@@ -350,7 +351,7 @@ public class BoardManager : MonoBehaviour
         BoardSquare placement = piece.GetSquareBelow();
         if (placement != null)
         {
-            if (cbm.GetAllowedPlacements(piece,Pieces,this).Contains(placement))
+            if (cbm.GetAllowedPlacements(piece, Pieces, this).Contains(placement))
             {
                 if ((piece.PieceColor == PieceColor.Black && currentTurn == Turn.AI) || (piece.PieceColor == PieceColor.White && currentTurn == Turn.Player))
                     return true;
@@ -517,7 +518,7 @@ public class BoardManager : MonoBehaviour
                     obj = Instantiate(obj, new Vector3(pieceX, pieceY, pieceZ), Quaternion.identity);
                     PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
                     pieceStatus.BuildFromData(p);
-                    pieceStatus.Position=new Vector2(-1f,-1f);
+                    pieceStatus.Position = new Vector2(-1f, -1f);
                     actualPlayerPieces.Add(pieceStatus);
                 }
             }
@@ -547,7 +548,7 @@ public class BoardManager : MonoBehaviour
             {
                 obj = Instantiate(obj, new Vector3(pieceX, pieceY, pieceZ), Quaternion.identity);
                 p = obj.GetComponent<PieceStatus>();
-                p.Position = new Vector2(-1f,-1f);
+                p.Position = new Vector2(-1f, -1f);
                 actualOpponentPieces.Add(p);
             }
         }
