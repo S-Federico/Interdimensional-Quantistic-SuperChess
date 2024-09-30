@@ -120,10 +120,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PieceType: 2
-  Hp: 1
-  Attack: 1
+  DamageTaken: 0
+  cloaked: 0
+  ethereal: 0
+  cure: 0
+  brittle: 0
+  commander: 0
+  testuggine: 0
+  hitChance: 1
+  scary: 0
+  appliedModifiers: []
   PieceColor: 0
-  ID: 3
+  PrefabID: 3
   Position: {x: 0, y: 0}
   MovementMatrixInfo:
     gridSize: {x: 7, y: 7}
@@ -136,3 +144,4 @@ MonoBehaviour:
     - row: 00000000040000000000000000000000000000000400000000000000
     - row: 00000000000000000400000000000000040000000000000000000000
     - row: 00000000000000000000000000000000000000000000000000000000
+  CellModifiers: []

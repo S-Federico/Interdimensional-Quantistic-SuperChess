@@ -84,7 +84,6 @@ public class ChessBoardModel
         }
 
         StringBuilder log = new StringBuilder();  // Variabile per accumulare i log
-        PrintBoard(board);
 
         int riga = (int)pieceStatus.Position.x;
         int colonna = (int)pieceStatus.Position.y;

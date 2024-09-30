@@ -73,7 +73,7 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     // Lista di pezzi affected da questo pezzo
     public PieceColor PieceColor;
-    public int ID;
+    public int PrefabID;
     public Vector2 Position;
 
     // Deve essere sempre di dimensioni dispari e con il pezzo al centro
@@ -83,6 +83,20 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     private BoardManager boardManager;
     public List<ScriptableStatusModifier> CellModifiers;
+    private static int nextID = 0; // Contatore statico condiviso da tutte le istanze
+
+    public int ID { get; set; } // ID pubblico per identificare univocamente il pezzo
+
+    void Awake()
+    {
+        AssignUniqueID();
+    }
+
+    private void AssignUniqueID()
+    {
+        ID = nextID;
+        nextID++; 
+    }
 
     void Start()
     {
@@ -176,7 +190,7 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     public PieceData GetPieceData()
     {
-        return new PieceData(PieceType, Hp, Attack, PieceColor, ID, Position, _MovementMatrix);
+        return new PieceData(PieceType, Hp, Attack, PieceColor, PrefabID, Position, _MovementMatrix);
     }
 
     public void BuildFromData(PieceData pData)
@@ -187,7 +201,7 @@ public class PieceStatus : MonoBehaviour, IClickable
             this.Hp = pData.Hp;
             this.Attack = pData.Attack;
             this.PieceColor = pData.PieceColor;
-            this.ID = pData.ID;
+            this.PrefabID = pData.PrefabID;
             this._MovementMatrix = pData.MovementMatrix;
             Vector2 pos = new Vector2(pData.Position[0], pData.Position[1]);
             this.Position = pos;

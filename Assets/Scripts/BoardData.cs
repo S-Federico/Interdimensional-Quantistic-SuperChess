@@ -77,7 +77,7 @@ public class PieceData
     public int Hp;
     public int Attack;
     public PieceColor PieceColor;
-    public int ID;
+    public int PrefabID;
     public int[] Position;
     public int[,] MovementMatrix;
 
@@ -87,7 +87,7 @@ public class PieceData
         this.Hp = hp;
         this.Attack = att;
         this.PieceColor = pColor;
-        this.ID = id;
+        this.PrefabID = id;
         this.MovementMatrix = movMatr;
         int[] pos = new int[2];
         pos[0] = (int)posix.x; // Converti la componente X in int
@@ -109,7 +109,7 @@ public class PieceData
                Hp == other.Hp &&
                Attack == other.Attack &&
                PieceColor == other.PieceColor &&
-               ID == other.ID &&
+               PrefabID == other.PrefabID &&
                Position[0] == other.Position[0] &&
                Position[1] == other.Position[1] &&
                MovementMatrixEquals(MovementMatrix, other.MovementMatrix);
@@ -133,7 +133,7 @@ public class PieceData
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(PieceType, Hp, Attack, PieceColor, ID, Position[0], Position[1], MovementMatrix);
+        return HashCode.Combine(PieceType, Hp, Attack, PieceColor, PrefabID, Position[0], Position[1], MovementMatrix);
     }
 
     public static PieceData FromPieceStatus(PieceStatus pieceStatus) {
@@ -142,7 +142,7 @@ public class PieceData
             pieceStatus.BaseHp,
             pieceStatus.BaseAttack,
             pieceStatus.PieceColor,
-            pieceStatus.ID,
+            pieceStatus.PrefabID,
             pieceStatus.Position,
             pieceStatus.MovementMatrix
         );

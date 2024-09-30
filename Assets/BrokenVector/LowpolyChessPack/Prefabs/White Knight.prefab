@@ -132,7 +132,7 @@ MonoBehaviour:
   scary: 0
   appliedModifiers: []
   PieceColor: 1
-  ID: 9
+  PrefabID: 9
   Position: {x: 0, y: 0}
   MovementMatrixInfo:
     gridSize: {x: 9, y: 9}

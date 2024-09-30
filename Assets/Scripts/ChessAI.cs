@@ -22,7 +22,7 @@ public class State
 public class ChessAI
 {
     PieceStatus[,] copiedBoard;
-    List<PieceStatus> copiedOpoonentAvaiblePieces;
+    List<PieceStatus> copiedOpponentAvaiblePieces;
     List<PieceStatus> copiedPlayerAvaiblePieces;
     private Stack<State> Hist;
     private int maxDepth;
@@ -32,6 +32,8 @@ public class ChessAI
     private int bestMoveX, bestMoveY; // Variabili per salvare la miglior mossa
     private List<GameObject> toDestroy;
     public List<GameObject> ToDestroy { get => toDestroy; }
+    List<PieceStatus> allBlackPieces;
+    List<PieceStatus> allWhitePieces;
     public ChessAI(ChessBoardModel cbm)
     {
         Hist = new Stack<State>();
@@ -39,14 +41,31 @@ public class ChessAI
         this.cbm = cbm; // Inizializzazione del modello della scacchiera
     }
 
-    public int[] GetBestMoveFromPosition(PieceStatus[,] board, int depth)
+    public int[] GetBestMoveFromPosition(PieceStatus[,] board, int depth, List<PieceStatus> opponentavaible, List<PieceStatus> playeravaible)
     {
         // Copia la board iniziale
+        copiedOpponentAvaiblePieces = CopyList(opponentavaible);
+        copiedPlayerAvaiblePieces = CopyList(playeravaible);
         copiedBoard = CopyBoard(board);
-
+        allBlackPieces = new List<PieceStatus>(copiedOpponentAvaiblePieces);
+        allWhitePieces = new List<PieceStatus>(copiedPlayerAvaiblePieces);
+        foreach (PieceStatus piece in copiedBoard)
+        {
+            if (piece != null)
+            {
+                if (piece.PieceColor == PieceColor.Black)
+                {
+                    allBlackPieces.Add(piece);
+                }
+                else
+                {
+                    allWhitePieces.Add(piece);
+                }
+            }
+        }
         Think(depth);
 
-        int[] move = new int[] { (int)bestPiece.Position.x, (int)bestPiece.Position.y, bestMoveX, bestMoveY };
+        int[] move = new int[] { (int)bestPiece.Position.x, (int)bestPiece.Position.y, bestMoveX, bestMoveY, bestPiece.ID };
 
         Debug.Log($"History stack count after AlphaBeta: {Hist.Count}");
 
@@ -83,7 +102,7 @@ public class ChessAI
         {
             int hValue = System.Int32.MinValue;
 
-            foreach (var piece in copiedBoard)
+            foreach (var piece in allBlackPieces)
             {
                 if (piece == null || piece.PieceColor != PieceColor.Black) continue; // Ignora celle vuote e pezzi bianchi
 
@@ -96,7 +115,7 @@ public class ChessAI
                     int targetCol = move[1];
                     //Debug.Log($"Black testing move: ({piece.Position.x}, {piece.Position.y}) -> ({targetRow}, {targetCol})");
 
-                    Move(new int[] { (int)piece.Position.x, (int)piece.Position.y, targetRow, targetCol }, copiedBoard);
+                    Move(new int[] { (int)piece.Position.x, (int)piece.Position.y, targetRow, targetCol }, copiedBoard, piece);
                     int thisMoveValue = AlphaBeta(depth - 1, !isMax, alpha, beta);
                     //Debug.Log($"Value:{thisMoveValue}");
 
@@ -125,7 +144,7 @@ public class ChessAI
         {
             int hValue = System.Int32.MaxValue;
 
-            foreach (var piece in copiedBoard)
+            foreach (var piece in allWhitePieces)
             {
                 if (piece == null || piece.PieceColor != PieceColor.White) continue; // Ignora celle vuote e pezzi neri
 
@@ -136,7 +155,7 @@ public class ChessAI
                     int targetRow = move[0];
                     int targetCol = move[1];
 
-                    Move(new int[] { (int)piece.Position.x, (int)piece.Position.y, targetRow, targetCol }, copiedBoard);
+                    Move(new int[] { (int)piece.Position.x, (int)piece.Position.y, targetRow, targetCol }, copiedBoard, piece);
                     int thisMoveValue = AlphaBeta(depth - 1, !isMax, alpha, beta);
 
                     Undo();
@@ -200,14 +219,22 @@ public class ChessAI
         return kingCount == 1;
     }
 
-    private void Move(int[] move, PieceStatus[,] board)
+    private void Move(int[] move, PieceStatus[,] board, PieceStatus piece)
     {
 
         int startRow = move[0];
         int startCol = move[1];
         int targetRow = move[2];
         int targetCol = move[3];
-        PieceStatus movingPiece = board[startRow, startCol];
+        PieceStatus movingPiece;
+        if (startRow == -1)
+        {
+            movingPiece = piece;
+        }
+        else
+        {
+            movingPiece = board[startRow, startCol];
+        }
         State state = new State(move, movingPiece);
 
         if (movingPiece == null) return;
@@ -216,7 +243,21 @@ public class ChessAI
         if (targetPiece == null)
         {
             board[targetRow, targetCol] = movingPiece;
-            board[startRow, startCol] = null;
+            if (startRow == -1)
+            {
+                if (movingPiece.PieceColor == PieceColor.Black)
+                {
+                    copiedOpponentAvaiblePieces.Remove(movingPiece);
+                }
+                else
+                {
+                    copiedPlayerAvaiblePieces.Remove(movingPiece);
+                }
+            }
+            else
+            {
+                board[startRow, startCol] = null;
+            }
             movingPiece.Position = new Vector2(targetRow, targetCol);
             state.hasMoved = true;
         }
@@ -225,7 +266,6 @@ public class ChessAI
             if (movingPiece.PieceColor != targetPiece.PieceColor)
             {
                 targetPiece.TakeDamage(movingPiece.Attack);
-
                 if (targetPiece.Hp <= 0)
                 {
                     state.capturedPiece = targetPiece;
@@ -281,9 +321,27 @@ public class ChessAI
             int targetRow = move[2];
             int targetCol = move[3];
 
-            if (hasMoved)
+            if (hasMoved && startRow != -1)
             {
                 copiedBoard[startRow, startCol] = movedPiece;
+                movedPiece.Position = new Vector2(startRow, startCol);
+                copiedBoard[targetRow, targetCol] = null;
+                if (capturedPiece != null)
+                {
+                    copiedBoard[targetRow, targetCol] = capturedPiece;
+                    capturedPiece.Hp += movedPiece.Attack;
+                }
+            }
+            else if (hasMoved && startRow == -1)
+            {
+                if (movedPiece.PieceColor == PieceColor.Black)
+                {
+                    copiedOpponentAvaiblePieces.Add(movedPiece);
+                }
+                else
+                {
+                    copiedPlayerAvaiblePieces.Add(movedPiece);
+                }
                 movedPiece.Position = new Vector2(startRow, startCol);
                 copiedBoard[targetRow, targetCol] = null;
                 if (capturedPiece != null)
@@ -296,6 +354,8 @@ public class ChessAI
             {
                 copiedBoard[targetRow, targetCol].Hp += movedPiece.Attack;
             }
+
+
 
         }
     }
@@ -321,7 +381,9 @@ public class ChessAI
                     copy.Hp = board[i, j].Hp;
                     copy.Attack = board[i, j].Attack;
                     copy.PieceColor = board[i, j].PieceColor;
+                    copy.PrefabID = board[i, j].PrefabID;
                     copy.ID = board[i, j].ID;
+
 
                     // Copia profonda della posizione
                     copy.Position = new Vector2(board[i, j].Position.x, board[i, j].Position.y);
@@ -334,5 +396,38 @@ public class ChessAI
         }
         return copiedBoard;
     }
+
+    private List<PieceStatus> CopyList(List<PieceStatus> board)
+    {
+        List<PieceStatus> copiedBoard = new List<PieceStatus>();
+
+        foreach (var piece in board)
+        {
+            if (piece != null)
+            {
+                GameObject temp = new GameObject("temp");
+                toDestroy.Add(temp);
+
+                PieceStatus copy = temp.AddComponent<PieceStatus>();
+
+                copy.PieceType = piece.PieceType;
+                copy.Hp = piece.Hp;
+                copy.Attack = piece.Attack;
+                copy.PieceColor = piece.PieceColor;
+                copy.PrefabID = piece.PrefabID;
+                copy.ID = piece.ID;
+
+                // Copia profonda della posizione
+                copy.Position = new Vector2(piece.Position.x, piece.Position.y);
+
+                copy.MovementMatrixInfo = piece.MovementMatrixInfo;
+
+                copiedBoard.Add(copy);
+            }
+        }
+
+        return copiedBoard;
+    }
+
 
 }

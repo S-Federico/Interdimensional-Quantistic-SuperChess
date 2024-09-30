@@ -265,7 +265,7 @@ public class BoardManager : MonoBehaviour
     {
         foreach (var prefab in this.PiecePrefabs)
         {
-            if (prefab.GetComponent<PieceStatus>().ID == id)
+            if (prefab.GetComponent<PieceStatus>().PrefabID == id)
             {
                 return prefab;
             }
@@ -326,7 +326,8 @@ public class BoardManager : MonoBehaviour
         if (piece == null || destination == null) return;
         PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
         // Perform logical movement
-        Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] = null;
+        if(piece.GetComponent<PieceStatus>().Position.x!=-1)
+            Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] = null;
 
         Pieces[(int)destination.x, (int)destination.y] = pieceStatus;
 
@@ -379,7 +380,7 @@ public class BoardManager : MonoBehaviour
                 for (int j = 0; j < Colonna; j++)
                 {
                     if (bData.piecesData[i, j] == null) continue;
-                    GameObject obj = GetPieceFromId(bData.piecesData[i, j].ID);
+                    GameObject obj = GetPieceFromId(bData.piecesData[i, j].PrefabID);
                     if (obj != null)
                     {
                         obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
@@ -512,7 +513,7 @@ public class BoardManager : MonoBehaviour
             }
             if (p != null)
             {
-                GameObject obj = GetPieceFromId(p.ID);
+                GameObject obj = GetPieceFromId(p.PrefabID);
                 if (obj != null)
                 {
                     obj = Instantiate(obj, new Vector3(pieceX, pieceY, pieceZ), Quaternion.identity);
@@ -542,7 +543,7 @@ public class BoardManager : MonoBehaviour
                 pieceX = opponentPiecesPlane.transform.position.x - xoffset;
                 pieceZ = (opponentPieceSpacingz / 2) + ((i - (opponentPieces.Count / 2)) * opponentPieceSpacingz) + opponentPiecesPlane.transform.position.z - (opponentPlaneSize.z / 2) + (padding / 2);
             }
-            GameObject obj = GetPieceFromId(p.ID);
+            GameObject obj = GetPieceFromId(p.PrefabID);
 
             if (obj != null)
             {
