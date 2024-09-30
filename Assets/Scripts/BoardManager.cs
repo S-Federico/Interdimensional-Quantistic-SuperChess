@@ -67,7 +67,7 @@ public class BoardManager : MonoBehaviour
             // Gestione input del giocatore
             if (showMovesFlag)
             {
-                if (selectedPiece != null)
+                if (selectedPiece != null && selectedPiece.GetComponent<PieceStatus>().Position!=new Vector2(-1f,-1f))
                 {
                     HighlightMoves();
                 }
@@ -324,37 +324,23 @@ public class BoardManager : MonoBehaviour
     {
         if (piece == null || destination == null) return;
         PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
-        if (pieceStatus == null)
-        {
-            Debug.Log("Piecestatus nullo");
-        }
         // Perform logical movement
         Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] = null;
-        if (Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] != null)
-        {
-            Debug.Log("Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] dovrebbe essere nullo ma non lo è!");
-        }
+ 
         Pieces[(int)destination.x, (int)destination.y] = pieceStatus;
-        if (Pieces[(int)destination.x, (int)destination.y] == null)
-        {
-            Debug.Log("Pieces[(int)destination.x, (int)destination.y] dovrebbe non essere nullo ma lo è!");
-        }
+
         pieceStatus.Position = destination;
-        if (pieceStatus.Position != destination)
-        {
-            Debug.Log("posizione del piecestatus è diverso da destinazione!");
-        }
+
         Vector3 newp = boardBehaviour.squares[(int)destination.x, (int)destination.y].transform.position;
-        Debug.Log($"piece.transform.position= {piece.transform.position.x},{piece.transform.position.y},{piece.transform.position.z}");
-        Debug.Log($"newp= {newp.x},{newp.y},{newp.z}");
-        Debug.Log($"newp= {destination.x},{destination.y}");
+
 
         // Perform phisical movement
-        piece.transform.position = boardBehaviour.GetSquare((int)destination.x, (int)destination.y).transform.position;
-        Debug.Log($"piece.transform.position= {piece.transform.position.x},{piece.transform.position.y},{piece.transform.position.z}");
-
+        Debug.Log($"Dovrei andare qua {boardBehaviour.GetSquare((int)destination.x, (int)destination.y).gameObject.name} {destination.x};{destination.y}: {newp.x} ; {newp.y} ; {newp.z}");
+        piece.transform.position = boardBehaviour.GetSquare((int)destination.x, (int)destination.y).gameObject.transform.position;
+        Debug.Log($"E invece sto qua:{piece.transform.position.x}  {piece.transform.position.y}  {piece.transform.position.z}");
 
     }
+
     public bool CanPlacePiece(PieceStatus piece)
     {
         if (piece == null)
@@ -364,7 +350,7 @@ public class BoardManager : MonoBehaviour
         BoardSquare placement = piece.GetSquareBelow();
         if (placement != null)
         {
-            if (cbm.GetAllowedPlacements(currentTurn,Pieces,this).Contains(placement))
+            if (cbm.GetAllowedPlacements(piece,Pieces,this).Contains(placement))
             {
                 if ((piece.PieceColor == PieceColor.Black && currentTurn == Turn.AI) || (piece.PieceColor == PieceColor.White && currentTurn == Turn.Player))
                     return true;
@@ -531,6 +517,7 @@ public class BoardManager : MonoBehaviour
                     obj = Instantiate(obj, new Vector3(pieceX, pieceY, pieceZ), Quaternion.identity);
                     PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
                     pieceStatus.BuildFromData(p);
+                    pieceStatus.Position=new Vector2(-1f,-1f);
                     actualPlayerPieces.Add(pieceStatus);
                 }
             }
@@ -560,7 +547,7 @@ public class BoardManager : MonoBehaviour
             {
                 obj = Instantiate(obj, new Vector3(pieceX, pieceY, pieceZ), Quaternion.identity);
                 p = obj.GetComponent<PieceStatus>();
-                p.Position = new Vector2();
+                p.Position = new Vector2(-1f,-1f);
                 actualOpponentPieces.Add(p);
             }
         }

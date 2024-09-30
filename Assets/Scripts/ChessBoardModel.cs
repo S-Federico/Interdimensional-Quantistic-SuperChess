@@ -6,36 +6,44 @@ using Unity.VisualScripting;
 using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Text;
 
 public class ChessBoardModel
 {
 
-    public void PrintBoard(PieceStatus[,] board)
+    private void PrintBoard(PieceStatus[,] board)
     {
-        for (int i = 0; i < board.GetLength(0); i++)
+        string row = "";
+
+        for (int i = 0 ; i <board.GetLength(0); i++)
         {
-            Console.Write("Riga " + (i + 1) + " :");
             for (int j = 0; j < board.GetLength(1); j++)
             {
                 if (board[i, j] != null)
-                    Console.Write(board[i, j].GetType() + "\t");
+                {
+                    row += $"{board[i, j].PieceType.ToString()[0]}({board[i, j].PieceColor.ToString()[0]}) ";
+                }
                 else
-                    Console.Write("N");
+                {
+                    row += "[       ] "; // Celle vuote
+                }
             }
-            Console.Write("\n");
+            row += "\n";
         }
+        Debug.Log(row);
     }
+
 
     public bool IsWhite(int riga, int colonna, PieceStatus[,] board)
     {
         return board[riga, colonna].PieceColor == PieceColor.White;
     }
 
-    public List<BoardSquare> GetAllowedPlacements(Turn currentTurn,PieceStatus[,] board,BoardManager boardManager)
+    public List<BoardSquare> GetAllowedPlacements(PieceStatus piece, PieceStatus[,] board, BoardManager boardManager)
     {
         List<BoardSquare> allowedPlacements = new List<BoardSquare>();
 
-        if (currentTurn == Turn.AI)
+        if (piece.PieceColor == PieceColor.Black)
         {
             for (int i = 0; i < 2; i++)
             {
@@ -64,105 +72,170 @@ public class ChessBoardModel
     public HashSet<int[]> GetPossibleMovesForPiece(PieceStatus pieceStatus, PieceStatus[,] board)
     {
         HashSet<int[]> moves = new HashSet<int[]>();
-
-        //serve per aggiungere separatamente le mosse sconnesse, come quelle del cavallo
         HashSet<int[]> disconnectedMoves = new HashSet<int[]>();
+
+        if(pieceStatus.Position.x==-1 && pieceStatus.Position.y==-1){
+            BoardManager bm= GameObject.Find("BoardManager").GetComponent<BoardManager>();
+            List<BoardSquare> allowedPlacements=GetAllowedPlacements(pieceStatus, board,bm);
+            foreach(BoardSquare square in allowedPlacements){
+                moves.Add(new int[] { (int)square.Position.x, (int)square.Position.y }) ;
+            }
+            return moves;
+        }
+
+        StringBuilder log = new StringBuilder();  // Variabile per accumulare i log
+        PrintBoard(board);
 
         int riga = (int)pieceStatus.Position.x;
         int colonna = (int)pieceStatus.Position.y;
 
         PieceStatus piece = board[riga, colonna];
         if (piece == null)
+        {
+            log.AppendLine($"No piece found at position ({riga},{colonna}). Exiting method.");
+            Debug.Log(log.ToString());
             return moves;
+        }
+
+        log.AppendLine($"Processing moves for {piece.PieceType} at position ({riga},{colonna})");
 
         int[,] matrix = piece.MovementMatrix;
         int offsetRighe = matrix.GetLength(0) / 2;
         int offsetColonne = matrix.GetLength(1) / 2;
 
-        // Creiamo una lista per tracciare le caselle ostruite
         HashSet<(int, int)> caselleOstruite = CalcolaCaselleOstruite(riga, colonna, board);
 
-        // Scorri sulle righe della matrice di movimento
         for (int i = 0; i < matrix.GetLength(0); i++)
         {
-            // Scorri sulle colonne della matrice di movimento
             for (int j = 0; j < matrix.GetLength(1); j++)
             {
                 int newRiga = riga + (i - offsetRighe);
                 int newColonna = colonna + (j - offsetColonne);
 
-                // Controlla che la nuova posizione sia all'interno della scacchiera
+                // Verifica se la posizione è dentro la scacchiera
                 if (newRiga >= 0 && newRiga < board.GetLength(0) && newColonna >= 0 && newColonna < board.GetLength(1))
                 {
-                    // Controlla che la cella non sia ostruita
-                    if (caselleOstruite.Contains((newRiga, newColonna)))
-                        continue;
+                    log.AppendLine($"Evaluating position ({newRiga},{newColonna})");
 
-                    // Se la matrice di movimento segna che ci puoi andare
+                    // Verifica se la casella è ostruita
+                    if (caselleOstruite.Contains((newRiga, newColonna)))
+                    {
+                        log.AppendLine($"Position ({newRiga},{newColonna}) is blocked. Skipping.");
+                        continue;
+                    }
+
+                    // Movimento normale
                     if (matrix[i, j] == 1)
                     {
                         if (board[newRiga, newColonna] == null)
                         {
-                            // Aggiungi come mossa di movimento (tipo = 1)
+                            log.AppendLine($"Movement to empty position ({newRiga},{newColonna}) added.");
                             moves.Add(new int[] { newRiga, newColonna, 1 });
                         }
-                        else if (board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor) // Controlla se è un pezzo avversario
+                        else if (board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor)
                         {
-                            // Aggiungi come mossa di attacco (tipo = 2)
                             if (!HasStatusEffect(board[newRiga, newColonna], StatusEffectType.Cloaked))
+                            {
+                                log.AppendLine($"Attack move to enemy at ({newRiga},{newColonna}) added.");
                                 moves.Add(new int[] { newRiga, newColonna, 2 });
+                            }
+                            else
+                            {
+                                log.AppendLine($"Enemy at ({newRiga},{newColonna}) is cloaked. Skipping.");
+                            }
+                        }
+                        else
+                        {
+                            log.AppendLine($"Friendly piece at ({newRiga},{newColonna}). Skipping.");
                         }
                     }
-                    // Se la casella è solo movimento, non attacco
+                    // Movimento solo (non attacco)
                     else if (matrix[i, j] == 2)
                     {
                         if (board[newRiga, newColonna] == null)
                         {
-                            // Aggiungi come mossa di movimento (tipo = 1)
+                            log.AppendLine($"Movement-only move to empty position ({newRiga},{newColonna}) added.");
                             moves.Add(new int[] { newRiga, newColonna, 1 });
                         }
+                        else
+                        {
+                            log.AppendLine($"Position ({newRiga},{newColonna}) is occupied by {board[newRiga, newColonna].gameObject.name}. Skipping.");
+                        }
                     }
-                    // Se la casella è solo attacco
+                    // Attacco solo
                     else if (matrix[i, j] == 3)
                     {
                         if (board[newRiga, newColonna] != null && board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor)
                         {
-                            // Aggiungi come mossa di movimento (tipo = 1)
                             if (!HasStatusEffect(board[newRiga, newColonna], StatusEffectType.Cloaked))
+                            {
+                                log.AppendLine($"Attack-only move to enemy at ({newRiga},{newColonna}) added.");
                                 moves.Add(new int[] { newRiga, newColonna, 2 });
+                            }
+                            else
+                            {
+                                log.AppendLine($"Enemy at ({newRiga},{newColonna}) is cloaked. Skipping.");
+                            }
+                        }
+                        else
+                        {
+                            log.AppendLine($"No enemy at ({newRiga},{newColonna}). Skipping.");
                         }
                     }
-                    //se la casella è movimento e attacco sconnesso 
+                    // Movimento e attacco sconnesso
                     else if (matrix[i, j] == 4)
                     {
-                        if (board[newRiga, newColonna] == null) // ZIO MATTONE
+                        if (board[newRiga, newColonna] == null)
                         {
-                            // Aggiungi come mossa di movimento (tipo = 1)
-                            disconnectedMoves.Add(new int[] { newRiga, newColonna, 1 }); // ZIO SCIMMIA
+                            log.AppendLine($"Disconnected movement move to empty position ({newRiga},{newColonna}) added.");
+                            disconnectedMoves.Add(new int[] { newRiga, newColonna, 1 });
                         }
-                        else if (board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor) // Controlla se è un pezzo avversario
+                        else if (board[newRiga, newColonna].PieceColor != pieceStatus.PieceColor)
                         {
-                            // Aggiungi come mossa di attacco (tipo = 2)
                             if (!HasStatusEffect(board[newRiga, newColonna], StatusEffectType.Cloaked))
-                                disconnectedMoves.Add(new int[] { newRiga, newColonna, 2 }); // ZIO PICCIONE
+                            {
+                                log.AppendLine($"Disconnected attack move to enemy at ({newRiga},{newColonna}) added.");
+                                disconnectedMoves.Add(new int[] { newRiga, newColonna, 2 });
+                            }
+                            else
+                            {
+                                log.AppendLine($"Enemy at ({newRiga},{newColonna}) is cloaked. Skipping.");
+                            }
+                        }
+                        else
+                        {
+                            log.AppendLine($"Friendly piece at ({newRiga},{newColonna}). Skipping.");
                         }
                     }
-
-
+                }
+                else
+                {
+                    log.AppendLine($"Position ({newRiga},{newColonna}) is outside the board. Skipping.");
                 }
             }
         }
 
-        // Pulizia del set di mosse per assicurarsi che siano connesse al pezzo di partenza con movimenti (tipo = 1)
+        // Log pre-pulizia
+        string preCleanMoves = string.Join(",", moves.Select(move => $"({move[0]},{move[1]},{move[2]})"));
+        log.AppendLine($"Moves before cleaning: {preCleanMoves}");
+
+        // Pulizia delle mosse sconnesse
         moves = CleanDisconnectedMoves(moves, riga, colonna, board);
         moves.UnionWith(disconnectedMoves);
 
+        // Log post-pulizia
+        string postCleanMoves = string.Join(",", moves.Select(move => $"({move[0]},{move[1]},{move[2]})"));
+        log.AppendLine($"Moves after cleaning: {postCleanMoves}");
 
-        string m = "Moves: " + string.Join(",", moves.Select(move => $"({move[0]},{move[1]})"));
+        // Log finale
+        log.AppendLine($"{moves.Count} moves found for {piece.PieceType} at position ({riga},{colonna})");
 
-        Debug.Log($"{moves.Count} Moves found for {piece.PieceType}: {m}");
+        // Stampa del log completo in un'unica chiamata
+        Debug.Log(log.ToString());
+
         return moves;
     }
+
 
     private HashSet<(int, int)> CalcolaCaselleOstruite(int riga, int colonna, PieceStatus[,] board)
     {
