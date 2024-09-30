@@ -31,6 +31,36 @@ public class ChessBoardModel
         return board[riga, colonna].PieceColor == PieceColor.White;
     }
 
+    public List<BoardSquare> GetAllowedPlacements(Turn currentTurn,PieceStatus[,] board,BoardManager boardManager)
+    {
+        List<BoardSquare> allowedPlacements = new List<BoardSquare>();
+
+        if (currentTurn == Turn.AI)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (board[i, j] == null)
+                        allowedPlacements.Add(boardManager.GetSquare(i, j).GetComponent<BoardSquare>());
+                }
+            }
+        }
+        else
+        {
+            for (int i = 6; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (board[i, j] == null)
+                        allowedPlacements.Add(boardManager.GetSquare(i, j).GetComponent<BoardSquare>());
+                }
+            }
+        }
+
+        return allowedPlacements;
+    }
+
     public HashSet<int[]> GetPossibleMovesForPiece(PieceStatus pieceStatus, PieceStatus[,] board)
     {
         HashSet<int[]> moves = new HashSet<int[]>();

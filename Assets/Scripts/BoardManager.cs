@@ -364,7 +364,7 @@ public class BoardManager : MonoBehaviour
         BoardSquare placement = piece.GetSquareBelow();
         if (placement != null)
         {
-            if (GetAllowedPlacements().Contains(placement))
+            if (cbm.GetAllowedPlacements(currentTurn,Pieces,this).Contains(placement))
             {
                 if ((piece.PieceColor == PieceColor.Black && currentTurn == Turn.AI) || (piece.PieceColor == PieceColor.White && currentTurn == Turn.Player))
                     return true;
@@ -373,35 +373,6 @@ public class BoardManager : MonoBehaviour
         return false;
     }
 
-    public List<BoardSquare> GetAllowedPlacements()
-    {
-        List<BoardSquare> allowedPlacements = new List<BoardSquare>();
-
-        if (currentTurn == Turn.AI)
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (Pieces[i, j] == null)
-                        allowedPlacements.Add(GetSquare(i, j).GetComponent<BoardSquare>());
-                }
-            }
-        }
-        else
-        {
-            for (int i = 6; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (Pieces[i, j] == null)
-                        allowedPlacements.Add(GetSquare(i, j).GetComponent<BoardSquare>());
-                }
-            }
-        }
-
-        return allowedPlacements;
-    }
     public BoardData GetBoardData()
     {
         return new BoardData(currentTurn, Pieces);

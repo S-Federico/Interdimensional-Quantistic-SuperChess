@@ -266,8 +266,11 @@ public class PieceStatus : MonoBehaviour, IClickable
     public void OnDragEnd()
     {
         BoardSquare square = GetSquareBelow();
-        Debug.Log($"Trying to place piece in ({square.Position.x},{square.Position.y}): {boardManager.CanPlacePiece(this)}");
-
+        if(square!=null){
+            Debug.Log($"Trying to place piece in ({square.Position.x},{square.Position.y}): {boardManager.CanPlacePiece(this)}");
+        }else{
+            Debug.Log("Square null!");
+        }
         if (boardManager.CanPlacePiece(this) && square != null)
         {
             transform.position = square.gameObject.transform.position;
