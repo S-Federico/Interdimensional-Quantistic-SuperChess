@@ -54,7 +54,8 @@ public class BoardManager : MonoBehaviour
 
     void Update()
     {
-        if (Pieces != null && ChessAI.IsGameOver(Pieces)) {
+        // Check on GameManager.Instance.IsGameover to avoit invoking GameOver function every frame
+        if (Pieces != null && ChessAI.IsGameOver(Pieces) && !GameManager.Instance.IsGameOver) {
             GameManager.Instance.GameOver();
         }
         if (currentTurn == Turn.Player)
