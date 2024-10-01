@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameUI : MonoBehaviour
 {
@@ -50,5 +51,16 @@ public class GameUI : MonoBehaviour
 
     public void MenuButtonPressed() {
         GameManager.Instance.IsPaused = !GameManager.Instance.IsPaused;
+    }
+
+    public void GoToNextLevel() {
+        GameManager.Instance.AdvanceLevel();
+        GameInfo gameInfo = GameManager.Instance.GameInfo;
+        List<PieceStatus> enemies = LevelGenerator.GenerateEnemies(gameInfo.currentLevel, gameInfo.currentStage);
+        BackToMainMenu();
+    }
+
+    public void GoToShop() {
+        SceneManager.LoadScene("ShopMockup");
     }
 }

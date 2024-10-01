@@ -6,37 +6,36 @@ using UnityEngine;
 public class OpponentManager : MonoBehaviour
 {
     public List<PieceStatus> pieces;
-    private ChessAI ai; 
+    private ChessAI ai;
     private ChessBoardModel cbm;
     public BoardManager boardManager;
+    public PlayerManager playerManager;
 
     public void Start()
     {
-                cbm = new ChessBoardModel();
-                ai = new ChessAI(cbm); 
-                boardManager = GameObject.FindAnyObjectByType<BoardManager>();
-
+        cbm = new ChessBoardModel();
+        ai = new ChessAI(cbm);
+        boardManager = GameObject.FindAnyObjectByType<BoardManager>();
+        playerManager = GameObject.FindAnyObjectByType<PlayerManager>();
     }
 
     public void ExecuteAITurn(PieceStatus[,] Pieces)
     {
         // Calcola la migliore mossa con l'IA
-        int[] bestMove = ai.GetBestMoveFromPosition(Pieces, 4); // Imposta la profondità desiderata (es. 3)
-        if (bestMove == null || bestMove.Length != 4)
+        int[] bestMove = ai.GetBestMoveFromPosition(Pieces, 3,pieces,playerManager.pieces); // Imposta la profondità desiderata (es. 3)
+        if (bestMove == null)
         {
             Debug.Log("Nessuna mossa valida trovata dall'IA.");
             // Gestire la fine del gioco o lo stallo
             return;
         }
 
-        if (bestMove.Length == 4)
+        if (bestMove[0]!=-1)
         {
             int startX = bestMove[0];
             int startY = bestMove[1];
             int endX = bestMove[2];
             int endY = bestMove[3];
-
-            Debug.Log($"Start=({startX},{startY})  Finish=({endX},{endY})");
 
             PieceStatus movingPiece = Pieces[startX, startY];
 
@@ -52,6 +51,23 @@ public class OpponentManager : MonoBehaviour
 
             boardManager.selectedPiece = null;
 
+        }else{
+            int endX = bestMove[2];
+            int endY = bestMove[3];
+            int pID = bestMove[4];
+
+            boardManager.SelectPiece(FindPiecebyID(pID).gameObject);
+            if (Pieces[endX, endY] == null)
+            {
+                boardManager.MovePiece(boardManager.selectedPiece, new Vector2(endX, endY));
+                pieces.Remove(FindPiecebyID(pID));
+            }
+            else
+            {
+                Debug.Log("A piece outside the board just attacked one inside! Fix that!");
+            }
+
+            boardManager.selectedPiece = null;
         }
 
         CleanTempObjects();
@@ -64,5 +80,15 @@ public class OpponentManager : MonoBehaviour
             Destroy(toDestroy);
         }
     }
+
+    public PieceStatus FindPiecebyID(int ID){
+        PieceStatus result =null;
+        foreach(PieceStatus p in pieces){
+            if (p.ID == ID)
+            result=p;
+        }
+        return result;
+    }
+
 
 }

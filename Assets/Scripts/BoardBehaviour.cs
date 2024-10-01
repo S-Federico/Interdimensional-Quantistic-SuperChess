@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class BoardBehaviour : MonoBehaviour
 {
-    public GameObject[,] squares; // Reso pubblico per permettere l'accesso da BoardManager
+    public GameObject[,] squares; 
     private Transform planeTransform;
     private float squareSize;
-    public int BoardSize = 8; // Reso pubblico per poter essere modificato se necessario
+    public int BoardSize = 8; 
 
     public void InitializeBoard()
     {
@@ -16,8 +16,7 @@ public class BoardBehaviour : MonoBehaviour
             planeTransform = this.transform.Find("Plane");
             if (planeTransform != null)
             {
-                // Calcola la dimensione delle caselle in base alle dimensioni del piano
-                squareSize = planeTransform.localScale.x * 10 / BoardSize; // Scala moltiplicata per 10 poiché il piano standard di Unity è di 10 unità
+                squareSize = planeTransform.localScale.x * 10 / BoardSize; 
             }
             else
             {

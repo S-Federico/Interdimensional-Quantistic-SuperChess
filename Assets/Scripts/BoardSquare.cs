@@ -6,8 +6,9 @@ public class BoardSquare : MonoBehaviour, IClickable
 {
     private BoardManager boardManager;
     private Vector2 position;
-    public Vector2 Position {get => position; set => position = value;}
+    public Vector2 Position { get => position; set => position = value; }
     public List<ScriptableStatusModifier> ManualsModifiers = new List<ScriptableStatusModifier>();
+
     void Awake()
     {
         if (boardManager == null)
@@ -19,5 +20,21 @@ public class BoardSquare : MonoBehaviour, IClickable
     public void OnClick()
     {
         boardManager.HandleSquareClick(this);
+    }
+
+    // Override del metodo Equals per confrontare i BoardSquare in base alla loro Position
+    public override bool Equals(object obj)
+    {
+        if (obj == null || !(obj is BoardSquare))
+            return false;
+
+        BoardSquare other = obj as BoardSquare;
+        return this.Position == other.Position; // Confronto basato sulla posizione
+    }
+
+    // Override di GetHashCode (necessario quando si sovrascrive Equals)
+    public override int GetHashCode()
+    {
+        return Position.GetHashCode();
     }
 }

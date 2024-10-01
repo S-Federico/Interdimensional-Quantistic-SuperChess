@@ -11,7 +11,7 @@ using System.Linq;
 
 public class BoardManager : MonoBehaviour
 {
-    private Turn currentTurn = Turn.Player;
+    public Turn currentTurn = Turn.Player;
     [SerializeField] private GameObject board;
     public Array2DInt BoardData;
     public List<GameObject> PiecePrefabs;
@@ -28,6 +28,9 @@ public class BoardManager : MonoBehaviour
     public OpponentManager opponent;
     private BoardBehaviour boardBehaviour;
     public GameObject plane_consumables;
+    public GameObject playerPiecesPlane;
+    public GameObject opponentPiecesPlane;
+
     public List<GameObject> consumables = new List<GameObject>();
 
     void Start()
@@ -51,14 +54,23 @@ public class BoardManager : MonoBehaviour
 
     void Update()
     {
+        if (Pieces != null && ChessAI.IsGameOver(Pieces)) {
+            GameManager.Instance.GameOver();
+        }
         if (currentTurn == Turn.Player)
         {
             alreadyExcecuting = false;
-
+            foreach (PieceStatus p in Player.pieces)
+            {
+                if (p != null && p.gameObject.TryGetComponent<DraggableBehaviour>(out DraggableBehaviour draggableBehaviour))
+                {
+                    draggableBehaviour.isDraggable = true;
+                }
+            }
             // Gestione input del giocatore
             if (showMovesFlag)
             {
-                if (selectedPiece != null)
+                if (selectedPiece != null && selectedPiece.GetComponent<PieceStatus>().Position != new Vector2(-1f, -1f))
                 {
                     HighlightMoves();
                 }
@@ -152,11 +164,9 @@ public class BoardManager : MonoBehaviour
     {
         if (piece != null)
         {
-            Debug.Log("Pezzo non nullo");
             //Deselect piece if is selected while is still selected
             if (selectedPiece == piece)
             {
-                Debug.Log("Deselect piece");
                 selectedPiece = null;
             }
             else
@@ -186,7 +196,6 @@ public class BoardManager : MonoBehaviour
         }
         HideMoves();
         showMovesFlag = true;
-        //highlightedFlag = selectedPiece != null;
     }
 
     public GameObject GetSquare(int x, int y)
@@ -213,10 +222,40 @@ public class BoardManager : MonoBehaviour
                 GameObject obj = GetPieceFromId(BoardData.GetCell(j, i));
                 if (obj != null)
                 {
-                    obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
                     PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
-                    pieceStatus.Position = new Vector2(i, j);
-                    result[i, j] = pieceStatus;
+                    // Here get PieceStatus from prefab from inspector. Then build PieceData from it and store in 
+                    // PlayerInfo. In this way it can be read from when the game starts
+                    if (pieceStatus.PieceColor == PieceColor.White)
+                    {
+                        if (pieceStatus.PieceType == PieceType.King)
+                        {
+                            obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                            pieceStatus = obj.GetComponent<PieceStatus>();
+                            pieceStatus.Position = new Vector2(i, j);
+                            result[i, j] = pieceStatus;
+                        }
+                        else
+                        {
+                            GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces.Add(PieceData.FromPieceStatus(pieceStatus));
+
+                        }
+                    }
+                    // If the piece is black, instantiate directly in board
+                    else
+                    {
+                        if (pieceStatus.PieceType == PieceType.King)
+                        {
+                            obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
+                            pieceStatus = obj.GetComponent<PieceStatus>();
+                            pieceStatus.Position = new Vector2(i, j);
+                            result[i, j] = pieceStatus;
+                        }
+                        else
+                        {
+                            opponent.pieces.Add(pieceStatus);
+                        }
+                    }
+
                 }
             }
         }
@@ -229,7 +268,7 @@ public class BoardManager : MonoBehaviour
     {
         foreach (var prefab in this.PiecePrefabs)
         {
-            if (prefab.GetComponent<PieceStatus>().ID == id)
+            if (prefab.GetComponent<PieceStatus>().PrefabID == id)
             {
                 return prefab;
             }
@@ -289,15 +328,40 @@ public class BoardManager : MonoBehaviour
     {
         if (piece == null || destination == null) return;
         PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
-
         // Perform logical movement
-        Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] = null;
+        if(piece.GetComponent<PieceStatus>().Position.x!=-1)
+            Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] = null;
+
         Pieces[(int)destination.x, (int)destination.y] = pieceStatus;
+
         pieceStatus.Position = destination;
 
-        // Perform phisical movement
-        piece.transform.position = boardBehaviour.squares[(int)destination.x, (int)destination.y].transform.position;
+        Vector3 newp = boardBehaviour.squares[(int)destination.x, (int)destination.y].transform.position;
 
+
+        // Perform phisical movement
+        Debug.Log($"Dovrei andare qua {boardBehaviour.GetSquare((int)destination.x, (int)destination.y).gameObject.name} {destination.x};{destination.y}: {newp.x} ; {newp.y} ; {newp.z}");
+        piece.transform.position = boardBehaviour.GetSquare((int)destination.x, (int)destination.y).gameObject.transform.position;
+        Debug.Log($"E invece sto qua:{piece.transform.position.x}  {piece.transform.position.y}  {piece.transform.position.z}");
+
+    }
+
+    public bool CanPlacePiece(PieceStatus piece)
+    {
+        if (piece == null)
+        {
+            return false;
+        }
+        BoardSquare placement = piece.GetSquareBelow();
+        if (placement != null)
+        {
+            if (cbm.GetAllowedPlacements(piece, Pieces, this).Contains(placement))
+            {
+                if ((piece.PieceColor == PieceColor.Black && currentTurn == Turn.AI) || (piece.PieceColor == PieceColor.White && currentTurn == Turn.Player))
+                    return true;
+            }
+        }
+        return false;
     }
 
     public BoardData GetBoardData()
@@ -319,7 +383,7 @@ public class BoardManager : MonoBehaviour
                 for (int j = 0; j < Colonna; j++)
                 {
                     if (bData.piecesData[i, j] == null) continue;
-                    GameObject obj = GetPieceFromId(bData.piecesData[i, j].ID);
+                    GameObject obj = GetPieceFromId(bData.piecesData[i, j].PrefabID);
                     if (obj != null)
                     {
                         obj = Instantiate(obj, GetSquare(i, j).transform.position, GetSquare(i, j).transform.rotation);
@@ -409,6 +473,107 @@ public class BoardManager : MonoBehaviour
                 Debug.LogError("Consumabile " + i + " nullo");
             }
             i++;
+        }
+    }
+
+
+    public void InitializePiecesPlanes()
+    {
+
+        int npieces = 10;
+
+        // Seleziona i pezzi del giocatore e dell'avversario
+        List<PieceData> playerPieces = Utility.SelectCurrentMatchPieces(npieces, GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces);
+        List<PieceStatus> opponentPieces = Utility.SelectCurrentMatchPieces(npieces, opponent.pieces);
+        List<PieceStatus> actualOpponentPieces = new List<PieceStatus>();
+        List<PieceStatus> actualPlayerPieces = new List<PieceStatus>();
+
+        // Ottieni le dimensioni dei piani
+        Vector3 playerPlaneSize = playerPiecesPlane.GetComponent<Renderer>().bounds.size;
+        Vector3 opponentPlaneSize = opponentPiecesPlane.GetComponent<Renderer>().bounds.size;
+
+        float padding = playerPlaneSize.z / 12;
+        float playerPieceSpacingz = (playerPlaneSize.z - padding) / (npieces / 2);
+        float opponentPieceSpacingz = (opponentPlaneSize.z - padding) / (npieces / 2);
+
+        float pieceY = playerPiecesPlane.transform.position.y; // Assume che i piani siano su un'asse Y fissa
+        float xoffset = playerPlaneSize.x / 4;
+
+        for (int i = 0; i < playerPieces.Count; i++)
+        {
+            float pieceX;
+            float pieceZ;
+            PieceData p = playerPieces.ElementAt(i);
+            if (i < (playerPieces.Count / 2))
+            {
+                pieceZ = (playerPieceSpacingz / 2) + (i * playerPieceSpacingz) + playerPiecesPlane.transform.position.z - (playerPlaneSize.z / 2) + (padding / 2);
+                pieceX = playerPiecesPlane.transform.position.x + xoffset;
+            }
+            else
+            {
+                pieceZ = (playerPieceSpacingz / 2) + ((i - (playerPieces.Count / 2)) * playerPieceSpacingz) + playerPiecesPlane.transform.position.z - (playerPlaneSize.z / 2) + (padding / 2);
+                pieceX = playerPiecesPlane.transform.position.x - xoffset;
+            }
+            if (p != null)
+            {
+                GameObject obj = GetPieceFromId(p.PrefabID);
+                if (obj != null)
+                {
+                    obj = Instantiate(obj, new Vector3(pieceX, pieceY, pieceZ), Quaternion.identity);
+                    PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
+                    pieceStatus.BuildFromData(p);
+                    pieceStatus.Position = new Vector2(-1f, -1f);
+                    actualPlayerPieces.Add(pieceStatus);
+                }
+            }
+        }
+
+        pieceY = opponentPiecesPlane.transform.position.y; // Assume che i piani siano su un'asse Y fissa
+
+        for (int i = 0; i < opponentPieces.Count; i++)
+        {
+            PieceStatus p = opponentPieces.ElementAt(i);
+
+            float pieceX;
+            float pieceZ;
+            if (i < (opponentPieces.Count / 2))
+            {
+                pieceX = opponentPiecesPlane.transform.position.x + xoffset;
+                pieceZ = (opponentPieceSpacingz / 2) + (i * opponentPieceSpacingz) + opponentPiecesPlane.transform.position.z - (opponentPlaneSize.z / 2) + (padding / 2);
+            }
+            else
+            {
+                pieceX = opponentPiecesPlane.transform.position.x - xoffset;
+                pieceZ = (opponentPieceSpacingz / 2) + ((i - (opponentPieces.Count / 2)) * opponentPieceSpacingz) + opponentPiecesPlane.transform.position.z - (opponentPlaneSize.z / 2) + (padding / 2);
+            }
+            GameObject obj = GetPieceFromId(p.PrefabID);
+
+            if (obj != null)
+            {
+                obj = Instantiate(obj, new Vector3(pieceX, pieceY, pieceZ), Quaternion.identity);
+                p = obj.GetComponent<PieceStatus>();
+                p.Position = new Vector2(-1f, -1f);
+                actualOpponentPieces.Add(p);
+            }
+        }
+
+        Player.pieces = actualPlayerPieces;
+        opponent.pieces = actualOpponentPieces;
+
+    }
+
+    public void PlayerPiecePositioned(PieceStatus piece)
+    {
+
+        Pieces[(int)piece.Position.x, (int)piece.Position.y] = piece;
+        Player.pieces.Remove(piece);
+        currentTurn = Turn.AI;
+        foreach (PieceStatus p in Player.pieces)
+        {
+            if (p != null && p.gameObject.TryGetComponent<DraggableBehaviour>(out DraggableBehaviour draggableBehaviour))
+            {
+                draggableBehaviour.isDraggable = false;
+            }
         }
     }
 }

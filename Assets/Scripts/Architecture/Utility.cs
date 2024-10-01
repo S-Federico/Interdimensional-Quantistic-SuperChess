@@ -23,18 +23,18 @@ public static class Utility
         return result;
     }
 
-    public static List<PieceStatus> SelectCurrentMatchPieces(int n, List<PieceStatus> pieces)
+    public static List<T> SelectCurrentMatchPieces<T>(int n, List<T> pieces)
     {
-        List<PieceStatus> avaiblePieces = new List<PieceStatus>();
+        List<T> avaiblePieces = new List<T>();
 
         // Se non ci sono abbastanza pezzi li usiamo tutti
         if (n > pieces.Count)
         {
-            avaiblePieces = new List<PieceStatus>(pieces);
+            avaiblePieces = new List<T>(pieces);
             return avaiblePieces;
         }
 
-        List<PieceStatus> tempList = new List<PieceStatus>(pieces);
+        List<T> tempList = new List<T>(pieces);
 
         for (int i = 0; i < n; i++)
         {

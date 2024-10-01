@@ -61,13 +61,13 @@ public class SaveManager : Singleton<SaveManager>
         return FindFilesInPath(BaseSavePath, SAVE_FILE_EXTENSION);
     }
 
-    public string[] FindFilesInPath(string folderPath, string fileType = "json")
+    public string[] FindFilesInPath(string folderPath, string fileType = SAVE_FILE_EXTENSION)
     {
         // Verifica che la cartella esista
         if (Directory.Exists(folderPath))
         {
             // Recupera tutti i file nella cartella
-            string[] files = Directory.GetFiles(folderPath, $"*.{SAVE_FILE_EXTENSION}");
+            string[] files = Directory.GetFiles(folderPath, $"*.{fileType}");
 
             // Mostra i file recuperati nella Console di Unity
             foreach (string file in files)
