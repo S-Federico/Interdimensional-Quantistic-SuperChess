@@ -93,7 +93,7 @@ public class PieceData
 
     public double StrenghtValue {
         get {
-            return DIFFICULTY_MAP[this.PieceType] * (Modifiers.Count + 1);
+            return DIFFICULTY_MAP[this.PieceType] * (Modifiers.Count + 1) * 3;
         }
     }
 
