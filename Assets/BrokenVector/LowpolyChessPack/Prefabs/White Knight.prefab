@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2311140}
   - component: {fileID: 6426312}
   - component: {fileID: 6822419275636468653}
+  - component: {fileID: 5495494930074570481}
   m_Layer: 0
   m_Name: White Knight
   m_TagString: BoardPiece
@@ -120,10 +121,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PieceType: 2
-  Hp: 1
-  Attack: 1
+  DamageTaken: 0
+  cloaked: 0
+  ethereal: 0
+  cure: 0
+  brittle: 0
+  commander: 0
+  testuggine: 0
+  hitChance: 1
+  scary: 0
+  appliedModifiers: []
   PieceColor: 1
-  ID: 9
+  PrefabID: 9
   Position: {x: 0, y: 0}
   MovementMatrixInfo:
     gridSize: {x: 9, y: 9}
@@ -138,3 +147,20 @@ MonoBehaviour:
     - row: 000000000000000000000000040000000000000004000000000000000000000000000000
     - row: 000000000000000000000000000000000000000000000000000000000000000000000000
     - row: 000000000000000000000000000000000000000000000000000000000000000000000000
+  CellModifiers: []
+--- !u!114 &5495494930074570481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5451a3295a30afc439956ace52af2c08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDragging: 0
+  elevation: 0.5
+  oldPosition: {x: 0, y: 0, z: 0}
+  isDraggable: 1

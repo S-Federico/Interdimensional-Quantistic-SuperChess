@@ -26,7 +26,7 @@ public class PieceStatus : MonoBehaviour, IClickable
         }
     }
 
-    public int BaseHp {get => this.baseHp;}
+    public int BaseHp { get => this.baseHp; }
 
     public int Attack
     {
@@ -40,7 +40,7 @@ public class PieceStatus : MonoBehaviour, IClickable
         }
     }
 
-    public int BaseAttack {get => this.baseAttack;}
+    public int BaseAttack { get => this.baseAttack; }
 
     public int NumberOfMoves
     {
@@ -54,7 +54,7 @@ public class PieceStatus : MonoBehaviour, IClickable
         }
     }
 
-    public int BaseNumberOfMoves {get => this.baseNumberOfMoves;}
+    public int BaseNumberOfMoves { get => this.baseNumberOfMoves; }
 
     public int DamageTaken = 0;
     public bool cloaked = false;
@@ -73,7 +73,7 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     // Lista di pezzi affected da questo pezzo
     public PieceColor PieceColor;
-    public int ID;
+    public int PrefabID;
     public Vector2 Position;
 
     // Deve essere sempre di dimensioni dispari e con il pezzo al centro
@@ -83,6 +83,20 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     private BoardManager boardManager;
     public List<ScriptableStatusModifier> CellModifiers;
+    private static int nextID = 0; // Contatore statico condiviso da tutte le istanze
+
+    public int ID { get; set; } // ID pubblico per identificare univocamente il pezzo
+
+    void Awake()
+    {
+        AssignUniqueID();
+    }
+
+    private void AssignUniqueID()
+    {
+        ID = nextID;
+        nextID++; 
+    }
 
     void Start()
     {
@@ -128,8 +142,12 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     private void CellModifiersCheck()
     {
-        GameObject cell = boardManager.GetSquare((int)Position.x, (int)Position.y);
-        if (cell.GetComponent<BoardSquare>().ManualsModifiers != null)
+        GameObject cell = null;
+        if (boardManager != null)
+        {
+            boardManager.GetSquare((int)Position.x, (int)Position.y);
+        }
+        if (cell != null && cell.GetComponent<BoardSquare>().ManualsModifiers != null)
         {
             CellModifiers = cell.GetComponent<BoardSquare>().ManualsModifiers;
         }
@@ -172,7 +190,7 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     public PieceData GetPieceData()
     {
-        return new PieceData(PieceType, Hp, Attack, PieceColor, ID, Position, _MovementMatrix);
+        return new PieceData(PieceType, Hp, Attack, PieceColor, PrefabID, Position, _MovementMatrix);
     }
 
     public void BuildFromData(PieceData pData)
@@ -183,7 +201,7 @@ public class PieceStatus : MonoBehaviour, IClickable
             this.Hp = pData.Hp;
             this.Attack = pData.Attack;
             this.PieceColor = pData.PieceColor;
-            this.ID = pData.ID;
+            this.PrefabID = pData.PrefabID;
             this._MovementMatrix = pData.MovementMatrix;
             Vector2 pos = new Vector2(pData.Position[0], pData.Position[1]);
             this.Position = pos;
@@ -243,4 +261,43 @@ public class PieceStatus : MonoBehaviour, IClickable
         boardManager.SelectPiece(this.gameObject);
     }
 
+    public BoardSquare GetSquareBelow()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit))
+        {
+            // Controlla se l'oggetto ha il componente BoardSquare
+            BoardSquare boardSquare = hit.collider.gameObject.GetComponent<BoardSquare>();
+            if (boardSquare != null)
+            {
+                return boardSquare;  // Restituisce il componente BoardSquare
+            }
+        }
+
+        return null;  // Restituisce null se non è stato trovato
+    }
+
+    public void OnDragEnd()
+    {
+        BoardSquare square = GetSquareBelow();
+        if(square!=null){
+            Debug.Log($"Trying to place piece in ({square.Position.x},{square.Position.y}): {boardManager.CanPlacePiece(this)}");
+        }else{
+            Debug.Log("Square null!");
+        }
+        if (boardManager.CanPlacePiece(this) && square != null)
+        {
+            transform.position = square.gameObject.transform.position;
+            Position = square.Position;
+            if (TryGetComponent<DraggableBehaviour>(out DraggableBehaviour draggableBehaviour))
+            {
+                draggableBehaviour.isDraggable = false;
+                boardManager.PlayerPiecePositioned(this);
+            }
+        }
+        else
+        {
+            transform.position = gameObject.GetComponent<DraggableBehaviour>().oldPosition;
+        }
+    }
 }
