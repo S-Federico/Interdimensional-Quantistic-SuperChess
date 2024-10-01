@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
+using Array2DEditor;
+using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -210,12 +212,116 @@ public class ItemData : MonoBehaviour, IClickable
         }
     }
 
-    public void UseItem()
+    public void UseItem(/*BoardSquare boardSquare*/)
     {
         Debug.Log($"Item {scriptableItem.Name} used!");
+
+        BoardManager board = FindAnyObjectByType<BoardManager>();
+        ScriptableConsumable ScriptCons = this.scriptableItem as ScriptableConsumable;
+
+        BoardSquare boardSquare = board.GetSquare(7, 3).GetComponent<BoardSquare>();
+
+        List<Vector2Int> affectedCells = CheeseOfThruth(boardSquare, board.Pieces, ScriptCons);
+
+        switch (ScriptCons.ConsumableType)
+        {
+            case ConsumablesType.Piece:
+                bool empty = true;
+                foreach (Vector2Int cell in affectedCells) if (board.Pieces[cell.x, cell.y]) empty = false;
+
+                if (empty)
+                {
+                    alreadyElevated = false;
+                    DeElevateItem();
+                    HideTags();
+                    return;
+                }
+
+                foreach (Vector2Int cell in affectedCells)
+                {
+                    PieceStatus piece = board.Pieces[cell.x, cell.y];
+                    if (piece)
+                    {
+                        foreach (ScriptableStatusModifier modi in ScriptCons.Modifiers)
+                        {
+                            piece.appliedModifiers.Add(modi);
+                        }
+                    }
+                }
+                break;
+
+            case ConsumablesType.Cell:
+                foreach (Vector2Int cell in affectedCells)
+                {
+                    foreach (ScriptableStatusModifier modi in ScriptCons.Modifiers)
+                    {
+                        board.GetSquare(cell.x, cell.y).GetComponent<BoardSquare>().ManualsModifiers.Add(modi);
+                    }
+                }
+                break;
+
+            default:
+                alreadyElevated = false;
+                DeElevateItem();
+                HideTags();
+                return;
+        }
+
+        Done();
+    }
+
+    public void Done()
+    {
         PlayerManager player = GameObject.Find("Player").GetComponent<PlayerManager>();
         player.RemoveItem(this);
         Destroy(this.gameObject);
+    }
+
+    public List<Vector2Int> CheeseOfThruth(BoardSquare boardSquare, PieceStatus[,] board, ScriptableConsumable consumable)
+    {
+        int riga = (int)boardSquare.Position.x;
+        int colonna = (int)boardSquare.Position.y;
+        int[,] matrix = ConvertArray2D(consumable.ApplicationMatrix);
+        int offsetRighe = matrix.GetLength(0) / 2;
+        int offsetColonne = matrix.GetLength(1) / 2;
+
+        List<Vector2Int> result = new List<Vector2Int>();
+
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                int newRiga = riga + (i - offsetRighe);
+                int newColonna = colonna + (j - offsetColonne);
+
+                // Controlla che la nuova posizione sia all'interno della scacchiera
+                if (newRiga >= 0 && newRiga < board.GetLength(0) && newColonna >= 0 && newColonna < board.GetLength(1))
+                {
+                    if (matrix[i, j] == 1)
+                    {
+                        result.Add(new Vector2Int(newRiga, newColonna));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    public int[,] ConvertArray2D(Array2DInt matrix)
+    {
+        // Crea una nuova matrice int[,] con le stesse dimensioni di Array2DInt
+        int[,] result = new int[matrix.GridSize.x, matrix.GridSize.y];
+
+        // Itera su tutte le celle e copia i valori
+        for (int i = 0; i < matrix.GridSize.x; i++)
+        {
+            for (int j = 0; j < matrix.GridSize.y; j++)
+            {
+                result[i, j] = matrix.GetCell(i, j);
+            }
+        }
+
+        return result;
     }
 }
 

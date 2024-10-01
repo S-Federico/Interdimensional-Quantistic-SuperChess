@@ -17,3 +17,11 @@ MonoBehaviour:
   Price: 4
   Modifiers:
   - {fileID: 11400000, guid: 40e3edb5d0d0922459426350a11952db, type: 2}
+  ConsumableType: 0
+  ApplicationMatrix:
+    gridSize: {x: 3, y: 3}
+    cellSize: {x: 32, y: 16}
+    cells:
+    - row: 010000000100000001000000
+    - row: 000000000100000000000000
+    - row: 000000000000000000000000
