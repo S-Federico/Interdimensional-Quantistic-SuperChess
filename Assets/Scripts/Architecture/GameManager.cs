@@ -127,7 +127,13 @@ public class GameManager : Singleton<GameManager>
         this.isGameOver = true;
 
         // Give money
-        this.GameInfo.PlayerInfo.Money += 2 * GameInfo.currentLevel * GameInfo.currentStage;
+        this.GameInfo.PlayerInfo.Money += MoneyWonFromCurrentRound;
+
+        SaveGameToFile();
+    }
+
+    public int MoneyWonFromCurrentRound {
+        get => 2 * GameInfo.currentLevel * GameInfo.currentStage;
     }
 
     internal void AdvanceLevel()

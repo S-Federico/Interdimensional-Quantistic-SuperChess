@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,6 +10,8 @@ public class GameUI : MonoBehaviour
     public GameObject PauseMenu;
     public GameObject GameOverMenu;
     public GameObject MenuButton;
+    public TMP_Text TotalMoneyText;
+    public TMP_Text EarnedMoneyText;
 
     void Start()
     {
@@ -24,6 +27,11 @@ public class GameUI : MonoBehaviour
 
         // GameOver UI should be visible only if is game over
         GameOverMenu.SetActive(GameManager.Instance.IsGameOver);
+
+        if (GameManager.Instance.IsGameOver) {
+            EarnedMoneyText.text = $"Money won: {GameManager.Instance.MoneyWonFromCurrentRound}$";
+            TotalMoneyText.text = $"Total money: {GameManager.Instance.GameInfo.PlayerInfo.Money}$";
+        }
     }
 
     public void HideAll()
