@@ -64,7 +64,7 @@ public class GameUI : MonoBehaviour
     public void GoToNextLevel() {
         GameManager.Instance.AdvanceLevel();
         GameInfo gameInfo = GameManager.Instance.GameInfo;
-        List<PieceStatus> enemies = LevelGenerator.GenerateEnemies(gameInfo.currentLevel, gameInfo.currentStage);
+        List<PieceData> enemies = LevelGenerator.Instance.GenerateEnemies(gameInfo.currentLevel, gameInfo.currentStage);
         BackToMainMenu();
     }
 

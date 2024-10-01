@@ -78,8 +78,24 @@ public class PieceData
     public int Attack;
     public PieceColor PieceColor;
     public int PrefabID;
-    public int[] Position;
-    public int[,] MovementMatrix;
+    public int[] Position = new int[]{};
+    public int[,] MovementMatrix = new int[,]{};
+    public List<ScriptableStatusModifier> Modifiers = new List<ScriptableStatusModifier>();
+
+    private static Dictionary<PieceType, int> DIFFICULTY_MAP = new Dictionary<PieceType, int>{
+        {PieceType.Bishop, 5},
+        {PieceType.Knight, 5},
+        {PieceType.Pawn, 2},
+        {PieceType.Queen, 10},
+        {PieceType.Rook, 6},
+        {PieceType.King, 10000}
+    };
+
+    public double StrenghtValue {
+        get {
+            return DIFFICULTY_MAP[this.PieceType] * (Modifiers.Count + 1);
+        }
+    }
 
     public PieceData(PieceType pType, int hp, int att, PieceColor pColor, int id, Vector2 posix, int[,] movMatr)
     {
@@ -136,7 +152,8 @@ public class PieceData
         return HashCode.Combine(PieceType, Hp, Attack, PieceColor, PrefabID, Position[0], Position[1], MovementMatrix);
     }
 
-    public static PieceData FromPieceStatus(PieceStatus pieceStatus) {
+    public static PieceData FromPieceStatus(PieceStatus pieceStatus)
+    {
         return new PieceData(
             pieceStatus.PieceType,
             pieceStatus.BaseHp,
