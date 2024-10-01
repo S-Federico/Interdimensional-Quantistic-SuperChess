@@ -29,6 +29,7 @@ public class BoardManager : MonoBehaviour
     private BoardBehaviour boardBehaviour;
     public GameObject plane_consumables;
     public List<GameObject> consumables;
+    public ItemData selectedConsumable;
 
     void Start()
     {
@@ -236,6 +237,13 @@ public class BoardManager : MonoBehaviour
 
     internal void HandleSquareClick(BoardSquare boardSquare)
     {
+        if (selectedConsumable != null)
+        {
+            selectedConsumable.UseItem(boardSquare);
+            selectedConsumable = null;
+            return;
+        }
+
         if (currentTurn != Turn.Player || selectedPiece == null) return;
 
         // Esegue il movimento o l'attacco

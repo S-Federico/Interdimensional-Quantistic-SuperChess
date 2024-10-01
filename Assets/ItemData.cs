@@ -200,8 +200,7 @@ public class ItemData : MonoBehaviour, IClickable
                 }
                 break;
             case ButtonType.Use:
-                ToggleSelected();
-                UseItem();
+                FindAnyObjectByType<BoardManager>().selectedConsumable = this;
                 break;
             case ButtonType.PriceTag:
                 ToggleSelected();
@@ -212,14 +211,13 @@ public class ItemData : MonoBehaviour, IClickable
         }
     }
 
-    public void UseItem(/*BoardSquare boardSquare*/)
+    public void UseItem(BoardSquare boardSquare)
     {
         Debug.Log($"Item {scriptableItem.Name} used!");
 
         BoardManager board = FindAnyObjectByType<BoardManager>();
+        
         ScriptableConsumable ScriptCons = this.scriptableItem as ScriptableConsumable;
-
-        BoardSquare boardSquare = board.GetSquare(7, 3).GetComponent<BoardSquare>();
 
         List<Vector2Int> affectedCells = CheeseOfThruth(boardSquare, board.Pieces, ScriptCons);
 
