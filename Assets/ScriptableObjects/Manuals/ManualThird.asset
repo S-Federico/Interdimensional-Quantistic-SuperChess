@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ManualThird
   m_EditorClassIdentifier: 
   Name: C_manual
-  Prefab: {fileID: 140880, guid: e9155916723d2f541a53f1db112851c8, type: 3}
+  Prefab: {fileID: 140880, guid: 2e3ccaaa6c9d1614bb661bee02cfd812, type: 3}
   Price: 30
   Modifiers:
   - {fileID: 11400000, guid: 40e3edb5d0d0922459426350a11952db, type: 2}

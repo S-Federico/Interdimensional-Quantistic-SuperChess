@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 64257739606776832}
   - component: {fileID: 64798870577824642}
   m_Layer: 0
-  m_Name: SM_Prop_Table_02
+  m_Name: Prop_Table_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

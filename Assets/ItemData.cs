@@ -216,7 +216,7 @@ public class ItemData : MonoBehaviour, IClickable
         Debug.Log($"Item {scriptableItem.Name} used!");
 
         BoardManager board = FindAnyObjectByType<BoardManager>();
-        
+
         ScriptableConsumable ScriptCons = this.scriptableItem as ScriptableConsumable;
 
         List<Vector2Int> affectedCells = CheeseOfThruth(boardSquare, board.Pieces, ScriptCons);
@@ -225,11 +225,10 @@ public class ItemData : MonoBehaviour, IClickable
         {
             case ConsumablesType.Piece:
                 bool empty = true;
-                foreach (Vector2Int cell in affectedCells) if (board.Pieces[cell.x, cell.y]) empty = false;
+                foreach (Vector2Int cell in affectedCells) if (board.Pieces[cell.x, cell.y] != null) empty = false;
 
                 if (empty)
                 {
-                    alreadyElevated = false;
                     DeElevateItem();
                     HideTags();
                     return;
@@ -238,7 +237,7 @@ public class ItemData : MonoBehaviour, IClickable
                 foreach (Vector2Int cell in affectedCells)
                 {
                     PieceStatus piece = board.Pieces[cell.x, cell.y];
-                    if (piece)
+                    if (piece != null)
                     {
                         foreach (ScriptableStatusModifier modi in ScriptCons.Modifiers)
                         {
@@ -259,7 +258,6 @@ public class ItemData : MonoBehaviour, IClickable
                 break;
 
             default:
-                alreadyElevated = false;
                 DeElevateItem();
                 HideTags();
                 return;
