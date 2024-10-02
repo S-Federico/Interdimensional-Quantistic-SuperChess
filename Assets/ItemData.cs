@@ -113,6 +113,7 @@ public class ItemData : MonoBehaviour, IClickable
                 alreadyElevated = false;
                 DeElevateItem();
                 HideTags();
+                FindAnyObjectByType<BoardManager>().selectedConsumable = null;
             }
 
         }
@@ -146,7 +147,7 @@ public class ItemData : MonoBehaviour, IClickable
         Vector3 p = this.gameObject.transform.position;
         Vector3 newP = new Vector3(p.x, p.y + el, p.z);
         this.gameObject.transform.position = newP;
-        Debug.Log($"Elevated to{newP.y}");
+        Debug.Log($"Elevated to {newP.y}");
     }
 
     public void ShowTags()
@@ -231,6 +232,8 @@ public class ItemData : MonoBehaviour, IClickable
                 {
                     DeElevateItem();
                     HideTags();
+                    FindAnyObjectByType<BoardManager>().selectedConsumable = null;
+                    ToggleSelected();
                     return;
                 }
 
@@ -260,6 +263,8 @@ public class ItemData : MonoBehaviour, IClickable
             default:
                 DeElevateItem();
                 HideTags();
+                FindAnyObjectByType<BoardManager>().selectedConsumable = null;
+                ToggleSelected();
                 return;
         }
 

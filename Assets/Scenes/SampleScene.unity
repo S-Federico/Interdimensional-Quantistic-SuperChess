@@ -577,9 +577,9 @@ MonoBehaviour:
   inventory: []
   Money: 0
   TemporaryManuals:
-  - {fileID: 179376, guid: 20fba2d07ecf8bf4f949e6e9c195c7b5, type: 3}
-  - {fileID: 142830, guid: 9f3ef59f783322441a01e041c6c6351f, type: 3}
-  - {fileID: 140880, guid: e9155916723d2f541a53f1db112851c8, type: 3}
+  - {fileID: 179376, guid: dcbb1a7482e31cf42986023dceaf24cf, type: 3}
+  - {fileID: 142830, guid: 9c6a9d18c5586e24e83829686ede80db, type: 3}
+  - {fileID: 140880, guid: 2e3ccaaa6c9d1614bb661bee02cfd812, type: 3}
   TemporaryConsumables:
   - {fileID: 176050, guid: e157f164f99d6e045b0cd37281b7c2f1, type: 3}
   - {fileID: 138894, guid: 87449f31749e7b9429392225dbc5bb51, type: 3}
@@ -1935,6 +1935,7 @@ MonoBehaviour:
   playerPiecesPlane: {fileID: 1460839057}
   opponentPiecesPlane: {fileID: 123155751}
   consumables: []
+  selectedConsumable: {fileID: 0}
 --- !u!4 &965710760
 Transform:
   m_ObjectHideFlags: 0
