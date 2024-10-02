@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
+using Array2DEditor;
+using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,7 +11,6 @@ using UnityEngine.UIElements;
 public class ItemData : MonoBehaviour, IClickable
 {
     public ScriptableItem scriptableItem;
-
     public bool bought;
     public bool selected;
     public bool alreadyElevated;
@@ -19,6 +20,7 @@ public class ItemData : MonoBehaviour, IClickable
     public GameObject priceTag;
     public GameObject sellTag;
     public GameObject useTag;
+    public bool shopScaling;
 
     //Ancore per i bottoni
     Vector3 bottomLeft;
@@ -66,7 +68,7 @@ public class ItemData : MonoBehaviour, IClickable
 
 
         SetButton(buyTag, bottomLeft, ButtonType.Buy, "Buy");
-        SetButton(sellTag, bottomLeft, ButtonType.Sell, $"Sell ({sellprice}$)");
+        SetButton(sellTag, bottomLeft, ButtonType.Sell, $"Sell {sellprice}$");
         SetButton(useTag, bottomRight, ButtonType.Use, "Use");
         SetButton(priceTag, bottomRight, ButtonType.PriceTag, $"{scriptableItem.Price}$");
     }
@@ -89,6 +91,12 @@ public class ItemData : MonoBehaviour, IClickable
 
     public void Update()
     {
+        if (!shopScaling)
+        {
+            SetScale(10f);
+            shopScaling = true;
+            el = 1f;
+        }
         if (selected)
         {
             if (!alreadyElevated)
@@ -109,6 +117,13 @@ public class ItemData : MonoBehaviour, IClickable
 
         }
     }
+
+    public void SetScale(float scaleFactor)
+    {
+        transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+        transform.localRotation = Quaternion.Euler(0, -90, 0);
+    }
+
     public void DeElevateItem()
     {
         Vector3 p = this.gameObject.transform.position;
@@ -116,6 +131,7 @@ public class ItemData : MonoBehaviour, IClickable
         this.gameObject.transform.position = newP;
         Debug.Log($"Deelevated to {newP.y}");
     }
+
     public void HideTags()
     {
         Debug.Log($"Price hidden");
@@ -124,6 +140,7 @@ public class ItemData : MonoBehaviour, IClickable
         useTag.SetActive(false);
         priceTag.SetActive(false);
     }
+
     public void ElevateItem()
     {
         Vector3 p = this.gameObject.transform.position;
@@ -131,9 +148,9 @@ public class ItemData : MonoBehaviour, IClickable
         this.gameObject.transform.position = newP;
         Debug.Log($"Elevated to{newP.y}");
     }
+
     public void ShowTags()
     {
-        Debug.Log($"Price: {scriptableItem.Price}");
         if (bought)
         {
             sellTag.SetActive(true);
@@ -174,6 +191,7 @@ public class ItemData : MonoBehaviour, IClickable
                 if (player != null)
                 {
                     player.Money += scriptableItem.Price / 2;
+                    player.RemoveItem(this);
                     Destroy(this.gameObject);
                 }
                 else
@@ -182,8 +200,7 @@ public class ItemData : MonoBehaviour, IClickable
                 }
                 break;
             case ButtonType.Use:
-                ToggleSelected();
-                UseItem();
+                FindAnyObjectByType<BoardManager>().selectedConsumable = this;
                 break;
             case ButtonType.PriceTag:
                 ToggleSelected();
@@ -194,10 +211,115 @@ public class ItemData : MonoBehaviour, IClickable
         }
     }
 
-    public void UseItem()
+    public void UseItem(BoardSquare boardSquare)
     {
         Debug.Log($"Item {scriptableItem.Name} used!");
+
+        BoardManager board = FindAnyObjectByType<BoardManager>();
+        
+        ScriptableConsumable ScriptCons = this.scriptableItem as ScriptableConsumable;
+
+        List<Vector2Int> affectedCells = CheeseOfThruth(boardSquare, board.Pieces, ScriptCons);
+
+        switch (ScriptCons.ConsumableType)
+        {
+            case ConsumablesType.Piece:
+                bool empty = true;
+                foreach (Vector2Int cell in affectedCells) if (board.Pieces[cell.x, cell.y]) empty = false;
+
+                if (empty)
+                {
+                    alreadyElevated = false;
+                    DeElevateItem();
+                    HideTags();
+                    return;
+                }
+
+                foreach (Vector2Int cell in affectedCells)
+                {
+                    PieceStatus piece = board.Pieces[cell.x, cell.y];
+                    if (piece)
+                    {
+                        foreach (ScriptableStatusModifier modi in ScriptCons.Modifiers)
+                        {
+                            piece.appliedModifiers.Add(modi);
+                        }
+                    }
+                }
+                break;
+
+            case ConsumablesType.Cell:
+                foreach (Vector2Int cell in affectedCells)
+                {
+                    foreach (ScriptableStatusModifier modi in ScriptCons.Modifiers)
+                    {
+                        board.GetSquare(cell.x, cell.y).GetComponent<BoardSquare>().ManualsModifiers.Add(modi);
+                    }
+                }
+                break;
+
+            default:
+                alreadyElevated = false;
+                DeElevateItem();
+                HideTags();
+                return;
+        }
+
+        Done();
+    }
+
+    public void Done()
+    {
+        PlayerManager player = GameObject.Find("Player").GetComponent<PlayerManager>();
+        player.RemoveItem(this);
         Destroy(this.gameObject);
+    }
+
+    public List<Vector2Int> CheeseOfThruth(BoardSquare boardSquare, PieceStatus[,] board, ScriptableConsumable consumable)
+    {
+        int riga = (int)boardSquare.Position.x;
+        int colonna = (int)boardSquare.Position.y;
+        int[,] matrix = ConvertArray2D(consumable.ApplicationMatrix);
+        int offsetRighe = matrix.GetLength(0) / 2;
+        int offsetColonne = matrix.GetLength(1) / 2;
+
+        List<Vector2Int> result = new List<Vector2Int>();
+
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                int newRiga = riga + (i - offsetRighe);
+                int newColonna = colonna + (j - offsetColonne);
+
+                // Controlla che la nuova posizione sia all'interno della scacchiera
+                if (newRiga >= 0 && newRiga < board.GetLength(0) && newColonna >= 0 && newColonna < board.GetLength(1))
+                {
+                    if (matrix[i, j] == 1)
+                    {
+                        result.Add(new Vector2Int(newRiga, newColonna));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    public int[,] ConvertArray2D(Array2DInt matrix)
+    {
+        // Crea una nuova matrice int[,] con le stesse dimensioni di Array2DInt
+        int[,] result = new int[matrix.GridSize.x, matrix.GridSize.y];
+
+        // Itera su tutte le celle e copia i valori
+        for (int i = 0; i < matrix.GridSize.x; i++)
+        {
+            for (int j = 0; j < matrix.GridSize.y; j++)
+            {
+                result[i, j] = matrix.GetCell(i, j);
+            }
+        }
+
+        return result;
     }
 }
 

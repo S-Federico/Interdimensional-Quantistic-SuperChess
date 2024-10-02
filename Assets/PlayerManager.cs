@@ -29,10 +29,43 @@ public class PlayerManager : MonoBehaviour
         Debug.Log("PManuals popolato.");
         foreach (GameObject go in TemporaryConsumables)
         {
+            go.GetComponent<ItemData>().bought = true;
             PConsumables.Add(go.GetComponent<ItemData>());
-            Debug.Log("PConsumables "+go.GetComponent<ItemData>().scriptableItem.Name);
+            Debug.Log("PConsumables " + go.GetComponent<ItemData>().scriptableItem.Name);
         }
         Debug.Log("PConsumables popolato.");
     }
 
+    public void RemoveItem(ItemData item)   // Da aggiornare per gestire meglio le liste (inventory etc)
+    {
+        bool removed = false;
+
+        // Controllo il tipo di scriptableItem e rimuovo dalla lista appropriata
+        if (item.scriptableItem is ScriptableConsumable)
+        {
+            ItemData consumable = PConsumables.FirstOrDefault(c => c.scriptableItem.Name == item.scriptableItem.Name);
+            if (consumable != null)
+            {
+                PConsumables.Remove(consumable);
+                removed = true;
+                Debug.Log("Consumabile rimosso dalla lista.");
+            }
+        }
+        else if (item.scriptableItem is ScriptableManual)
+        {
+            ItemData manual = PManuals.FirstOrDefault(m => m.scriptableItem.Name == item.scriptableItem.Name);
+            if (manual != null)
+            {
+                PManuals.Remove(manual);
+                removed = true;
+                Debug.Log("Manuale rimosso dalla lista.");
+            }
+        }
+
+        // Se non è stato trovato l'item in nessuna lista
+        if (!removed)
+        {
+            Debug.Log("Item non trovato in nessuna lista.");
+        }
+    }
 }
