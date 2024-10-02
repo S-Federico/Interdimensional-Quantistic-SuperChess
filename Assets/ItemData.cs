@@ -61,10 +61,10 @@ public class ItemData : MonoBehaviour, IClickable
         el = 0.1f;
         int sellprice = scriptableItem.Price / 2;
 
-        buyTag = Instantiate(Resources.Load<GameObject>("Prefabs/ButtonPrefab"));
-        sellTag = Instantiate(Resources.Load<GameObject>("Prefabs/ButtonPrefab"));
-        useTag = Instantiate(Resources.Load<GameObject>("Prefabs/ButtonPrefab"));
-        priceTag = Instantiate(Resources.Load<GameObject>("Prefabs/ButtonPrefab"));
+        buyTag = Instantiate(Resources.Load<GameObject>("ButtonPrefab"));
+        sellTag = Instantiate(Resources.Load<GameObject>("ButtonPrefab"));
+        useTag = Instantiate(Resources.Load<GameObject>("ButtonPrefab"));
+        priceTag = Instantiate(Resources.Load<GameObject>("ButtonPrefab"));
 
 
         SetButton(buyTag, bottomLeft, ButtonType.Buy, "Buy");

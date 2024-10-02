@@ -95,7 +95,7 @@ public class PieceStatus : MonoBehaviour, IClickable
     private void AssignUniqueID()
     {
         ID = nextID;
-        nextID++; 
+        nextID++;
     }
 
     void Start()
@@ -145,7 +145,7 @@ public class PieceStatus : MonoBehaviour, IClickable
         GameObject cell = null;
         if (boardManager != null)
         {
-            boardManager.GetSquare((int)Position.x, (int)Position.y);
+            cell = boardManager.GetSquare((int)Position.x, (int)Position.y);
         }
         if (cell != null && cell.GetComponent<BoardSquare>().ManualsModifiers != null)
         {
@@ -280,9 +280,12 @@ public class PieceStatus : MonoBehaviour, IClickable
     public void OnDragEnd()
     {
         BoardSquare square = GetSquareBelow();
-        if(square!=null){
+        if (square != null)
+        {
             Debug.Log($"Trying to place piece in ({square.Position.x},{square.Position.y}): {boardManager.CanPlacePiece(this)}");
-        }else{
+        }
+        else
+        {
             Debug.Log("Square null!");
         }
         if (boardManager.CanPlacePiece(this) && square != null)
