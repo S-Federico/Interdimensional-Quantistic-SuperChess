@@ -113,7 +113,8 @@ public class ItemData : MonoBehaviour, IClickable
                 alreadyElevated = false;
                 DeElevateItem();
                 HideTags();
-                FindAnyObjectByType<BoardManager>().selectedConsumable = null;
+                if (FindAnyObjectByType<BoardManager>() != null)
+                    FindAnyObjectByType<BoardManager>().selectedConsumable = null;
             }
 
         }
