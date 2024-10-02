@@ -39,6 +39,7 @@ public class PlayerManager : MonoBehaviour
     public void RemoveItem(ItemData item)   // Da aggiornare per gestire meglio le liste (inventory etc)
     {
         bool removed = false;
+        item.bought = false;
 
         // Controllo il tipo di scriptableItem e rimuovo dalla lista appropriata
         if (item.scriptableItem is ScriptableConsumable)

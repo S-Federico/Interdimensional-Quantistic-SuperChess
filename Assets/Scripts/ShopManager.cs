@@ -222,6 +222,7 @@ public class ShopManager : MonoBehaviour
             );
             GameObject obj = Instantiate(selectedConsumable.Prefab, position, Quaternion.identity);
             ItemData item = obj.GetComponent<ItemData>();
+            item.bought = false;
             item.shopScaling = true;
             if (item != null)
             {

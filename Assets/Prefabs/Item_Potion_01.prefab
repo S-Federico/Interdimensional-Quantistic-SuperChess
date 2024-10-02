@@ -128,3 +128,4 @@ MonoBehaviour:
   priceTag: {fileID: 0}
   sellTag: {fileID: 0}
   useTag: {fileID: 0}
+  shopScaling: 0
