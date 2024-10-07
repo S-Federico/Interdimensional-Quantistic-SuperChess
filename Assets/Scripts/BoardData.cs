@@ -106,8 +106,8 @@ public class PieceData
         this.PrefabID = id;
         this.MovementMatrix = movMatr;
         int[] pos = new int[2];
-        pos[0] = (int)posix.x; // Converti la componente X in int
-        pos[1] = (int)posix.y; // Converti la componente Y in int
+        pos[0] = (int)posix.x; 
+        pos[1] = (int)posix.y;
         this.Position = pos;
     }
 

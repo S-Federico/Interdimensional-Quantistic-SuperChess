@@ -118,12 +118,6 @@ public class ShopManager : MonoBehaviour
         // Controllare anche per evitare di prendere item che il giocatore ha già negli "slot" (questo vale nello specifico per i manuali)
     }
 
-    public void FillShop()
-    {
-        // prendere tre elementi dalla lista da piazzare
-        // istanziare ognuno degli elementi con la transform corretta 
-    }
-
     public void SelectRandomManuals(int numberOfManuals, float padding)
     {
         // Creiamo una copia della lista originale per non modificare quella originale

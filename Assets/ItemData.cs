@@ -231,7 +231,6 @@ public class ItemData : MonoBehaviour, IClickable
 
                 if (empty)
                 {
-                    DeElevateItem();
                     HideTags();
                     FindAnyObjectByType<BoardManager>().selectedConsumable = null;
                     ToggleSelected();
@@ -262,7 +261,6 @@ public class ItemData : MonoBehaviour, IClickable
                 break;
 
             default:
-                DeElevateItem();
                 HideTags();
                 FindAnyObjectByType<BoardManager>().selectedConsumable = null;
                 ToggleSelected();
