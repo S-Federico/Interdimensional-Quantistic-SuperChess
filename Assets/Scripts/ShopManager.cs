@@ -61,7 +61,7 @@ public class ShopManager : MonoBehaviour
         {
             if (CanBeBought(item))
             {
-                player.Money -= item.scriptableItem.Price;
+                GameManager.Instance.GameInfo.PlayerInfo.Money -= item.scriptableItem.Price;
                 //istanzia nell'inventario del player
                 player.inventory.Add(item);
                 item.bought = true;
@@ -75,7 +75,7 @@ public class ShopManager : MonoBehaviour
     {
         if (item != null)
         {
-            if (player.Money >= item.scriptableItem.Price)
+            if (GameManager.Instance.GameInfo.PlayerInfo.Money >= item.scriptableItem.Price)
             {
                 return true;
             }

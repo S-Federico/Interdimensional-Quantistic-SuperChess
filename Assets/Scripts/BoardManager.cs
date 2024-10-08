@@ -599,4 +599,5 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
+
 }

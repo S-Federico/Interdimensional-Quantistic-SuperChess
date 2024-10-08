@@ -192,7 +192,7 @@ public class ItemData : MonoBehaviour, IClickable
                 PlayerManager player = GameObject.Find("Player").GetComponent<PlayerManager>();
                 if (player != null)
                 {
-                    player.Money += scriptableItem.Price / 2;
+                    GameManager.Instance.GameInfo.PlayerInfo.Money += scriptableItem.Price / 2;
                     player.RemoveItem(this);
                     Destroy(this.gameObject);
                 }

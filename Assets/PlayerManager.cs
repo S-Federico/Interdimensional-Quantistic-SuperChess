@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     public List<ItemData> inventory;
-    public int Money;
     public List<GameObject> TemporaryManuals;
     public List<GameObject> TemporaryConsumables;
     public List<ItemData> PManuals;
@@ -16,7 +15,6 @@ public class PlayerManager : MonoBehaviour
     public void Start()
     {
         inventory = new List<ItemData>();
-        Money = 100;
         TemporaryInventoryFill();
     }
 
