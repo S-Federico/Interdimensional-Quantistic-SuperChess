@@ -62,7 +62,7 @@ public class ItemData : MonoBehaviour, IClickable
         }
 
         el = 0.1f;
-        int sellprice = pieceprice * 2;
+        int sellprice = pieceprice / 2;
         if (scriptableItem != null)
             sellprice = scriptableItem.Price / 2;
 
