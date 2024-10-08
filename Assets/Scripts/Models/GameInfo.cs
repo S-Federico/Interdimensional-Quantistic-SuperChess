@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 public class GameInfo
 {
-    public string ProfileName = "Empty"; //Game1.save
+    public string ProfileName = null; //Game1.save
     public int currentLevel = 1;
     public int currentStage = 1;
 
