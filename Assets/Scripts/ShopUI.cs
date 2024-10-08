@@ -17,7 +17,7 @@ public class ShopUI : MonoBehaviour
 
     public void BackToMainMenu()
     {
-        #warning Controllare cosa si deve salvare in questo caso. Adesso non trova BuardManager (giustamente)
+        #warning Controllare cosa si deve salvare in questo caso. Va cercando BoardManager(?)
         GameManager.Instance.SaveGameToFile();
         GameManager.Instance.RestartGame();
         GameManager.Instance.IsPaused = false;
@@ -25,7 +25,6 @@ public class ShopUI : MonoBehaviour
 
     public void GoToNextLevel()
     {
-        #warning Controllare cosa si deve salvare in questo caso. Adesso non trova BuardManager (giustamente)
         GameManager.Instance.AdvanceLevel();
         GameInfo gameInfo = GameManager.Instance.GameInfo;
         List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces("Pieces","Modifiers",PieceColor.Black,gameInfo.currentLevel, gameInfo.currentStage);
