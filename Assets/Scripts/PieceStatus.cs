@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Array2DEditor;
+using TMPro;
 using UnityEngine;
 
 public class PieceStatus : MonoBehaviour, IClickable
@@ -87,6 +88,10 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     public int ID { get; set; } // ID pubblico per identificare univocamente il pezzo
 
+    //Ancore per i bottoni
+    Vector3 topCenter;
+    public GameObject stats;
+
     void Awake()
     {
         AssignUniqueID();
@@ -103,11 +108,48 @@ public class PieceStatus : MonoBehaviour, IClickable
         boardManager = FindAnyObjectByType<BoardManager>();
         BuildMovementMatrix();
         CellModifiers = new List<ScriptableStatusModifier>();
+        SetStatsTag();
     }
 
     void Update()
     {
         CellModifiersCheck();
+        UpdateTagText();
+    }
+
+    public void SetStatsTag()
+    {
+        // Calcola il bounding box del modello del GameObject padre (assumendo che il modello abbia un MeshRenderer)
+        Renderer modelRenderer = this.gameObject.GetComponentInChildren<Renderer>();
+        if (modelRenderer != null)
+        {
+            float objHeight = modelRenderer.bounds.size.y;
+            float objWidth = modelRenderer.bounds.size.x;
+            float objLenght = modelRenderer.bounds.size.z;
+
+            topCenter = new Vector3();
+            topCenter.z = this.gameObject.transform.position.z;
+            topCenter.y = this.gameObject.transform.position.y + objHeight;
+            topCenter.x = this.gameObject.transform.position.x;
+        }
+        else
+        {
+            Debug.LogError("Non è stato trovato un Renderer nel GameObject padre o nei suoi figli.");
+        }
+        stats = Instantiate(Resources.Load<GameObject>("StatsPrefab"));
+        stats.transform.position = this.gameObject.transform.position;
+        stats.transform.position = topCenter;
+
+        // Imposta il padre del bottone
+        stats.transform.SetParent(transform);
+
+        UpdateTagText();
+    }
+
+    public void UpdateTagText()
+    {
+        //Imposta il testo
+        stats.GetComponentInChildren<TextMeshProUGUI>().text = $"A:{this.Attack} / H:{this.Hp}";
     }
 
     public int CalculateBuff(List<ScriptableStatusModifier> modifiers, AttributeType type)
