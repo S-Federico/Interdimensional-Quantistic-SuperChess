@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 2324162}
   - component: {fileID: 64412402852764920}
   - component: {fileID: 3013305953266583905}
-  - component: {fileID: 3362946105035778764}
   m_Layer: 0
   m_Name: Item_Potion_01
   m_TagString: Untagged
@@ -130,19 +129,3 @@ MonoBehaviour:
   sellTag: {fileID: 0}
   useTag: {fileID: 0}
   shopScaling: 0
---- !u!114 &3362946105035778764
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 176050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5451a3295a30afc439956ace52af2c08, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isDragging: 0
-  elevation: 0.5
-  oldPosition: {x: 0, y: 0, z: 0}
-  isDraggable: 0
