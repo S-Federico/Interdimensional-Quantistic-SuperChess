@@ -26,6 +26,9 @@ public class ItemData : MonoBehaviour, IClickable
     Vector3 bottomLeft;
     Vector3 bottomRight;
     Vector3 bottomCenter;
+    public PieceData pieceData = null;
+
+    public int pieceprice = 10;
 
     public void Start()
     {
@@ -59,18 +62,19 @@ public class ItemData : MonoBehaviour, IClickable
         }
 
         el = 0.1f;
-        int sellprice = scriptableItem.Price / 2;
+        int sellprice = pieceprice * 2;
+        if (scriptableItem != null)
+            sellprice = scriptableItem.Price / 2;
 
         buyTag = Instantiate(Resources.Load<GameObject>("ButtonPrefab"));
         sellTag = Instantiate(Resources.Load<GameObject>("ButtonPrefab"));
         useTag = Instantiate(Resources.Load<GameObject>("ButtonPrefab"));
         priceTag = Instantiate(Resources.Load<GameObject>("ButtonPrefab"));
 
-
         SetButton(buyTag, bottomLeft, ButtonType.Buy, "Buy");
         SetButton(sellTag, bottomLeft, ButtonType.Sell, $"Sell {sellprice}$");
         SetButton(useTag, bottomRight, ButtonType.Use, "Use");
-        SetButton(priceTag, bottomRight, ButtonType.PriceTag, $"{scriptableItem.Price}$");
+        SetButton(priceTag, bottomRight, ButtonType.PriceTag, $"{sellprice * 2}$");
     }
 
     public void SetButton(GameObject b, Vector3 anchor, ButtonType type, string text)
@@ -93,10 +97,18 @@ public class ItemData : MonoBehaviour, IClickable
     {
         if (!shopScaling)
         {
-            SetScale(10f);
+            if (pieceData != null)
+            {
+                SetScale(0.1f);
+            }
+            else
+            {
+                SetScale(10f);
+                el = 1f;
+            }
             shopScaling = true;
-            el = 1f;
         }
+
         if (selected)
         {
             if (!alreadyElevated)

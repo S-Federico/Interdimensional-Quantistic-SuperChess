@@ -64,7 +64,7 @@ public class GameUI : MonoBehaviour
     public void GoToNextLevel() {
         GameManager.Instance.AdvanceLevel();
         GameInfo gameInfo = GameManager.Instance.GameInfo;
-        List<PieceData> enemies = LevelGenerator.Instance.GenerateEnemies(gameInfo.currentLevel, gameInfo.currentStage);
+        List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces("Pieces","Modifiers",PieceColor.Black,gameInfo.currentLevel, gameInfo.currentStage);
         gameInfo.OpponentInfo.ExtraPieces = enemies;
         gameInfo.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
         GameManager.Instance.IsGameOver = false;

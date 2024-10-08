@@ -57,13 +57,26 @@ public class ShopManager : MonoBehaviour
 
     public void BuyItem(ItemData item)
     {
+        //crea caso speciale per buyItem
+        //Quando si compra si genera il PieceData e si aggiunge ai playerextrapieces
         if (item != null)
         {
             if (CanBeBought(item))
             {
-                GameManager.Instance.GameInfo.PlayerInfo.Money -= item.scriptableItem.Price;
+                if (item.scriptableItem != null)
+                    GameManager.Instance.GameInfo.PlayerInfo.Money -= item.scriptableItem.Price;
+                else
+                    GameManager.Instance.GameInfo.PlayerInfo.Money -= item.pieceprice;
+
                 //istanzia nell'inventario del player
-                player.inventory.Add(item);
+                if (item.pieceData != null){
+                    GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces.Add(item.pieceData);
+                    Destroy(item.gameObject);
+                    return;
+                }
+                else
+                    player.inventory.Add(item);
+
                 item.bought = true;
                 //cambia la transform (prima o poi sarà responsabilità del player o dell'inventario stesso)
                 item.gameObject.transform.position = GameObject.Find("PlayerInventory").transform.position;
@@ -75,9 +88,19 @@ public class ShopManager : MonoBehaviour
     {
         if (item != null)
         {
-            if (GameManager.Instance.GameInfo.PlayerInfo.Money >= item.scriptableItem.Price)
+            if (item.scriptableItem != null)
             {
-                return true;
+                if (GameManager.Instance.GameInfo.PlayerInfo.Money >= item.scriptableItem.Price)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (GameManager.Instance.GameInfo.PlayerInfo.Money >= item.pieceprice)
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -243,54 +266,107 @@ public class ShopManager : MonoBehaviour
 
     public void SelectRandomPieces(int numberOfPieces, float padding)
     {
-        List<ScriptablePiece> tempList = new List<ScriptablePiece>(scriptablePieceList);
-        if (tempList.Count < numberOfPieces)
-        {
-            Debug.LogError("Non ci sono abbastanza manuali nella lista!");
-            return;
-        }
+        // Genera i pezzi per il livello corrente
+        List<PieceData> pieces = LevelGenerator.Instance.GeneratePieces("Pieces", "Modifiers", PieceColor.White, GameManager.Instance.GameInfo.currentLevel, GameManager.Instance.GameInfo.currentStage, numberOfPieces);
+
+        // Calcola le dimensioni del piano e la spaziatura
         float planeLength = plane_pieces.GetComponent<Renderer>().bounds.size.x;
         float totalRequiredSpace = numberOfPieces * padding;
+
         if (planeLength < totalRequiredSpace)
         {
-            Debug.LogError("Non c'è abbastanza spazio per posizionare i manuali con il padding richiesto.");
+            Debug.LogError("Non c'è abbastanza spazio per posizionare i pezzi con il padding richiesto.");
             return;
         }
+
+        // Calcola la spaziatura tra i pezzi
         float spacing = (planeLength - (padding * (numberOfPieces - 1))) / (numberOfPieces + 1);
         Vector3 planeStartPosition = plane_pieces.transform.position;
         float planeMinX = planeStartPosition.x - planeLength / 2;
+
+        // Posiziona ogni pezzo in modo equidistante
         for (int i = 0; i < numberOfPieces; i++)
         {
-            int randomIndex = UnityEngine.Random.Range(0, tempList.Count);
-            ScriptablePiece selectedPiece = tempList[randomIndex];
+            PieceData pieceData = pieces[i];
+
+            // Cerca il prefab giusto all'interno della cartella Resources/Pieces
+            GameObject prefab = FindPiecePrefabById(pieceData.PrefabID);
+            if (prefab == null)
+            {
+                Debug.LogError("Prefab non trovato per ID: " + pieceData.PrefabID);
+                continue;
+            }
+
+            // Calcola la posizione
             Vector3 position = new Vector3(
                 planeMinX + spacing * (i + 1) + padding * i,
                 planeStartPosition.y,
                 planeStartPosition.z
             );
-            GameObject obj = Instantiate(selectedPiece.Prefab, position, Quaternion.identity);
-            ItemData item = obj.GetComponent<ItemData>();
-            item.shopScaling = true;
-            if (item != null)
+
+            // Istanzia il prefab del pezzo
+            GameObject obj = Instantiate(prefab, position, Quaternion.identity);
+            obj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            // Aggiunge e configura il componente PieceStatus
+            PieceStatus pieceStatus = obj.GetComponent<PieceStatus>();
+
+            if (pieceStatus != null)
             {
-                item.scriptableItem = selectedPiece;
+                Destroy(pieceStatus);
             }
+
+            DraggableBehaviour drag = obj.GetComponent<DraggableBehaviour>();
+            if (drag != null)
+            {
+                Destroy(drag);
+            }
+
+            // Aggiunge e configura il componente ItemData
+            ItemData itemData = obj.AddComponent<ItemData>();
+            if (itemData != null)
+            {
+                itemData.bought = false;
+                itemData.shopScaling = true;
+                itemData.el = 0.1f;
+                itemData.pieceData = pieceData;
+            }
+
+            // Regola la posizione sull'asse Y in base all'altezza dell'oggetto
             Renderer objRenderer = obj.GetComponent<Renderer>();
             if (objRenderer != null)
             {
-                float objHeight = objRenderer.bounds.size.y;
+                float objHeight = objRenderer.bounds.size.y / 10;
                 position.y = planeStartPosition.y + objHeight / 2;
                 obj.transform.position = position;
             }
             else
             {
-                Debug.LogWarning("Il prefab non ha un Renderer. Non posso calcolare la sua altezza.");
+                Debug.LogWarning("Il prefab del pezzo non ha un Renderer. Non posso calcolare la sua altezza.");
             }
+
+            // Aggiungi un po' di rotazione casuale sull'asse Y per variare l'orientamento
             obj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
-            pieces.Add(obj);
-            tempList.RemoveAt(randomIndex);
-            Debug.Log("Selezionato pezzo: " + selectedPiece.name + " alla posizione " + position);
+
+            // Debug per confermare la selezione del pezzo e la posizione
+            Debug.Log("Pezzo selezionato: " + pieceData.PrefabID + " alla posizione " + position);
         }
     }
+
+    // Metodo per cercare il prefab giusto in Resources/Pieces
+    private GameObject FindPiecePrefabById(int prefabId)
+    {
+        GameObject[] prefabs = Resources.LoadAll<GameObject>("Pieces");
+        foreach (GameObject prefab in prefabs)
+        {
+            PieceStatus pieceStatus = prefab.GetComponent<PieceStatus>();
+            if (pieceStatus != null && pieceStatus.PrefabID == prefabId)
+            {
+                return prefab;
+            }
+        }
+        return null;
+    }
+
+
 
 }
