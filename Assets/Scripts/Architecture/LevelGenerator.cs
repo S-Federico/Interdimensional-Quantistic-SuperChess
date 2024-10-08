@@ -68,4 +68,24 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         return result;
     }
+
+    public BoardData GenerateDefaultBoardData() {
+        GameObject[] prefabs = Resources.LoadAll<GameObject>("Pieces");
+        PieceStatus whiteKing = null;
+        PieceStatus blackKing = null;
+        foreach (var piece in prefabs)
+        {
+            if (whiteKing != null && blackKing != null) break;
+            if(piece.TryGetComponent<PieceStatus>(out PieceStatus pieceStatus) && pieceStatus.PieceColor == PieceColor.Black && pieceStatus.PieceType == PieceType.King) {
+                blackKing = pieceStatus;
+            } else if(piece.TryGetComponent<PieceStatus>(out PieceStatus pieceStatus2) && pieceStatus.PieceColor == PieceColor.White && pieceStatus.PieceType == PieceType.King) {
+                whiteKing = pieceStatus2;
+            }
+        }
+        PieceStatus[,] pieces = new PieceStatus[8,8];
+        pieces[7,4] = whiteKing;
+        pieces[0,4] = blackKing;
+        BoardData boardData = new BoardData(Turn.Player, pieces);
+        return boardData;
+    } 
 }

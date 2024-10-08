@@ -157,5 +157,12 @@ public class GameManager : Singleton<GameManager>
             GameInfo.currentLevel += 1;
             GameInfo.currentStage = 1;
         }
+
+        // Move currentPieces in inventory (player only because enemy will be overridden in other function)
+        GameInfo.PlayerInfo.CurrentlyUsedExtraPieces.ForEach(p => GameInfo.PlayerInfo.ExtraPieces.Add(p));
+        GameInfo.PlayerInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
+
+        GameInfo.OpponentInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
+
     }
 }

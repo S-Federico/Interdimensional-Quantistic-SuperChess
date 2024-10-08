@@ -553,8 +553,8 @@ public class BoardManager : MonoBehaviour
 
         for (int i = 0; i < opponentPieces.Count; i++)
         {
-            PieceStatus p = new PieceStatus();
-            p.BuildFromData(opponentPieces.ElementAt(i));
+            PieceData pd = opponentPieces.ElementAt(i);
+            PieceStatus p;
 
             float pieceX;
             float pieceZ;
@@ -568,7 +568,7 @@ public class BoardManager : MonoBehaviour
                 pieceX = opponentPiecesPlane.transform.position.x - xoffset;
                 pieceZ = (opponentPieceSpacingz / 2) + ((i - (opponentPieces.Count / 2)) * opponentPieceSpacingz) + opponentPiecesPlane.transform.position.z - (opponentPlaneSize.z / 2) + (padding / 2);
             }
-            GameObject obj = GetPieceFromId(p.PrefabID);
+            GameObject obj = GetPieceFromId(pd.PrefabID);
 
             if (obj != null)
             {

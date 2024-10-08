@@ -65,7 +65,11 @@ public class GameUI : MonoBehaviour
         GameManager.Instance.AdvanceLevel();
         GameInfo gameInfo = GameManager.Instance.GameInfo;
         List<PieceData> enemies = LevelGenerator.Instance.GenerateEnemies(gameInfo.currentLevel, gameInfo.currentStage);
-        BackToMainMenu();
+        gameInfo.OpponentInfo.ExtraPieces = enemies;
+        gameInfo.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
+        GameManager.Instance.IsGameOver = false;
+        GameManager.Instance.SaveGameToFile();
+        GameManager.Instance.ContinueGame(gameInfo);
     }
 
     public void GoToShop() {
