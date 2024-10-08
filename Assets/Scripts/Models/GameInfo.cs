@@ -8,6 +8,7 @@ public class GameInfo
     public int currentStage = 1;
 
     public PlayerInfo PlayerInfo = new PlayerInfo();
+    public PlayerInfo OpponentInfo = new PlayerInfo();
 
     public bool HasSaveFile()
     {

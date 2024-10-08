@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using Newtonsoft.Json;
 using Unity.VisualScripting;
 using System;
+using System.Linq;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -37,7 +38,7 @@ public class GameManager : Singleton<GameManager>
 
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
         boardManager.LoadBoardFromBoardData();
-        boardManager.InitializePiecesPlanes();
+        boardManager.InitializePiecesPlanes(true);
     }
 
     public void NewGame(GameInfo gameInfo)
@@ -93,8 +94,20 @@ public class GameManager : Singleton<GameManager>
             return;
         }
 
-        // // Pulisci il file esistente
-        // File.WriteAllText(SaveFilePath, "");
+        // Salvo i pezzi usati attualmente dall'opponent nel file di salvataggio
+        OpponentManager opponentManager = FindAnyObjectByType<OpponentManager>();
+        if (opponentManager != null) {
+            GameInfo.OpponentInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
+            opponentManager.pieces.ForEach(p => GameInfo.OpponentInfo.CurrentlyUsedExtraPieces.Add(p.GetPieceData()));
+        }
+
+        // Salvo i pezzi usati attualmente dal player nel file di salvataggio
+        PlayerManager playerManager = FindAnyObjectByType<PlayerManager>();
+        if (playerManager != null) {
+            GameInfo.PlayerInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
+            playerManager.pieces.ForEach(p => GameInfo.PlayerInfo.CurrentlyUsedExtraPieces.Add(p.GetPieceData()));
+        }
+
 
         // string json = JsonConvert.SerializeObject(boardStatus, Formatting.Indented); // Usa JSON.NET
         SaveManager.Instance.Save(GameInfo, this.GameInfo.ProfileName);

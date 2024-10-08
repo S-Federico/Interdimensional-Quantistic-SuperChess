@@ -34,8 +34,11 @@ public class BoardManager : MonoBehaviour
     public List<GameObject> consumables;
     public ItemData selectedConsumable;
 
+    private GameInfo gameInfo;
+
     void Start()
     {
+        gameInfo = GameManager.Instance.GameInfo;
         cbm = new ChessBoardModel();
         Player = GameObject.FindAnyObjectByType<PlayerManager>();
         boardBehaviour = board.GetComponent<BoardBehaviour>();
@@ -56,7 +59,8 @@ public class BoardManager : MonoBehaviour
     void Update()
     {
         // Check on GameManager.Instance.IsGameover to avoit invoking GameOver function every frame
-        if (Pieces != null && ChessAI.IsGameOver(Pieces) && !GameManager.Instance.IsGameOver) {
+        if (Pieces != null && ChessAI.IsGameOver(Pieces) && !GameManager.Instance.IsGameOver)
+        {
             GameManager.Instance.GameOver();
         }
         if (currentTurn == Turn.Player)
@@ -251,7 +255,7 @@ public class BoardManager : MonoBehaviour
                         }
                         else
                         {
-                            opponent.pieces.Add(pieceStatus);
+                            GameManager.Instance.GameInfo.OpponentInfo.ExtraPieces.Add(PieceData.FromPieceStatus(pieceStatus));
                         }
                     }
 
@@ -334,7 +338,7 @@ public class BoardManager : MonoBehaviour
         if (piece == null || destination == null) return;
         PieceStatus pieceStatus = piece.GetComponent<PieceStatus>();
         // Perform logical movement
-        if(piece.GetComponent<PieceStatus>().Position.x!=-1)
+        if (piece.GetComponent<PieceStatus>().Position.x != -1)
             Pieces[(int)pieceStatus.Position.x, (int)pieceStatus.Position.y] = null;
 
         Pieces[(int)destination.x, (int)destination.y] = pieceStatus;
@@ -399,6 +403,7 @@ public class BoardManager : MonoBehaviour
                 }
             }
             this.Pieces = result;
+            InitializePiecesPlanes(false);
         }
     }
 
@@ -479,14 +484,28 @@ public class BoardManager : MonoBehaviour
     }
 
 
-    public void InitializePiecesPlanes()
+    public void InitializePiecesPlanes(bool isNewGame)
     {
 
         int npieces = 10;
 
         // Seleziona i pezzi del giocatore e dell'avversario
-        List<PieceData> playerPieces = Utility.SelectCurrentMatchPieces(npieces, GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces);
-        List<PieceStatus> opponentPieces = Utility.SelectCurrentMatchPieces(npieces, opponent.pieces);
+        // Prima di prenderli dalla pool globale, vede se si tratta di una nuova partita.
+        // Se non è nuova partita, allora li prende dal salvataggio
+        if (isNewGame)
+        {
+            // "Equipaggio" i pezzi dall'inventario globale del player e opponent per metterli sul piano
+            gameInfo.PlayerInfo.CurrentlyUsedExtraPieces = Utility.SelectCurrentMatchPieces(npieces, gameInfo.PlayerInfo.ExtraPieces);
+            gameInfo.OpponentInfo.CurrentlyUsedExtraPieces = Utility.SelectCurrentMatchPieces(npieces, gameInfo.OpponentInfo.ExtraPieces);
+
+            // Rimuovo i pezzi "equipaggiati" dall'inventario globale di player e nemico
+            gameInfo.PlayerInfo.ExtraPieces.RemoveAll(p => gameInfo.PlayerInfo.CurrentlyUsedExtraPieces.Contains(p));
+            gameInfo.OpponentInfo.ExtraPieces.RemoveAll(p => gameInfo.OpponentInfo.CurrentlyUsedExtraPieces.Contains(p));
+
+        }
+        List<PieceData> playerPieces = gameInfo.PlayerInfo.CurrentlyUsedExtraPieces;
+        List<PieceData> opponentPieces = gameInfo.OpponentInfo.CurrentlyUsedExtraPieces;
+
         List<PieceStatus> actualOpponentPieces = new List<PieceStatus>();
         List<PieceStatus> actualPlayerPieces = new List<PieceStatus>();
 
@@ -534,7 +553,8 @@ public class BoardManager : MonoBehaviour
 
         for (int i = 0; i < opponentPieces.Count; i++)
         {
-            PieceStatus p = opponentPieces.ElementAt(i);
+            PieceStatus p = new PieceStatus();
+            p.BuildFromData(opponentPieces.ElementAt(i));
 
             float pieceX;
             float pieceZ;
@@ -569,6 +589,7 @@ public class BoardManager : MonoBehaviour
 
         Pieces[(int)piece.Position.x, (int)piece.Position.y] = piece;
         Player.pieces.Remove(piece);
+
         currentTurn = Turn.AI;
         foreach (PieceStatus p in Player.pieces)
         {

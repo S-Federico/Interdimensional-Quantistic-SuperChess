@@ -60,7 +60,9 @@ public class OpponentManager : MonoBehaviour
             if (Pieces[endX, endY] == null)
             {
                 boardManager.MovePiece(boardManager.selectedPiece, new Vector2(endX, endY));
-                pieces.Remove(FindPiecebyID(pID));
+                PieceStatus ps = FindPiecebyID(pID);
+                GameManager.Instance.GameInfo.OpponentInfo.CurrentlyUsedExtraPieces.Remove(ps.GetPieceData());
+                pieces.Remove(ps);
             }
             else
             {
