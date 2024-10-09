@@ -46,6 +46,7 @@ public class PlayerManager : MonoBehaviour
             if (consumable != null)
             {
                 PConsumables.Remove(consumable);
+                GameManager.Instance.GameInfo.PlayerInfo.Consumables.Remove(item.ScriptableItemPath);
                 removed = true;
                 Debug.Log("Consumabile rimosso dalla lista.");
             }
@@ -56,6 +57,7 @@ public class PlayerManager : MonoBehaviour
             if (manual != null)
             {
                 PManuals.Remove(manual);
+                GameManager.Instance.GameInfo.PlayerInfo.Manuals.Remove(item.ScriptableItemPath);
                 removed = true;
                 Debug.Log("Manuale rimosso dalla lista.");
             }

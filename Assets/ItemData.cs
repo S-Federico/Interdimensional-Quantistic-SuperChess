@@ -11,6 +11,10 @@ using UnityEngine.UIElements;
 public class ItemData : MonoBehaviour, IClickable
 {
     public ScriptableItem scriptableItem;
+    public string ScriptableItemPath;
+
+
+
     public bool bought;
     public bool selected;
     public bool alreadyElevated;
