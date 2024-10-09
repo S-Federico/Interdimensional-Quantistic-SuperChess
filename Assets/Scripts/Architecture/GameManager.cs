@@ -35,7 +35,10 @@ public class GameManager : Singleton<GameManager>
         {
             yield return null; // Aspetta un frame
         }
-
+    /*
+        GameInfo.PlayerInfo.Manuals.Add("Assets/ScriptableObjects/Manuals/Manual Second.asset");
+        GameInfo.PlayerInfo.Consumables.Add("Assets/ScriptableObjects/Consumables/FirstConsumable.asset");
+    */
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
         boardManager.LoadBoardFromBoardData();
         boardManager.InitializePiecesPlanes(true);
@@ -96,14 +99,16 @@ public class GameManager : Singleton<GameManager>
 
         // Salvo i pezzi usati attualmente dall'opponent nel file di salvataggio
         OpponentManager opponentManager = FindAnyObjectByType<OpponentManager>();
-        if (opponentManager != null) {
+        if (opponentManager != null)
+        {
             GameInfo.OpponentInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
             opponentManager.pieces.ForEach(p => GameInfo.OpponentInfo.CurrentlyUsedExtraPieces.Add(p.GetPieceData()));
         }
 
         // Salvo i pezzi usati attualmente dal player nel file di salvataggio
         PlayerManager playerManager = FindAnyObjectByType<PlayerManager>();
-        if (playerManager != null) {
+        if (playerManager != null)
+        {
             GameInfo.PlayerInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
             playerManager.pieces.ForEach(p => GameInfo.PlayerInfo.CurrentlyUsedExtraPieces.Add(p.GetPieceData()));
         }
@@ -133,6 +138,14 @@ public class GameManager : Singleton<GameManager>
         }
 
         boardManager.BuildFromData(this.GameInfo.BoardData);
+
+        var playerManager = GameObject.FindAnyObjectByType<PlayerManager>();
+        if (playerManager == null)
+        {
+            Debug.LogError("BoardManager non trovato!");
+            return;
+        }
+        playerManager.BuildFromData(this.GameInfo.PlayerInfo);
     }
 
     internal void GameOver()
@@ -145,7 +158,8 @@ public class GameManager : Singleton<GameManager>
         SaveGameToFile();
     }
 
-    public int MoneyWonFromCurrentRound {
+    public int MoneyWonFromCurrentRound
+    {
         get => 2 * GameInfo.currentLevel * GameInfo.currentStage;
     }
 

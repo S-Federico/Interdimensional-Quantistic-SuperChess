@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
     public List<ItemData> inventory;
-    public List<GameObject> TemporaryManuals;
-    public List<GameObject> TemporaryConsumables;
     public List<ItemData> PManuals;
     public List<ItemData> PConsumables;
     public List<PieceStatus> pieces;
@@ -15,23 +15,51 @@ public class PlayerManager : MonoBehaviour
     public void Start()
     {
         inventory = new List<ItemData>();
-        TemporaryInventoryFill();
+        BuildFromData(GameManager.Instance.GameInfo.PlayerInfo);
     }
 
-    private void TemporaryInventoryFill()
+    public void BuildFromData(PlayerInfo playerInfo)
     {
-        foreach (GameObject go in TemporaryManuals)
+        if (playerInfo == null)
         {
-            PManuals.Add(go.GetComponent<ItemData>());
+            Debug.LogError("playerInfo è null");
+            return;
         }
-        Debug.Log("PManuals popolato.");
-        foreach (GameObject go in TemporaryConsumables)
+
+        foreach (string consumPath in playerInfo.Consumables)
         {
-            go.GetComponent<ItemData>().bought = true;
-            PConsumables.Add(go.GetComponent<ItemData>());
-            Debug.Log("PConsumables " + go.GetComponent<ItemData>().scriptableItem.Name);
+            ScriptableConsumable obj = AssetDatabase.LoadAssetAtPath<ScriptableConsumable>(consumPath);
+            if (obj == null)
+            {
+                Debug.LogError($"scriptableConsumable al path {consumPath} è nullo");
+                return;
+            }
+            ItemData item = obj.Prefab.GetComponent<ItemData>();
+            if (item == null)
+            {
+                Debug.LogError($"itemdata al path {consumPath} è nullo");
+                return;
+            }
+            PConsumables.Add(item);
         }
-        Debug.Log("PConsumables popolato.");
+        Debug.Log($"PConsumables popolato.{PConsumables.Count}");
+        foreach (string manualPath in playerInfo.Manuals)
+        {
+            ScriptableManual obj = AssetDatabase.LoadAssetAtPath<ScriptableManual>(manualPath);
+            if (obj == null)
+            {
+                Debug.LogError($"scriptableManual al path {manualPath} è nullo");
+                return;
+            }
+            ItemData item = obj.Prefab.GetComponent<ItemData>();
+            if (item == null)
+            {
+                Debug.LogError($"itemdata al path {manualPath} è nullo");
+                return;
+            }
+            PManuals.Add(item);
+        }
+        Debug.Log($"PManuals popolato. {PManuals.Count}");
     }
 
     public void RemoveItem(ItemData item)   // Da aggiornare per gestire meglio le liste (inventory etc)
