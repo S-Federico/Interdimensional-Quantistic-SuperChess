@@ -34,13 +34,13 @@ public class ShopManager : MonoBehaviour
     public GameObject plane_consumable;
     public Dictionary<string, ScriptableManual> scriptableManualDict = new Dictionary<string, ScriptableManual>();
     public Dictionary<string, ScriptableConsumable> scriptableConsumableDict = new Dictionary<string, ScriptableConsumable>();
-    public Dictionary<string, ScriptablePiece> scriptablePieceDict = new Dictionary<string, ScriptablePiece>();
     public List<GameObject> manuals = new List<GameObject>();
     public List<GameObject> consumables = new List<GameObject>();
     public List<GameObject> pieces = new List<GameObject>();
 
     private PlayerManager player;
 
+    int numPieces=2;
 
     void Start()
     {
@@ -48,12 +48,11 @@ public class ShopManager : MonoBehaviour
         // Load scriptable objects into dictionaries
         LoadScriptableObjects<ScriptableManual>("Assets/ScriptableObjects/Manuals", scriptableManualDict);
         LoadScriptableObjects<ScriptableConsumable>("Assets/ScriptableObjects/Consumables", scriptableConsumableDict);
-        LoadScriptableObjects<ScriptablePiece>("Assets/ScriptableObjects/Pieces", scriptablePieceDict);
 
         // Select random items from the dictionaries
         SelectRandomManuals(scriptableManualDict.Count, 0.1f);
         SelectRandomConsumables(scriptableConsumableDict.Count, 0.1f);
-        SelectRandomPieces(scriptablePieceDict.Count, 0.1f);
+        SelectRandomPieces(numPieces, 0.1f);
         player = GameObject.Find("Player").GetComponent<PlayerManager>();
 
     }
@@ -80,7 +79,6 @@ public class ShopManager : MonoBehaviour
                 }
                 else
                 {
-                    player.inventory.Add(item);
                     if (item.scriptableItem is ScriptableConsumable)
                     {
                         GameManager.Instance.GameInfo.PlayerInfo.Consumables.Add(item.ScriptableItemPath);
@@ -94,6 +92,10 @@ public class ShopManager : MonoBehaviour
                 //cambia la transform (prima o poi sarà responsabilità del player o dell'inventario stesso)
                 item.gameObject.transform.position = GameObject.Find("PlayerInventory").transform.position;
             }
+            else
+            {
+                Debug.Log("Item non comprato.");
+            }
         }
     }
 
@@ -105,6 +107,7 @@ public class ShopManager : MonoBehaviour
             {
                 if (GameManager.Instance.GameInfo.PlayerInfo.Money >= item.scriptableItem.Price)
                 {
+                    Debug.LogError($"Item: {item.scriptableItem.Price} Player: {GameManager.Instance.GameInfo.PlayerInfo.Money}");
                     return true;
                 }
             }
@@ -112,6 +115,7 @@ public class ShopManager : MonoBehaviour
             {
                 if (GameManager.Instance.GameInfo.PlayerInfo.Money >= item.pieceprice)
                 {
+                    Debug.LogError($"Item: {item.scriptableItem.Price} Player: {GameManager.Instance.GameInfo.PlayerInfo.Money}");
                     return true;
                 }
             }
@@ -277,8 +281,14 @@ public class ShopManager : MonoBehaviour
             "Pieces", "Modifiers", PieceColor.White,
             GameManager.Instance.GameInfo.currentLevel,
             GameManager.Instance.GameInfo.currentStage,
+            numberOfPieces,
             numberOfPieces
         );
+
+        if (pieces.Count <numPieces){
+            Debug.LogError($"not enough pieces to populate shop section. Pieces needed:{numberOfPieces}, pieces found:{pieces.Count}");
+            return;
+        }
 
         float planeLength = plane_pieces.GetComponent<Renderer>().bounds.size.x;
         float totalRequiredSpace = numberOfPieces * padding;
@@ -293,7 +303,7 @@ public class ShopManager : MonoBehaviour
         Vector3 planeStartPosition = plane_pieces.transform.position;
         float planeMinX = planeStartPosition.x - planeLength / 2;
 
-        for (int i = 0; i < numberOfPieces; i++)
+        for (int i = 0; i < pieces.Count; i++)
         {
             PieceData pieceData = pieces[i];
             GameObject prefab = FindPiecePrefabById(pieceData.PrefabID);

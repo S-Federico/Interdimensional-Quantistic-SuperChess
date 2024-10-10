@@ -15,7 +15,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// <param name="level">The level to generate enemies for</param>
     /// <param name="stage">The stage of the level to generat enemies for</param>
     /// <returns></returns>
-    public List<PieceData> GeneratePieces(string piecespath, string modpath, PieceColor color, int level = 1, int stage = 1, int maxPieces = 8)
+    public List<PieceData> GeneratePieces(string piecespath, string modpath, PieceColor color, int level = 1, int stage = 1, int maxPieces = 8, int minPieces = 1)
     {
         List<PieceData> result = new List<PieceData>();
 
@@ -42,7 +42,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         double difficultyToReach = BASE_DIFFICULTY + Math.Pow(VARIABLE_BASE_DIFFICULTY, level * stage);
         double currentDifficulty = 0.0f;
 
-        while (currentDifficulty < difficultyToReach && result.Count < maxPieces && pieces.Count > 0)
+        while ((currentDifficulty < difficultyToReach || result.Count <= minPieces) && result.Count < maxPieces && pieces.Count > 0)
         {
             int pieceIndex = (int)UnityEngine.Random.Range(0, pieces.Count);
             PieceData randomPiece = pieces[pieceIndex];

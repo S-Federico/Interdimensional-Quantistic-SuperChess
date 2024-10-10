@@ -66,9 +66,9 @@ public class ItemData : MonoBehaviour, IClickable
         }
 
         el = 0.1f;
-        int sellprice = pieceprice / 2;
+        int buyprice = pieceprice ;
         if (scriptableItem != null)
-            sellprice = scriptableItem.Price / 2;
+            buyprice = scriptableItem.Price;
 
         buyTag = Instantiate(Resources.Load<GameObject>("ButtonPrefab"));
         sellTag = Instantiate(Resources.Load<GameObject>("ButtonPrefab"));
@@ -76,9 +76,9 @@ public class ItemData : MonoBehaviour, IClickable
         priceTag = Instantiate(Resources.Load<GameObject>("ButtonPrefab"));
 
         SetButton(buyTag, bottomLeft, ButtonType.Buy, "Buy");
-        SetButton(sellTag, bottomLeft, ButtonType.Sell, $"Sell {sellprice}$");
+        SetButton(sellTag, bottomLeft, ButtonType.Sell, $"Sell {(buyprice/2)+1}$");
         SetButton(useTag, bottomRight, ButtonType.Use, "Use");
-        SetButton(priceTag, bottomRight, ButtonType.PriceTag, $"{sellprice * 2}$");
+        SetButton(priceTag, bottomRight, ButtonType.PriceTag, $"{buyprice}$");
     }
 
     public void SetButton(GameObject b, Vector3 anchor, ButtonType type, string text)
@@ -208,7 +208,7 @@ public class ItemData : MonoBehaviour, IClickable
                 PlayerManager player = GameObject.Find("Player").GetComponent<PlayerManager>();
                 if (player != null)
                 {
-                    GameManager.Instance.GameInfo.PlayerInfo.Money += scriptableItem.Price / 2;
+                    GameManager.Instance.GameInfo.PlayerInfo.Money += (scriptableItem.Price / 2)+1;
                     player.RemoveItem(this);
                     Destroy(this.gameObject);
                 }

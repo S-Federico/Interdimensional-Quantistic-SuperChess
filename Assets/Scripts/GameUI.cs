@@ -18,8 +18,9 @@ public class GameUI : MonoBehaviour
     {
         HideAll();
     }
-    
-    void Update() {
+
+    void Update()
+    {
         // Menu button has to be shown only if is not in GameOver
         MenuButton.SetActive(!GameManager.Instance.IsGameOver);
 
@@ -29,7 +30,8 @@ public class GameUI : MonoBehaviour
         // GameOver UI should be visible only if is game over
         GameOverMenu.SetActive(GameManager.Instance.IsGameOver);
 
-        if (GameManager.Instance.IsGameOver) {
+        if (GameManager.Instance.IsGameOver)
+        {
             EarnedMoneyText.text = $"Money won: {GameManager.Instance.MoneyWonFromCurrentRound}$";
             TotalMoneyText.text = $"Total money: {GameManager.Instance.GameInfo.PlayerInfo.Money}$";
         }
@@ -59,14 +61,16 @@ public class GameUI : MonoBehaviour
         GameManager.Instance.IsPaused = false;
     }
 
-    public void MenuButtonPressed() {
+    public void MenuButtonPressed()
+    {
         GameManager.Instance.IsPaused = !GameManager.Instance.IsPaused;
     }
 
-    public void GoToNextLevel() {
+    public void GoToNextLevel()
+    {
         GameManager.Instance.AdvanceLevel();
         GameInfo gameInfo = GameManager.Instance.GameInfo;
-        List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces("Pieces","Modifiers",PieceColor.Black,gameInfo.currentLevel, gameInfo.currentStage);
+        List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces("Pieces", "Modifiers", PieceColor.Black, gameInfo.currentLevel, gameInfo.currentStage);
         gameInfo.OpponentInfo.ExtraPieces = enemies;
         gameInfo.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
         GameManager.Instance.IsGameOver = false;
@@ -76,7 +80,8 @@ public class GameUI : MonoBehaviour
         GameManager.Instance.ContinueGame(gameInfo);
     }
 
-    public void GoToShop() {
+    public void GoToShop()
+    {
         SceneManager.LoadScene("ShopMockup");
     }
 }

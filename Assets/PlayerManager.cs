@@ -7,14 +7,12 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    public List<ItemData> inventory;
     public List<ItemData> PManuals;
     public List<ItemData> PConsumables;
     public List<PieceStatus> pieces;
 
     public void Start()
     {
-        inventory = new List<ItemData>();
         BuildFromData(GameManager.Instance.GameInfo.PlayerInfo);
     }
 
