@@ -504,7 +504,6 @@ public class BoardManager : MonoBehaviour
         if (isNewGame)
         {
             MovePiecesFromInventoryToPlanes(gameInfo, npieces);
-
         }
         List<PieceData> playerPieces = gameInfo.PlayerInfo.CurrentlyUsedExtraPieces;
         List<PieceData> opponentPieces = gameInfo.OpponentInfo.CurrentlyUsedExtraPieces;
