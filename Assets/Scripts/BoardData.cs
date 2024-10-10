@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Array2DEditor;
+using Newtonsoft.Json;
 using UnityEditor.Experimental;
 using UnityEngine;
 public class BoardData
@@ -80,7 +81,7 @@ public class PieceData
     public int PrefabID;
     public int[] Position = new int[]{};
     public int[,] MovementMatrix = new int[,]{};
-    public List<ScriptableStatusModifier> Modifiers = new List<ScriptableStatusModifier>();
+    [JsonIgnore] public List<ScriptableStatusModifier> Modifiers = new List<ScriptableStatusModifier>();
 
     private static Dictionary<PieceType, int> DIFFICULTY_MAP = new Dictionary<PieceType, int>{
         {PieceType.Bishop, 5},
@@ -133,6 +134,8 @@ public class PieceData
 
     private bool MovementMatrixEquals(int[,] matrix1, int[,] matrix2)
     {
+        if (matrix1 == null && matrix2 == null) return true;
+        if (matrix1 == null || matrix2 == null) return false;
         if (matrix1.GetLength(0) != matrix2.GetLength(0) || matrix1.GetLength(1) != matrix2.GetLength(1))
             return false;
 

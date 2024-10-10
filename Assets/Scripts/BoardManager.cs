@@ -483,6 +483,15 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    public static void MovePiecesFromInventoryToPlanes(GameInfo gameInfo, int npieces) {
+        // "Equipaggio" i pezzi dall'inventario globale del player e opponent per metterli sul piano
+        gameInfo.PlayerInfo.CurrentlyUsedExtraPieces = Utility.SelectCurrentMatchPieces(npieces, gameInfo.PlayerInfo.ExtraPieces);
+        gameInfo.OpponentInfo.CurrentlyUsedExtraPieces = Utility.SelectCurrentMatchPieces(npieces, gameInfo.OpponentInfo.ExtraPieces);
+
+        // Rimuovo i pezzi "equipaggiati" dall'inventario globale di player e nemico
+        gameInfo.PlayerInfo.ExtraPieces.RemoveAll(p => gameInfo.PlayerInfo.CurrentlyUsedExtraPieces.Contains(p));
+        gameInfo.OpponentInfo.ExtraPieces.RemoveAll(p => gameInfo.OpponentInfo.CurrentlyUsedExtraPieces.Contains(p));
+    }
 
     public void InitializePiecesPlanes(bool isNewGame)
     {
@@ -494,13 +503,7 @@ public class BoardManager : MonoBehaviour
         // Se non è nuova partita, allora li prende dal salvataggio
         if (isNewGame)
         {
-            // "Equipaggio" i pezzi dall'inventario globale del player e opponent per metterli sul piano
-            gameInfo.PlayerInfo.CurrentlyUsedExtraPieces = Utility.SelectCurrentMatchPieces(npieces, gameInfo.PlayerInfo.ExtraPieces);
-            gameInfo.OpponentInfo.CurrentlyUsedExtraPieces = Utility.SelectCurrentMatchPieces(npieces, gameInfo.OpponentInfo.ExtraPieces);
-
-            // Rimuovo i pezzi "equipaggiati" dall'inventario globale di player e nemico
-            gameInfo.PlayerInfo.ExtraPieces.RemoveAll(p => gameInfo.PlayerInfo.CurrentlyUsedExtraPieces.Contains(p));
-            gameInfo.OpponentInfo.ExtraPieces.RemoveAll(p => gameInfo.OpponentInfo.CurrentlyUsedExtraPieces.Contains(p));
+            MovePiecesFromInventoryToPlanes(gameInfo, npieces);
 
         }
         List<PieceData> playerPieces = gameInfo.PlayerInfo.CurrentlyUsedExtraPieces;

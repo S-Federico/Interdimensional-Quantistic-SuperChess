@@ -70,7 +70,9 @@ public class GameUI : MonoBehaviour
         gameInfo.OpponentInfo.ExtraPieces = enemies;
         gameInfo.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
         GameManager.Instance.IsGameOver = false;
-        GameManager.Instance.SaveGameToFile();
+        BoardManager.MovePiecesFromInventoryToPlanes(gameInfo, 10);
+        GameManager.Instance.SaveGameToFile(gameInfo);
+        GameManager.Instance.LoadGameFromFile();
         GameManager.Instance.ContinueGame(gameInfo);
     }
 

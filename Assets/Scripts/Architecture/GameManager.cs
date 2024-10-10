@@ -78,6 +78,11 @@ public class GameManager : Singleton<GameManager>
         isGameOver = false;
     }
 
+    public void SaveGameToFile(GameInfo gameInfo) {
+        SaveManager.Instance.Save(gameInfo, gameInfo.ProfileName);
+    }
+
+
 
     public void SaveGameToFile()
     {
@@ -128,7 +133,7 @@ public class GameManager : Singleton<GameManager>
 
     public void LoadGameFromFile()
     {
-        //GameInfo b = SaveManager.Instance.Load<GameInfo>(gameInfo.ProfileName);
+        GameInfo = SaveManager.Instance.Load<GameInfo>(GameInfo.ProfileName);
 
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
         if (boardManager == null)
@@ -137,7 +142,7 @@ public class GameManager : Singleton<GameManager>
             return;
         }
 
-        boardManager.BuildFromData(this.GameInfo.BoardData);
+        boardManager.BuildFromData(GameInfo.BoardData);
 
         var playerManager = GameObject.FindAnyObjectByType<PlayerManager>();
         if (playerManager == null)
@@ -145,7 +150,7 @@ public class GameManager : Singleton<GameManager>
             Debug.LogError("BoardManager non trovato!");
             return;
         }
-        playerManager.BuildFromData(this.GameInfo.PlayerInfo);
+        playerManager.BuildFromData(GameInfo.PlayerInfo);
     }
 
     internal void GameOver()
