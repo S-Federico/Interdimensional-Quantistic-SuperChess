@@ -72,3 +72,6 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 Assets/boardStatus.json
 /Assets/SyntyStudios
+
+# Special folders
+/[Aa]ssets/Saves/*

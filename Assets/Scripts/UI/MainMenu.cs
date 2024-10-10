@@ -79,6 +79,7 @@ public class MainMenu : MonoBehaviour
 
     public void NewGame()
     {
+        this.selectedGameInfo.Reset();
         GameManager.Instance.NewGame(this.selectedGameInfo);
     }
 

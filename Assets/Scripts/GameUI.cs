@@ -12,6 +12,7 @@ public class GameUI : MonoBehaviour
     public GameObject MenuButton;
     public TMP_Text TotalMoneyText;
     public TMP_Text EarnedMoneyText;
+    public TMP_Text CurrentMoneyText;
 
     void Start()
     {
@@ -32,6 +33,7 @@ public class GameUI : MonoBehaviour
             EarnedMoneyText.text = $"Money won: {GameManager.Instance.MoneyWonFromCurrentRound}$";
             TotalMoneyText.text = $"Total money: {GameManager.Instance.GameInfo.PlayerInfo.Money}$";
         }
+        CurrentMoneyText.text = $"Total money: {GameManager.Instance.GameInfo.PlayerInfo.Money}$";
     }
 
     public void HideAll()
