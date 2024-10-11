@@ -17,8 +17,6 @@ public class ShopUI : MonoBehaviour
 
     public void BackToMainMenu()
     {
-#warning Controllare cosa si deve salvare in questo caso. Va cercando BoardManager(?)
-        GameManager.Instance.SaveGameToFile();
         GameManager.Instance.RestartGame();
         GameManager.Instance.IsPaused = false;
     }
