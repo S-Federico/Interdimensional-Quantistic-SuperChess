@@ -26,6 +26,7 @@ public class GameInfo
         this.PlayerInfo = new PlayerInfo();
         this.OpponentInfo = new PlayerInfo();
         this.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
+        this.GameState = GameState.RUNNING;
     }
 
     List<Consumable> UnlockedConsumables = new List<Consumable>();
