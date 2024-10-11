@@ -31,4 +31,6 @@ public class GameInfo
     List<Consumable> UnlockedConsumables = new List<Consumable>();
 
     public BoardData BoardData;
+
+    public GameState GameState = GameState.RUNNING;
 }

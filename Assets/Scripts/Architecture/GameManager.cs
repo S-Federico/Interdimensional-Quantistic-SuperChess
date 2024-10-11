@@ -157,8 +157,13 @@ public class GameManager : Singleton<GameManager>
     {
         this.isGameOver = true;
 
-        // Give money
-        this.GameInfo.PlayerInfo.Money += MoneyWonFromCurrentRound;
+        // Give money only if game is currently running to prevent giving again money
+        if (GameInfo.GameState == GameState.RUNNING) {
+            this.GameInfo.PlayerInfo.Money += MoneyWonFromCurrentRound;
+        }
+        
+        // Signal that now game is over
+        GameInfo.GameState = GameState.GAME_OVER;
 
         SaveGameToFile();
     }
