@@ -184,4 +184,28 @@ public class GameManager : Singleton<GameManager>
         GameInfo.OpponentInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
 
     }
+
+    public void GoToNextLevel() {
+        AdvanceLevel();
+        GameInfo gameInfo = GameInfo;
+        List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces("Pieces", "Modifiers", PieceColor.Black, gameInfo.currentLevel, gameInfo.currentStage);
+        gameInfo.OpponentInfo.ExtraPieces = enemies;
+        foreach (var item in gameInfo.BoardData.piecesData)
+        {
+            if (item != null && item.PieceColor == PieceColor.White && item.PieceType != PieceType.King) {
+                gameInfo.PlayerInfo.ExtraPieces.Add(item);
+            }
+        }
+        gameInfo.PlayerInfo.CurrentlyUsedExtraPieces.ForEach(p => gameInfo.PlayerInfo.ExtraPieces.Add(p));
+        gameInfo.PlayerInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
+
+        BoardManager.MovePiecesFromInventoryToPlanes(gameInfo, 10);
+        gameInfo.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
+       
+        IsGameOver = false;
+       
+        SaveGameToFile(gameInfo);
+        LoadGameFromFile();
+        ContinueGame(gameInfo);
+    }
 }

@@ -68,27 +68,7 @@ public class GameUI : MonoBehaviour
 
     public void GoToNextLevel()
     {
-        GameManager.Instance.AdvanceLevel();
-        GameInfo gameInfo = GameManager.Instance.GameInfo;
-        List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces("Pieces", "Modifiers", PieceColor.Black, gameInfo.currentLevel, gameInfo.currentStage);
-        gameInfo.OpponentInfo.ExtraPieces = enemies;
-        foreach (var item in gameInfo.BoardData.piecesData)
-        {
-            if (item != null && item.PieceColor == PieceColor.White && item.PieceType != PieceType.King) {
-                gameInfo.PlayerInfo.ExtraPieces.Add(item);
-            }
-        }
-        gameInfo.PlayerInfo.CurrentlyUsedExtraPieces.ForEach(p => gameInfo.PlayerInfo.ExtraPieces.Add(p));
-        gameInfo.PlayerInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
-
-        BoardManager.MovePiecesFromInventoryToPlanes(gameInfo, 10);
-        gameInfo.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
-       
-        GameManager.Instance.IsGameOver = false;
-       
-        GameManager.Instance.SaveGameToFile(gameInfo);
-        GameManager.Instance.LoadGameFromFile();
-        GameManager.Instance.ContinueGame(gameInfo);
+        GameManager.Instance.GoToNextLevel();
     }
 
     public void GoToShop()
