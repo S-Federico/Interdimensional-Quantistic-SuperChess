@@ -358,7 +358,7 @@ public class ChessBoardModel
         bool hasEffect = false;
         if (piece.appliedModifiers != null)
         {
-            foreach (ScriptableStatusModifier status in piece.appliedModifiers)
+            foreach (ScriptableModifierData status in piece.appliedModifiers)
             {
                 if (status.statusEffectType == statusEffect)
                     hasEffect = true;

@@ -260,7 +260,7 @@ public class ItemData : MonoBehaviour, IClickable
                     {
                         foreach (ScriptableStatusModifier modi in ScriptCons.Modifiers)
                         {
-                            piece.appliedModifiers.Add(modi);
+                            piece.appliedModifiers.Add(ScriptableModifierData.FromScriptableObject(modi));
                         }
                     }
                 }

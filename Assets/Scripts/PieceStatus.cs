@@ -70,7 +70,7 @@ public class PieceStatus : MonoBehaviour, IClickable
     public bool scary = false;
 
     // Modificatori applicati
-    public List<ScriptableStatusModifier> appliedModifiers;
+    public List<ScriptableModifierData> appliedModifiers;
 
     // Lista di pezzi affected da questo pezzo
     public PieceColor PieceColor;
@@ -152,7 +152,37 @@ public class PieceStatus : MonoBehaviour, IClickable
         stats.GetComponentInChildren<TextMeshProUGUI>().text = $"A:{this.Attack} / H:{this.Hp}";
     }
 
-    public int CalculateBuff(List<ScriptableStatusModifier> modifiers, AttributeType type)
+    public int CalculateBuff(List<ScriptableModifierData> modifiers, AttributeType type)
+    {
+        // Facciamo che per ora vanno in ordine di applicazione, poi pensiamo al riordino con priorità
+        int result = 0;
+        if (modifiers == null)
+        {
+            return result;
+        }
+        foreach (ScriptableModifierData modifier in modifiers)
+        {
+            if (modifier.attributeType == type)
+            {
+                switch (modifier.applicationType)
+                {
+                    case ModifierApplicationType.Additive:
+                        result += (int)modifier.value;
+                        break;
+                    case ModifierApplicationType.Multiplicative:
+                        result *= (int)modifier.value;
+                        break;
+                    case ModifierApplicationType.Absolute:
+                        result = (int)modifier.value;
+                        break;
+
+                }
+            }
+        }
+        return result;
+    }
+
+     public int CalculateBuff(List<ScriptableStatusModifier> modifiers, AttributeType type)
     {
         // Facciamo che per ora vanno in ordine di applicazione, poi pensiamo al riordino con priorità
         int result = 0;
@@ -232,7 +262,7 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     public PieceData GetPieceData()
     {
-        return new PieceData(PieceType, Hp, Attack, PieceColor, PrefabID, Position, _MovementMatrix);
+        return new PieceData(PieceType, Hp, Attack, PieceColor, PrefabID, Position, _MovementMatrix, appliedModifiers);
     }
 
     public void BuildFromData(PieceData pData)
@@ -247,6 +277,15 @@ public class PieceStatus : MonoBehaviour, IClickable
             this._MovementMatrix = pData.MovementMatrix;
             Vector2 pos = new Vector2(pData.Position[0], pData.Position[1]);
             this.Position = pos;
+
+            this.appliedModifiers = new List<ScriptableModifierData>();
+            if (pData.AppliedModifierPaths != null) {
+                foreach (var item in pData.AppliedModifierPaths)
+                {
+                    this.appliedModifiers.Add(ScriptableModifierData.FromScriptableObject(Resources.Load<ScriptableStatusModifier>($"{Constants.MODIFIERS_BASE_PATH}/{item}")));
+                }
+            }
+            
         }
     }
 
