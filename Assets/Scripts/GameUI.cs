@@ -13,6 +13,11 @@ public class GameUI : MonoBehaviour
     public TMP_Text TotalMoneyText;
     public TMP_Text EarnedMoneyText;
     public TMP_Text CurrentMoneyText;
+    public TMP_Text GameOverText;
+
+    public GameObject NextLevelBtn;
+    public GameObject GoToShopBtn;
+    public GameObject BackToMenuBtn;
 
     void Start()
     {
@@ -32,8 +37,22 @@ public class GameUI : MonoBehaviour
 
         if (GameManager.Instance.IsGameOver)
         {
-            EarnedMoneyText.text = $"Money won: {GameManager.Instance.MoneyWonFromCurrentRound}$";
-            TotalMoneyText.text = $"Total money: {GameManager.Instance.GameInfo.PlayerInfo.Money}$";
+            GameInfo gameInfo = GameManager.Instance.GameInfo;
+            if (gameInfo.Winner != null && gameInfo.Winner == PieceColor.White) {
+                GameOverText.text = Constants.VICTORY_TEXT;
+                EarnedMoneyText.text = $"Money won: {GameManager.Instance.MoneyWonFromCurrentRound}$";
+                TotalMoneyText.text = $"Total money: {GameManager.Instance.GameInfo.PlayerInfo.Money}$";
+                NextLevelBtn.SetActive(true);
+                GoToShopBtn.SetActive(true);
+                BackToMenuBtn.SetActive(false);
+            } else {
+                GameOverText.text = Constants.DEFEAT_TEXT;
+                EarnedMoneyText.text = "";
+                TotalMoneyText.text = "";
+                BackToMenuBtn.SetActive(true);
+                NextLevelBtn.SetActive(false);
+                GoToShopBtn.SetActive(false);
+            }
         }
         CurrentMoneyText.text = $"Total money: {GameManager.Instance.GameInfo.PlayerInfo.Money}$";
     }

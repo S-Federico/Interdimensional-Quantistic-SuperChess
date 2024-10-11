@@ -153,12 +153,13 @@ public class GameManager : Singleton<GameManager>
         playerManager.BuildFromData(GameInfo.PlayerInfo);
     }
 
-    internal void GameOver()
+    internal void GameOver(PieceColor? winner)
     {
         this.isGameOver = true;
+        GameInfo.Winner = winner;
 
         // Give money only if game is currently running to prevent giving again money
-        if (GameInfo.GameState == GameState.RUNNING) {
+        if (GameInfo.GameState == GameState.RUNNING && GameInfo.Winner == PieceColor.White) {
             this.GameInfo.PlayerInfo.Money += MoneyWonFromCurrentRound;
         }
         
@@ -196,6 +197,7 @@ public class GameManager : Singleton<GameManager>
 
         // To reset game running again
         gameInfo.GameState = GameState.RUNNING;
+        gameInfo.Winner = null;
         
         List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces("Pieces", "Modifiers", PieceColor.Black, gameInfo.currentLevel, gameInfo.currentStage);
         gameInfo.OpponentInfo.ExtraPieces = enemies;

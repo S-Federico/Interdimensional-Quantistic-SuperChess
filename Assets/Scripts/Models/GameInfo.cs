@@ -32,6 +32,7 @@ public class GameInfo
     List<Consumable> UnlockedConsumables = new List<Consumable>();
 
     public BoardData BoardData;
+    public PieceColor? Winner;
 
     public GameState GameState = GameState.RUNNING;
 }

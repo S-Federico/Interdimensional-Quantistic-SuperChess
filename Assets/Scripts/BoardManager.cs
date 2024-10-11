@@ -61,7 +61,9 @@ public class BoardManager : MonoBehaviour
         // Check on GameManager.Instance.IsGameover to avoit invoking GameOver function every frame
         if (Pieces != null && ChessAI.IsGameOver(Pieces) && !GameManager.Instance.IsGameOver)
         {
-            GameManager.Instance.GameOver();
+            PieceColor? winner = ChessAI.GetWinner(Pieces);
+            GameManager.Instance.GameOver(winner);
+
         }
         if (currentTurn == Turn.Player)
         {

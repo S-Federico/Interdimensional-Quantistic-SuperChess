@@ -218,6 +218,26 @@ public class ChessAI
         // Se c'è esattamente un re, il gioco è finito
         return kingCount == 1;
     }
+    public static PieceColor? GetWinner(PieceStatus[,] board)
+    {
+        int kingCount = 0;
+        PieceColor? winner = null;
+
+        foreach (PieceStatus piece in board)
+        {
+            if (piece != null && piece.PieceType == PieceType.King)
+            {
+                kingCount++;
+                winner = piece.PieceColor;
+                // Se ci sono più di un re, non è game over (serve per testing)
+                if (kingCount > 1)
+                    return null;
+            }
+        }
+
+        // Se c'è esattamente un re, il gioco è finito
+        return winner;
+    }
 
     private void Move(int[] move, PieceStatus[,] board, PieceStatus piece)
     {
