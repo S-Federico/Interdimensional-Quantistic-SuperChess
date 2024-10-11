@@ -193,6 +193,10 @@ public class GameManager : Singleton<GameManager>
     public void GoToNextLevel() {
         AdvanceLevel();
         GameInfo gameInfo = GameInfo;
+
+        // To reset game running again
+        gameInfo.GameState = GameState.RUNNING;
+        
         List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces("Pieces", "Modifiers", PieceColor.Black, gameInfo.currentLevel, gameInfo.currentStage);
         gameInfo.OpponentInfo.ExtraPieces = enemies;
         foreach (var item in gameInfo.BoardData.piecesData)
