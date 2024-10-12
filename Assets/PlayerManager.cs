@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
@@ -26,7 +25,7 @@ public class PlayerManager : MonoBehaviour
 
         foreach (string consumPath in playerInfo.Consumables)
         {
-            ScriptableConsumable obj = AssetDatabase.LoadAssetAtPath<ScriptableConsumable>(consumPath);
+            ScriptableConsumable obj = Resources.Load<ScriptableConsumable>(consumPath);
             if (obj == null)
             {
                 Debug.LogError($"scriptableConsumable al path {consumPath} è nullo");
@@ -43,7 +42,7 @@ public class PlayerManager : MonoBehaviour
         Debug.Log($"PConsumables popolato.{PConsumables.Count}");
         foreach (string manualPath in playerInfo.Manuals)
         {
-            ScriptableManual obj = AssetDatabase.LoadAssetAtPath<ScriptableManual>(manualPath);
+            ScriptableManual obj = Resources.Load<ScriptableManual>(manualPath);
             if (obj == null)
             {
                 Debug.LogError($"scriptableManual al path {manualPath} è nullo");

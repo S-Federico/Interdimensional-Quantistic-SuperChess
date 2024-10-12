@@ -1,10 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Array2DEditor;
-using Newtonsoft.Json;
-using UnityEditor.Experimental;
-using UnityEngine;
 public class BoardData
 {
     public Turn currentTurn;

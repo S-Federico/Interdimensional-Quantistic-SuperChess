@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Array2DEditor;
 using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
-using UnityEditor;
-using UnityEditor.Search;
 using UnityEngine;
 using System.Linq;
 using Unity.VisualScripting;
@@ -46,8 +44,8 @@ public class ShopManager : MonoBehaviour
     {
         Debug.Log("SONO LO SHOP MANAGER");
         // Load scriptable objects into dictionaries
-        LoadScriptableObjects<ScriptableManual>("Assets/ScriptableObjects/Manuals", scriptableManualDict);
-        LoadScriptableObjects<ScriptableConsumable>("Assets/ScriptableObjects/Consumables", scriptableConsumableDict);
+        LoadScriptableObjects<ScriptableManual>("ScriptableObjects/Manuals", scriptableManualDict);
+        LoadScriptableObjects<ScriptableConsumable>("ScriptableObjects/Consumables", scriptableConsumableDict);
 
         // Select random items from the dictionaries
         SelectRandomManuals(scriptableManualDict.Count, 0.1f);
@@ -126,23 +124,12 @@ public class ShopManager : MonoBehaviour
     // Metodo per caricare scriptable objects di un tipo specifico da una cartella
     public void LoadScriptableObjects<T>(string folderPath, Dictionary<string, T> scriptableObjectDict) where T : ScriptableObject
     {
-        string[] assetGUIDs = AssetDatabase.FindAssets($"t:{typeof(T).Name}", new[] { folderPath });
+        T[] allitems = Resources.LoadAll<T>(folderPath);
 
-        foreach (string guid in assetGUIDs)
-        {
-            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-            T obj = AssetDatabase.LoadAssetAtPath<T>(assetPath);
-
-            if (obj != null)
-            {
-                scriptableObjectDict[assetPath] = obj;
-                Debug.Log($"Caricato: {obj.name} da percorso {assetPath}");
-            }
-            else
-            {
-                Debug.LogError($"Non è stato possibile caricare l'asset: {assetPath}");
-            }
-        }
+        foreach(T item in allitems){
+            scriptableObjectDict[$"{folderPath}/{item.name}"] = item;
+            Debug.Log($"Caricato: {item.name} da percorso Resources/{folderPath}/{item.name}.asset");
+        }    
     }
 
     public void FilterLockedItems()
