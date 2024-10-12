@@ -21,8 +21,8 @@ public class ShopUI : MonoBehaviour
         GameManager.Instance.IsPaused = false;
     }
 
-    public void BackToGame()
+    public void GoToNextLevel()
     {
-       GameManager.Instance.ContinueGame(GameManager.Instance.GameInfo);
+       GameManager.Instance.GoToNextLevel();
     }
 }
