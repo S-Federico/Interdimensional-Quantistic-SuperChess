@@ -38,7 +38,7 @@ public class ShopManager : MonoBehaviour
 
     private PlayerManager player;
 
-    int numPieces=2;
+    int numPieces = 2;
 
     void Start()
     {
@@ -124,10 +124,11 @@ public class ShopManager : MonoBehaviour
     {
         T[] allitems = Resources.LoadAll<T>(folderPath);
 
-        foreach(T item in allitems){
+        foreach (T item in allitems)
+        {
             scriptableObjectDict[$"{folderPath}/{item.name}"] = item;
             Debug.Log($"Caricato: {item.name} da percorso Resources/{folderPath}/{item.name}.asset");
-        }    
+        }
     }
 
     public void FilterLockedItems()
@@ -181,6 +182,8 @@ public class ShopManager : MonoBehaviour
                 item.scriptableItem = selectedManual;
                 item.ScriptableItemPath = assetPath; // Set the path
                 item.shopScaling = true;
+                item.bought = false;
+
             }
 
             manuals.Add(obj);
@@ -270,7 +273,8 @@ public class ShopManager : MonoBehaviour
             numberOfPieces
         );
 
-        if (pieces.Count <numPieces){
+        if (pieces.Count < numPieces)
+        {
             Debug.LogError($"not enough pieces to populate shop section. Pieces needed:{numberOfPieces}, pieces found:{pieces.Count}");
             return;
         }

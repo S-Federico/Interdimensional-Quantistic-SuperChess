@@ -121,7 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scriptableItem: {fileID: 11400000, guid: 21948fc8f1966e84ba4207cd45f144ae, type: 2}
   ScriptableItemPath: 
-  bought: 1
+  bought: 0
   selected: 0
   alreadyElevated: 0
   el: 0
