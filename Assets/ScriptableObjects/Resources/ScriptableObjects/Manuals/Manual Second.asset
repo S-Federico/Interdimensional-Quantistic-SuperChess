@@ -16,7 +16,8 @@ MonoBehaviour:
   Prefab: {fileID: 142830, guid: 9c6a9d18c5586e24e83829686ede80db, type: 3}
   Price: 20
   Modifiers:
-  - {fileID: 11400000, guid: a4ec869793eb27348aab5b8d8d4f3cac, type: 2}
+  - {fileID: 11400000, guid: 94acd0f7745b89544b5d9ddf81a12c74, type: 2}
+  - {fileID: 11400000, guid: 68e1bad8b7bf8584a8f368f1153af610, type: 2}
   ApplicationMatrix:
     gridSize: {x: 8, y: 8}
     cellSize: {x: 32, y: 16}

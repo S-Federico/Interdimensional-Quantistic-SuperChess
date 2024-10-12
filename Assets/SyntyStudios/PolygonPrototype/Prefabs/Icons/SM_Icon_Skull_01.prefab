@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4721473126883556}
   - component: {fileID: 33746993512943424}
   - component: {fileID: 23583631986834334}
-  - component: {fileID: -2048133514357273891}
   m_Layer: 0
   m_Name: SM_Icon_Skull_01
   m_TagString: Untagged
@@ -84,18 +83,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-2048133514357273891
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1758002909022086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80f177696abdb1f4298aa9af2bf39199, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Name: 
-  Price: 0
-  type: 0
