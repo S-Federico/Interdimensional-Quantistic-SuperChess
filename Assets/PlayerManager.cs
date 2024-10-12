@@ -23,6 +23,7 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
+        PConsumables = new List<ItemData>();
         foreach (string consumPath in playerInfo.Consumables)
         {
             ScriptableConsumable obj = Resources.Load<ScriptableConsumable>(consumPath);
@@ -40,6 +41,7 @@ public class PlayerManager : MonoBehaviour
             PConsumables.Add(item);
         }
         Debug.Log($"PConsumables popolato.{PConsumables.Count}");
+        PManuals = new List<ItemData>();
         foreach (string manualPath in playerInfo.Manuals)
         {
             ScriptableManual obj = Resources.Load<ScriptableManual>(manualPath);
