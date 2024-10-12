@@ -105,7 +105,6 @@ public class ShopManager : MonoBehaviour
             {
                 if (GameManager.Instance.GameInfo.PlayerInfo.Money >= item.scriptableItem.Price)
                 {
-                    Debug.LogError($"Item: {item.scriptableItem.Price} Player: {GameManager.Instance.GameInfo.PlayerInfo.Money}");
                     return true;
                 }
             }
@@ -113,7 +112,6 @@ public class ShopManager : MonoBehaviour
             {
                 if (GameManager.Instance.GameInfo.PlayerInfo.Money >= item.pieceprice)
                 {
-                    Debug.LogError($"Item: {item.scriptableItem.Price} Player: {GameManager.Instance.GameInfo.PlayerInfo.Money}");
                     return true;
                 }
             }

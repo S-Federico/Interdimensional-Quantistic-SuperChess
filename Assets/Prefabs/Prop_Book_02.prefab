@@ -118,7 +118,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80f177696abdb1f4298aa9af2bf39199, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scriptableItem: {fileID: 11400000, guid: 9de76326be1552841ba1e6f02b1600d7, type: 2}
+  scriptableItem: {fileID: 11400000, guid: 2d860cfa2c3fc9440984e779f53a909a, type: 2}
+  ScriptableItemPath: 
   bought: 0
   selected: 0
   alreadyElevated: 0
@@ -127,3 +128,5 @@ MonoBehaviour:
   priceTag: {fileID: 0}
   sellTag: {fileID: 0}
   useTag: {fileID: 0}
+  shopScaling: 0
+  pieceprice: 10
