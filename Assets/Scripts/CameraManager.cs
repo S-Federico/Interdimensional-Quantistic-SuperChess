@@ -26,7 +26,6 @@ public class CameraManager : MonoBehaviour
 
         if (inputManager.RightClickPressed)
         {
-            if (inputManager.MouseDelta != Vector2.zero)
             {
                 Vector2 mouseMovement = inputManager.MouseDelta;
                 //Camera.transform.RotateAround(CameraFocus.position, new Vector3(1, 0, 0), mouseMovement.y * Time.deltaTime * RotationSpeed);

@@ -37,8 +37,9 @@ public class InputManager : MonoBehaviour
         rightClickAction.performed += ctx => rightClickPressed = ctx.ReadValue<float>() > 0.0f;
         rightClickAction.canceled += ctx => rightClickPressed = ctx.ReadValue<float>() > 0.0f;
 
-        mousePositionAction.performed += OnMouseMove;
-        //mousePositionAction.canceled += OnMouseMove;
+        OnMouseMove();
+        // mousePositionAction.performed += OnMouseMove();
+        // mousePositionAction.canceled += ctx => mouseDelta = Vector2.zero;
     }
 
     void OnEnable()
@@ -90,9 +91,14 @@ public class InputManager : MonoBehaviour
             draggedObject = null;
         }
     }
+
+    void Update() {
+        OnMouseMove();
+    }
     
-    private void OnMouseMove(InputAction.CallbackContext ctx) {
-        Vector2 newPos = ctx.ReadValue<Vector2>();
+    private void OnMouseMove() {
+        if (!mousePositionAction.enabled) return;
+        Vector2 newPos = mousePositionAction.ReadValue<Vector2>();
         if (currMousePosition != null) {
             mouseDelta = (Vector2)(newPos - currMousePosition);
         }
