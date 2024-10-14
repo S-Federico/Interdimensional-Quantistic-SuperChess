@@ -12,6 +12,15 @@ public class InputManager : MonoBehaviour
     private InputAction rightClickAction;
     private InputAction mousePositionAction;
 
+    // Right click
+    private bool rightClickPressed = false;
+    public bool RightClickPressed {get => rightClickPressed; }
+
+    // Mouse movement
+    private Vector2 mouseDelta = Vector2.zero;
+    private Vector2? currMousePosition = null;
+    public Vector2 MouseDelta {get => mouseDelta; }
+
     private IDraggable draggedObject = null;
     void Awake()
     {
@@ -23,11 +32,19 @@ public class InputManager : MonoBehaviour
         leftClickAction = inputActions.FindActionMap("Gameplay").FindAction("Left click");
         rightClickAction = inputActions.FindActionMap("Gameplay").FindAction("Right click");
         mousePositionAction = inputActions.FindActionMap("Gameplay").FindAction("Mouse Position");
+
+        // Read right click pression value
+        rightClickAction.performed += ctx => rightClickPressed = ctx.ReadValue<float>() > 0.0f;
+        rightClickAction.canceled += ctx => rightClickPressed = ctx.ReadValue<float>() > 0.0f;
+
+        mousePositionAction.performed += OnMouseMove;
+        //mousePositionAction.canceled += OnMouseMove;
     }
 
     void OnEnable()
     {
         leftClickAction.Enable();
+        rightClickAction.Enable();
         leftClickAction.performed += OnLeftClick; //Aggiungi questo evento tra i listener di questa azione
         leftClickAction.canceled += OnLeftClickRelease;
 
@@ -40,6 +57,7 @@ public class InputManager : MonoBehaviour
         leftClickAction.canceled -= OnLeftClickRelease;
 
         leftClickAction.Disable();
+        rightClickAction.Disable();
         mousePositionAction.Disable();
     }
 
@@ -72,6 +90,13 @@ public class InputManager : MonoBehaviour
             draggedObject = null;
         }
     }
-
+    
+    private void OnMouseMove(InputAction.CallbackContext ctx) {
+        Vector2 newPos = ctx.ReadValue<Vector2>();
+        if (currMousePosition != null) {
+            mouseDelta = (Vector2)(newPos - currMousePosition);
+        }
+        currMousePosition = newPos;
+    }
 }
 

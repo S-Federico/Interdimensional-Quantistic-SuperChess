@@ -16,12 +16,12 @@
                 },
                 {
                     "name": "Right click",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "4f54606f-6ced-43b3-a696-3b666091dbd8",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "DiscreteButton",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Mouse Position",
