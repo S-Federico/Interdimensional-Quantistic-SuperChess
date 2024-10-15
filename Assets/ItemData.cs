@@ -277,7 +277,8 @@ public class ItemData : MonoBehaviour, IClickable
                 {
                     foreach (ScriptableStatusModifier modi in ScriptCons.Modifiers)
                     {
-                        board.GetSquare(cell.x, cell.y).GetComponent<BoardSquare>().ManualsModifiers.Add(modi);
+                        BoardSquare square = board.GetSquare(cell.x, cell.y).GetComponent<BoardSquare>();
+                        square.ManualsModifiers.Add(modi);
                     }
                 }
                 break;

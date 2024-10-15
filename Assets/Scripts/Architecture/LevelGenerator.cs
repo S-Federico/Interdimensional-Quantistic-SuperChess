@@ -93,7 +93,17 @@ public class LevelGenerator : Singleton<LevelGenerator>
         PieceStatus[,] pieces = new PieceStatus[8, 8];
         pieces[7, 4] = whiteKing;
         pieces[0, 4] = blackKing;
-        BoardData boardData = new BoardData(Turn.Player, pieces);
+
+        BoardSquare[,] squares = new BoardSquare[pieces.GetLength(0), pieces.GetLength(1)];
+        for (int i = 0; i < pieces.GetLength(0); i++)
+        {
+            for (int j = 0; j < pieces.GetLength(1); j++)
+            {
+                squares[i, j] = new BoardSquare(new Vector2(i, j), new List<ScriptableStatusModifier>());
+            }
+        }
+
+        BoardData boardData = new BoardData(Turn.Player, pieces, squares);
         return boardData;
     }
 }

@@ -47,4 +47,25 @@ public static class Utility
         return avaiblePieces;
     }
 
+    public static bool MatrixEquals<T>(T[,] matrix1, T[,] matrix2) where T : IEquatable<T> {
+        if (matrix1 == null && matrix2 == null) return true;
+        if (matrix1 == null || matrix2 == null) return false;
+        if (matrix1.GetLength(0) != matrix2.GetLength(0) || matrix1.GetLength(1) != matrix2.GetLength(1))
+            return false;
+
+        for (int i = 0; i < matrix1.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix1.GetLength(1); j++)
+            {
+                T elem1 = matrix1[i,j];
+                T elem2 = matrix2[i,j];
+                if (elem1 == null && elem2 == null) continue;
+                if (elem1 == null || elem2 == null) return false;
+                if (!matrix1[i, j].Equals(matrix2[i, j]))
+                    return false;
+            }
+        }
+        return true;
+    }
+
 }

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
-public class PieceData
+public class PieceData : IEquatable<PieceData>
 {
     public PieceType PieceType;
     public int Hp;
@@ -73,20 +73,21 @@ public class PieceData
 
     private bool MovementMatrixEquals(int[,] matrix1, int[,] matrix2)
     {
-        if (matrix1 == null && matrix2 == null) return true;
-        if (matrix1 == null || matrix2 == null) return false;
-        if (matrix1.GetLength(0) != matrix2.GetLength(0) || matrix1.GetLength(1) != matrix2.GetLength(1))
-            return false;
+        return Utility.MatrixEquals(matrix1, matrix2);
+        // if (matrix1 == null && matrix2 == null) return true;
+        // if (matrix1 == null || matrix2 == null) return false;
+        // if (matrix1.GetLength(0) != matrix2.GetLength(0) || matrix1.GetLength(1) != matrix2.GetLength(1))
+        //     return false;
 
-        for (int i = 0; i < matrix1.GetLength(0); i++)
-        {
-            for (int j = 0; j < matrix1.GetLength(1); j++)
-            {
-                if (matrix1[i, j] != matrix2[i, j])
-                    return false;
-            }
-        }
-        return true;
+        // for (int i = 0; i < matrix1.GetLength(0); i++)
+        // {
+        //     for (int j = 0; j < matrix1.GetLength(1); j++)
+        //     {
+        //         if (matrix1[i, j] != matrix2[i, j])
+        //             return false;
+        //     }
+        // }
+        // return true;
     }
 
     public override int GetHashCode()
@@ -106,5 +107,19 @@ public class PieceData
             pieceStatus.MovementMatrix,
             pieceStatus.appliedModifiers
         );
+    }
+
+    public bool Equals(PieceData other)
+    {
+
+        // Confronta tutti i campi della classe
+        return PieceType == other.PieceType &&
+               Hp == other.Hp &&
+               Attack == other.Attack &&
+               PieceColor == other.PieceColor &&
+               PrefabID == other.PrefabID &&
+               Position[0] == other.Position[0] &&
+               Position[1] == other.Position[1] &&
+               MovementMatrixEquals(MovementMatrix, other.MovementMatrix);
     }
 }

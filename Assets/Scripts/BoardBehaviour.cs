@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class BoardBehaviour : MonoBehaviour
 {
-    public GameObject[,] squares; 
+    public GameObject[,] squares;
+    public BoardSquare[,] BoardSquares; 
     private Transform planeTransform;
     private float squareSize;
     public int BoardSize = 8; 
@@ -29,7 +30,7 @@ public class BoardBehaviour : MonoBehaviour
         }
 
         squares = new GameObject[BoardSize, BoardSize];
-
+        BoardSquares = new BoardSquare[BoardSize, BoardSize];
         for (int x = 0; x < BoardSize; x++)
         {
             for (int y = 0; y < BoardSize; y++)
@@ -43,6 +44,8 @@ public class BoardBehaviour : MonoBehaviour
                 // Aggiungi componente alla casella
                 BoardSquare boardSquare = newSquare.AddComponent<BoardSquare>();
                 boardSquare.Position = new Vector2(x, y);
+                boardSquare.ManualsModifiers = new List<ScriptableStatusModifier>();
+                BoardSquares[x, y] = boardSquare;
 
                 // Imposta la scala del piano in base alla dimensione della casella
                 newSquare.transform.localScale = new Vector3(squareSize / 10f, 1f, squareSize / 10f);

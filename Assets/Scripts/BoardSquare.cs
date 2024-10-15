@@ -9,6 +9,12 @@ public class BoardSquare : MonoBehaviour, IClickable
     public Vector2 Position { get => position; set => position = value; }
     public List<ScriptableStatusModifier> ManualsModifiers = new List<ScriptableStatusModifier>();
 
+    public BoardSquare(Vector2 position, List<ScriptableStatusModifier> manualsModifiers)
+    {
+        Position = position;
+        ManualsModifiers = manualsModifiers;
+    }
+
     void Awake()
     {
         if (boardManager == null)

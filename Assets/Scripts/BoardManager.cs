@@ -372,7 +372,7 @@ public class BoardManager : MonoBehaviour
 
     public BoardData GetBoardData()
     {
-        return new BoardData(currentTurn, Pieces);
+        return new BoardData(currentTurn, Pieces, boardBehaviour.BoardSquares);
     }
 
     public void BuildFromData(BoardData bData)
@@ -399,6 +399,18 @@ public class BoardManager : MonoBehaviour
                     }
                 }
             }
+
+            for (int i = 0; i < Riga; i++)
+            {
+                for (int j = 0; j < Colonna; j++)
+                {
+                    BoardSquareData boardData = bData.BoardSquareDatas[i,j];
+                    List<string> cellModifierNames = boardData.ManualsModifierNames;
+                    //TODO: Far si che in boardBehaviour si metta nello status delle celle i modificatori
+
+                }
+            }
+
             this.Pieces = result;
             InitializePiecesPlanes(false);
         }
