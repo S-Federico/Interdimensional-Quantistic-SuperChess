@@ -92,6 +92,7 @@ public class GameUI : MonoBehaviour
 
     public void GoToShop()
     {
+        GameManager.Instance.SaveGameToFile();
         SceneManager.LoadScene("ShopMockup");
     }
 }

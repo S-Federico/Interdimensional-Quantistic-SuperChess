@@ -87,14 +87,16 @@ public class GameManager : Singleton<GameManager>
     public void SaveGameToFile()
     {
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
+        BoardData boardStatus = null;
         if (boardManager == null)
         {
             Debug.LogError("BoardManager non trovato!");
+            boardStatus = GameInfo.BoardData;
             return;
+        } else {
+            boardStatus = boardManager.GetBoardData();
         }
-
-        // Chiama GetBoardData() e controlla se il risultato è valido
-        BoardData boardStatus = boardManager.GetBoardData();
+        
         this.GameInfo.BoardData = boardStatus;
         if (boardStatus == null)
         {
