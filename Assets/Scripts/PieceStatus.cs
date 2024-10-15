@@ -13,6 +13,12 @@ public class PieceStatus : MonoBehaviour, IClickable
     private int baseHp = 1;
     private int baseAttack = 1;
     private int baseNumberOfMoves = 1;
+    private ParticleSystem auraParticle;
+
+    // private Renderer modelRenderer;
+    // private Color originalColor;
+    // public Color highlightColor = Color.yellow; // Change this to your desired highlight color
+
 
     // Proprietà calcolate
     public int Hp
@@ -105,6 +111,10 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     void Start()
     {
+        // modelRenderer = GetComponent<Renderer>();
+        // originalColor = modelRenderer.material.color;
+        auraParticle = GetComponentInChildren<ParticleSystem>();
+        auraParticle.Stop();
         boardManager = FindAnyObjectByType<BoardManager>();
         BuildMovementMatrix();
         CellModifiers = new List<ScriptableStatusModifier>();
@@ -383,5 +393,19 @@ public class PieceStatus : MonoBehaviour, IClickable
         {
             transform.position = gameObject.GetComponent<DraggableBehaviour>().oldPosition;
         }
+    }
+
+    void OnMouseEnter()
+    {
+        // Change the color when the mouse enters the model
+        //modelRenderer.material.color = highlightColor;
+        auraParticle.Play();
+    }
+
+    void OnMouseExit()
+    {
+        // Revert back to the original color when the mouse exits
+        //modelRenderer.material.color = originalColor;
+        auraParticle.Stop();
     }
 }
