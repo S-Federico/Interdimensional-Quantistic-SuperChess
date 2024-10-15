@@ -38,6 +38,7 @@ public class PlayerManager : MonoBehaviour
                 Debug.LogError($"itemdata al path {consumPath} è nullo");
                 return;
             }
+            item.ScriptableItemPath=consumPath;
             PConsumables.Add(item);
         }
         Debug.Log($"PConsumables popolato.{PConsumables.Count}");
@@ -56,6 +57,7 @@ public class PlayerManager : MonoBehaviour
                 Debug.LogError($"itemdata al path {manualPath} è nullo");
                 return;
             }
+            item.ScriptableItemPath=manualPath;
             PManuals.Add(item);
         }
         Debug.Log($"PManuals popolato. {PManuals.Count}");
