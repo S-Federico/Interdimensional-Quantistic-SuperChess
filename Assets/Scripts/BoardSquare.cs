@@ -17,6 +17,41 @@ public class BoardSquare : MonoBehaviour, IClickable
         }
     }
 
+    public void Update()
+    {
+        if (boardManager == null) return;
+        Highlight();
+
+    }
+
+    public void Highlight()
+    {
+        Renderer renderer = this.gameObject.GetComponent<Renderer>();
+
+        if (boardManager.highlightedSquares.TryGetValue(((int)position.x, (int)position.y), out int result))
+        {
+            if (renderer != null)
+            {
+                renderer.enabled = true;
+                switch (result)
+                {
+                    case 1:
+                        renderer.material.color = Color.green;
+                        break;
+                    case 2:
+                        renderer.material.color = Color.red;
+                        break;
+                    default:
+                        renderer.material.color = Color.white;
+                        break;
+                }
+            }
+        }
+        else
+        {
+            renderer.enabled = false;
+        }
+    }
     public void OnClick()
     {
         boardManager.HandleSquareClick(this);

@@ -6,6 +6,7 @@ using System.Linq;
 
 public class BoardManager : MonoBehaviour
 {
+    public Dictionary<(int, int), int> highlightedSquares;
     public Turn currentTurn = Turn.Player;
     [SerializeField] private GameObject board;
     public Array2DInt BoardData;
@@ -38,6 +39,7 @@ public class BoardManager : MonoBehaviour
         Player = GameObject.FindAnyObjectByType<PlayerManager>();
         boardBehaviour = board.GetComponent<BoardBehaviour>();
         boardBehaviour.InitializeBoard();
+        highlightedSquares = new Dictionary<(int, int), int>();
 
         //prima o poi questa cosa sarà fatta con scriptable object prendendo da una serie finita di opponent, 
         //con le loro formazioni, buff ecc e livello, che fa scalare il tutto, oltre a opening lines e musiche
@@ -75,11 +77,7 @@ public class BoardManager : MonoBehaviour
             {
                 if (selectedPiece != null && selectedPiece.GetComponent<PieceStatus>().Position != new Vector2(-1f, -1f))
                 {
-                    HighlightMoves();
-                }
-                else
-                {
-                    HideMoves();
+                    UpdateHighlightedSquares();
                 }
             }
         }
@@ -96,71 +94,30 @@ public class BoardManager : MonoBehaviour
         showMovesFlag = false;
     }
 
-    void HighlightMoves()
+    void UpdateHighlightedSquares()
     {
-        //int[] coord = GetPositionFromPiece(selectedPiece);
-        PieceStatus pieceStatus = selectedPiece.GetComponent<PieceStatus>();
+        highlightedSquares.Clear();
 
+        PieceStatus pieceStatus = selectedPiece.GetComponent<PieceStatus>();
         HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(pieceStatus, Pieces);
-        string possibleMovesStr = string.Join(",", possibleMoves.Select(move => "[" + string.Join(",", move) + "]"));
-        Debug.Log("Possible moves: " + possibleMovesStr);
 
         foreach (int[] move in possibleMoves)
         {
-            int x = move[0];
-            int y = move[1];
-            int moveType = move[2];
-            GameObject square = GetSquare(x, y);
-
-            if (square != null)
+            if (move.Length >= 3)
             {
-                Renderer renderer = square.GetComponent<Renderer>();
-                if (renderer != null)
-                {
-                    renderer.enabled = true;
-                    switch (moveType)
-                    {
-                        case 1:
-                            renderer.material.color = Color.green;
-                            break;
-                        case 2:
-                            renderer.material.color = Color.red;
-                            break;
-                        default:
-                            renderer.material.color = Color.white;
-                            break;
-                    }
+                (int, int) key = (move[0], move[1]);
+                int value = move[2];
 
-
-                }
-            }
-            else
-            {
-                Debug.Log($"No square found at position ({x}, {y}).");
+                highlightedSquares[key] = value;
             }
         }
     }
 
-    void HideMoves()
-    {
-        // Itera su tutte le caselle della scacchiera per nascondere le evidenziazioni
-        for (int x = 0; x < boardBehaviour.BoardSize; x++)
-        {
-            for (int y = 0; y < boardBehaviour.BoardSize; y++)
-            {
-                GameObject square = GetSquare(x, y);
-                if (square != null)
-                {
-                    // Rende la casella invisibile o ripristina il suo stato iniziale
-                    Renderer renderer = square.GetComponent<Renderer>();
-                    if (renderer != null)
-                    {
-                        renderer.enabled = false;
-                    }
-                }
-            }
-        }
+    public void HideMoves(){
+        highlightedSquares.Clear();
     }
+
+
 
     public void SelectPiece(GameObject piece)
     {
@@ -480,7 +437,8 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public static void MovePiecesFromInventoryToPlanes(GameInfo gameInfo, int npieces) {
+    public static void MovePiecesFromInventoryToPlanes(GameInfo gameInfo, int npieces)
+    {
         // "Equipaggio" i pezzi dall'inventario globale del player e opponent per metterli sul piano
         gameInfo.PlayerInfo.CurrentlyUsedExtraPieces = Utility.SelectCurrentMatchPieces(npieces, gameInfo.PlayerInfo.ExtraPieces);
         gameInfo.OpponentInfo.CurrentlyUsedExtraPieces = Utility.SelectCurrentMatchPieces(npieces, gameInfo.OpponentInfo.ExtraPieces);
