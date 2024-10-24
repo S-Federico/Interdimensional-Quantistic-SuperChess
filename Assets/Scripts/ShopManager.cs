@@ -261,9 +261,6 @@ public class ShopManager : MonoBehaviour
 
     public void SelectRandomPieces(int numberOfPieces, float padding)
     {
-        // The logic for pieces remains the same unless you have specific paths for them.
-        // If so, you can modify this method similarly to the ones above.
-
         // Generate pieces for the current level
         List<PieceData> pieces = LevelGenerator.Instance.GeneratePieces(
             "Pieces", "Modifiers", PieceColor.White,

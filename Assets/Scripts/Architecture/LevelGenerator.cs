@@ -9,6 +9,66 @@ public class LevelGenerator : Singleton<LevelGenerator>
     private const int BASE_DIFFICULTY = 10;
     private const int VARIABLE_BASE_DIFFICULTY = 2;
 
+
+    public List<PieceData> GeneratePieces(ScriptableLevel level, PieceColor color,  int l = 1, int stage = 1, int maxPieces = 8, int minPieces = 1)
+    {
+        List<PieceData> result = new List<PieceData>();
+
+        List<GameObject> prefabs = level.Prefabs;
+        List<ScriptableStatusModifier> ModifierPrefabs = level.Modifiers;
+
+        List<PieceData> pieces = new List<PieceData>();
+
+        foreach (var piece in prefabs)
+        {
+            if (piece.TryGetComponent<PieceStatus>(out PieceStatus pieceStatus) && pieceStatus.PieceColor == color)
+            {
+                pieces.Add(pieceStatus.GetPieceData());
+            }
+        }
+
+        // Always add King
+        PieceData king = pieces.First(p => p.PieceType == PieceType.King);
+
+
+        // Remove King from possible pieces
+        pieces.RemoveAll(p => p.PieceType == PieceType.King);
+
+        double difficultyToReach = BASE_DIFFICULTY + Math.Pow(VARIABLE_BASE_DIFFICULTY, l * stage);
+        double currentDifficulty = 0.0f;
+
+        while ((currentDifficulty < difficultyToReach || result.Count <= minPieces) && result.Count < maxPieces && pieces.Count > 0)
+        {
+            int pieceIndex = (int)UnityEngine.Random.Range(0, pieces.Count);
+            PieceData randomPiece = pieces[pieceIndex];
+            result.Add(randomPiece);
+            currentDifficulty += randomPiece.StrenghtValue;
+            pieces.RemoveAt(pieceIndex);
+        }
+
+        if (currentDifficulty < difficultyToReach)
+        {
+            while (currentDifficulty < difficultyToReach)
+            {
+                PieceData randomPiece = result[(int)UnityEngine.Random.Range(0, result.Count)];
+                currentDifficulty -= randomPiece.StrenghtValue;
+
+                ScriptableStatusModifier randomScriptableStatusModifier = ModifierPrefabs[(int)UnityEngine.Random.Range(0, ModifierPrefabs.Count)];
+                if (randomScriptableStatusModifier.modifierType == ModifierType.SpecialEffect && randomPiece.Modifiers.Find(m => m.name == randomScriptableStatusModifier.name) != null)
+                {
+                    currentDifficulty += randomPiece.StrenghtValue;
+                    continue;
+                }
+                //NB: Qui sto passando il prefab!!
+                randomPiece.Modifiers.Add(Instantiate(randomScriptableStatusModifier));
+                currentDifficulty += randomPiece.StrenghtValue;
+            }
+        }
+
+        return result;
+    }
+
+
     /// <summary>
     /// This function creates a list of PieceStatus, taken from prefabs, to load on a given level at a given stage
     /// </summary>

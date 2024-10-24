@@ -12,6 +12,7 @@ public class GameManager : Singleton<GameManager>
 {
     public static int MAX_LEVEL = 3;
 
+    public List<ScriptableLevel> levels = null;
 
     public GameInfo GameInfo;
     private bool isPaused = false;
@@ -23,6 +24,7 @@ public class GameManager : Singleton<GameManager>
     void Awake()
     {
         Debug.Log("Game Manager instantiated!");
+        levels = new List<ScriptableLevel>(Resources.LoadAll<ScriptableLevel>("ScriptableObjects/Levels"));
     }
 
     public IEnumerator NewGameCoroutine(string sceneName)
@@ -35,10 +37,10 @@ public class GameManager : Singleton<GameManager>
         {
             yield return null; // Aspetta un frame
         }
-    /*
-        GameInfo.PlayerInfo.Manuals.Add("Assets/ScriptableObjects/Manuals/Manual Second.asset");
-        GameInfo.PlayerInfo.Consumables.Add("Assets/ScriptableObjects/Consumables/FirstConsumable.asset");
-    */
+        /*
+            GameInfo.PlayerInfo.Manuals.Add("Assets/ScriptableObjects/Manuals/Manual Second.asset");
+            GameInfo.PlayerInfo.Consumables.Add("Assets/ScriptableObjects/Consumables/FirstConsumable.asset");
+        */
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
         boardManager.LoadBoardFromBoardData();
         boardManager.InitializePiecesPlanes(true);
@@ -47,6 +49,7 @@ public class GameManager : Singleton<GameManager>
     public void NewGame(GameInfo gameInfo)
     {
         this.GameInfo = gameInfo;
+
         StartCoroutine(NewGameCoroutine("SampleScene"));
     }
 
@@ -78,7 +81,8 @@ public class GameManager : Singleton<GameManager>
         isGameOver = false;
     }
 
-    public void SaveGameToFile(GameInfo gameInfo) {
+    public void SaveGameToFile(GameInfo gameInfo)
+    {
         SaveManager.Instance.Save(gameInfo, gameInfo.ProfileName);
     }
 
@@ -121,14 +125,6 @@ public class GameManager : Singleton<GameManager>
 
         // string json = JsonConvert.SerializeObject(boardStatus, Formatting.Indented); // Usa JSON.NET
         SaveManager.Instance.Save(GameInfo, this.GameInfo.ProfileName);
-
-        // //Queste righe servono perché potremmo cambiare cose nel progetto e inserire nello stato 
-        // //da salvare oggetti non serializzabili. Questo serve a debuggare questa cosa, lo toglieremo
-        // //quando il modello dei dati non cambierà più
-        // BoardData b = JsonConvert.DeserializeObject<BoardData>(json);
-        // bool equal = b.Equals(boardStatus);
-        // Debug.Log("Abbiamo salvato bene? " + equal);
-
     }
 
     public void LoadGameFromFile()
@@ -159,10 +155,11 @@ public class GameManager : Singleton<GameManager>
         GameInfo.Winner = winner;
 
         // Give money only if game is currently running to prevent giving again money
-        if (GameInfo.GameState == GameState.RUNNING && GameInfo.Winner == PieceColor.White) {
+        if (GameInfo.GameState == GameState.RUNNING && GameInfo.Winner == PieceColor.White)
+        {
             this.GameInfo.PlayerInfo.Money += MoneyWonFromCurrentRound;
         }
-        
+
         // Signal that now game is over
         GameInfo.GameState = GameState.GAME_OVER;
 
@@ -181,29 +178,30 @@ public class GameManager : Singleton<GameManager>
         {
             GameInfo.currentLevel += 1;
             GameInfo.currentStage = 1;
+            GameInfo.Level = GetRandomLevel().Name;
         }
 
         // Move currentPieces in inventory (player only because enemy will be overridden in other function)
         GameInfo.PlayerInfo.CurrentlyUsedExtraPieces.ForEach(p => GameInfo.PlayerInfo.ExtraPieces.Add(p));
         GameInfo.PlayerInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
-
         GameInfo.OpponentInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
-
     }
 
-    public void GoToNextLevel() {
+    public void GoToNextLevel()
+    {
         AdvanceLevel();
         GameInfo gameInfo = GameInfo;
 
         // To reset game running again
         gameInfo.GameState = GameState.RUNNING;
         gameInfo.Winner = null;
-        
-        List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces("Pieces", "Modifiers", PieceColor.Black, gameInfo.currentLevel, gameInfo.currentStage);
+        Debug.Log($"Livello salvato: {gameInfo.Level} e getrandom level ritorna:");
+        List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces(GetLevel(gameInfo.Level), PieceColor.Black, gameInfo.currentLevel, gameInfo.currentStage);
         gameInfo.OpponentInfo.ExtraPieces = enemies;
         foreach (var item in gameInfo.BoardData.piecesData)
         {
-            if (item != null && item.PieceColor == PieceColor.White && item.PieceType != PieceType.King) {
+            if (item != null && item.PieceColor == PieceColor.White && item.PieceType != PieceType.King)
+            {
                 gameInfo.PlayerInfo.ExtraPieces.Add(item);
             }
         }
@@ -212,11 +210,23 @@ public class GameManager : Singleton<GameManager>
 
         BoardManager.MovePiecesFromInventoryToPlanes(gameInfo, 10);
         gameInfo.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
-       
+
         IsGameOver = false;
-       
+
         SaveGameToFile(gameInfo);
         LoadGameFromFile();
         ContinueGame(gameInfo);
     }
+
+    public ScriptableLevel GetLevel(string name)
+    {
+        return levels.Find(level => level.Name == name);
+    }
+
+    public ScriptableLevel GetRandomLevel()
+    {
+        int randomIndex = UnityEngine.Random.Range(0, levels.Count);
+        return levels[randomIndex];
+    }
+
 }
