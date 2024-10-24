@@ -23,6 +23,6 @@ public class ShopUI : MonoBehaviour
 
     public void GoToNextLevel()
     {
-       GameManager.Instance.GoToNextLevel();
+       GameManager.Instance.GoToNextLevelFromShop();
     }
 }
