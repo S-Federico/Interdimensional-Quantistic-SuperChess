@@ -313,6 +313,7 @@ public class ShopManager : MonoBehaviour
             obj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
             // Remove unnecessary components
+            Destroy(obj.GetComponentInChildren<ParticleSystem>());
             Destroy(obj.GetComponent<PieceStatus>());
             Destroy(obj.GetComponent<DraggableBehaviour>());
 
