@@ -218,19 +218,20 @@ public class GameManager : Singleton<GameManager>
         ContinueGame(gameInfo);
     }
 
-    public void GoToNextLevelFromShop() {
+    public void GoToNextLevelFromShop()     {
         AdvanceLevel();
         GameInfo gameInfo = GameInfo;
 
         // To reset game running again
         gameInfo.GameState = GameState.RUNNING;
         gameInfo.Winner = null;
-        
-        List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces("Pieces", "Modifiers", PieceColor.Black, gameInfo.currentLevel, gameInfo.currentStage);
+        Debug.Log($"Livello salvato: {gameInfo.Level} e getrandom level ritorna:");
+        List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces(GetLevel(gameInfo.Level), PieceColor.Black, gameInfo.currentLevel, gameInfo.currentStage);
         gameInfo.OpponentInfo.ExtraPieces = enemies;
         foreach (var item in gameInfo.BoardData.piecesData)
         {
-            if (item != null && item.PieceColor == PieceColor.White && item.PieceType != PieceType.King) {
+            if (item != null && item.PieceColor == PieceColor.White && item.PieceType != PieceType.King)
+            {
                 gameInfo.PlayerInfo.ExtraPieces.Add(item);
             }
         }
@@ -239,9 +240,9 @@ public class GameManager : Singleton<GameManager>
 
         BoardManager.MovePiecesFromInventoryToPlanes(gameInfo, 10);
         gameInfo.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
-       
+
         IsGameOver = false;
-       
+
         SaveGameToFile(gameInfo);
         //LoadGameFromFile();
         ContinueGame(gameInfo);
