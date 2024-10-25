@@ -152,6 +152,7 @@ public class PieceStatus : MonoBehaviour, IClickable
 
         // Imposta il padre del bottone
         stats.transform.SetParent(transform);
+        stats.SetActive(false);
 
         UpdateTagText();
     }
@@ -192,7 +193,7 @@ public class PieceStatus : MonoBehaviour, IClickable
         return result;
     }
 
-     public int CalculateBuff(List<ScriptableStatusModifier> modifiers, AttributeType type)
+    public int CalculateBuff(List<ScriptableStatusModifier> modifiers, AttributeType type)
     {
         // Facciamo che per ora vanno in ordine di applicazione, poi pensiamo al riordino con priorità
         int result = 0;
@@ -289,13 +290,14 @@ public class PieceStatus : MonoBehaviour, IClickable
             this.Position = pos;
 
             this.appliedModifiers = new List<ScriptableModifierData>();
-            if (pData.AppliedModifierPaths != null) {
+            if (pData.AppliedModifierPaths != null)
+            {
                 foreach (var item in pData.AppliedModifierPaths)
                 {
                     this.appliedModifiers.Add(ScriptableModifierData.FromScriptableObject(Resources.Load<ScriptableStatusModifier>($"{Constants.MODIFIERS_BASE_PATH}/{item}")));
                 }
             }
-            
+
         }
     }
 
@@ -399,13 +401,21 @@ public class PieceStatus : MonoBehaviour, IClickable
     {
         // Change the color when the mouse enters the model
         //modelRenderer.material.color = highlightColor;
-        auraParticle.Play();
+        if (auraParticle != null)
+        {
+            auraParticle.Play();
+            stats.SetActive(true);
+        }
     }
 
     void OnMouseExit()
     {
         // Revert back to the original color when the mouse exits
         //modelRenderer.material.color = originalColor;
-        auraParticle.Stop();
+        if (auraParticle != null)
+        {
+            auraParticle.Stop();
+            stats.SetActive(false);
+        }
     }
 }

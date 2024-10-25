@@ -218,6 +218,35 @@ public class GameManager : Singleton<GameManager>
         ContinueGame(gameInfo);
     }
 
+    public void GoToNextLevelFromShop() {
+        AdvanceLevel();
+        GameInfo gameInfo = GameInfo;
+
+        // To reset game running again
+        gameInfo.GameState = GameState.RUNNING;
+        gameInfo.Winner = null;
+        
+        List<PieceData> enemies = LevelGenerator.Instance.GeneratePieces("Pieces", "Modifiers", PieceColor.Black, gameInfo.currentLevel, gameInfo.currentStage);
+        gameInfo.OpponentInfo.ExtraPieces = enemies;
+        foreach (var item in gameInfo.BoardData.piecesData)
+        {
+            if (item != null && item.PieceColor == PieceColor.White && item.PieceType != PieceType.King) {
+                gameInfo.PlayerInfo.ExtraPieces.Add(item);
+            }
+        }
+        gameInfo.PlayerInfo.CurrentlyUsedExtraPieces.ForEach(p => gameInfo.PlayerInfo.ExtraPieces.Add(p));
+        gameInfo.PlayerInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
+
+        BoardManager.MovePiecesFromInventoryToPlanes(gameInfo, 10);
+        gameInfo.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
+       
+        IsGameOver = false;
+       
+        SaveGameToFile(gameInfo);
+        //LoadGameFromFile();
+        ContinueGame(gameInfo);
+    }
+
     public ScriptableLevel GetLevel(string name)
     {
         return levels.Find(level => level.Name == name);
