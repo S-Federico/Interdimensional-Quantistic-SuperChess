@@ -12,8 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13663ca5514694b4597af0f5d32644c1, type: 3}
   m_Name: DefaultLevel
   m_EditorClassIdentifier: 
-  Name: 
-  Prefabs: []
+  Name: DefaultLevel
+  Prefabs:
+  - {fileID: 196866, guid: 4e8571e8539518744b19cf2cf99e536c, type: 3}
+  - {fileID: 130826, guid: 4a94ed87d6408c148a71fb67b6f4af63, type: 3}
+  - {fileID: 196802, guid: 4032206ae7a9ee841beff18d013a72c0, type: 3}
+  - {fileID: 138226, guid: c819a69fd2c036148ae4633780508bbf, type: 3}
+  - {fileID: 184594, guid: 450ef2fca0576d544be782bc5f406118, type: 3}
+  - {fileID: 125018, guid: 495587dd7c295db4ea216728467d06c6, type: 3}
+  - {fileID: 190264, guid: 01001919bea61754d984b913f9b2a702, type: 3}
+  - {fileID: 119820, guid: 143584589beea0e41a39b319d1f8cb59, type: 3}
+  - {fileID: 107724, guid: d452dad80d650c644a88199de6b0dc64, type: 3}
+  - {fileID: 104878, guid: 90ed6790058576347b722a88dfa6aee0, type: 3}
+  - {fileID: 103078, guid: 194de214eb20e4d40901662070320b7c, type: 3}
+  - {fileID: 114028, guid: 612735a464fb94a4f80b1ed75d7d6414, type: 3}
   Modifiers: []
   scene:
     m_Handle: 0

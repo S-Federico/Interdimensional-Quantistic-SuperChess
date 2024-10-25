@@ -218,7 +218,8 @@ public class GameManager : Singleton<GameManager>
         ContinueGame(gameInfo);
     }
 
-    public void GoToNextLevelFromShop()     {
+    public void GoToNextLevelFromShop()
+    {
         AdvanceLevel();
         GameInfo gameInfo = GameInfo;
 
