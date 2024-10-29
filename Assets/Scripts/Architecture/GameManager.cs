@@ -29,6 +29,10 @@ public class GameManager : Singleton<GameManager>
 
     public IEnumerator NewGameCoroutine(string sceneName)
     {
+        TransitionLoader transitionLoader = FindAnyObjectByType<TransitionLoader>();
+        transitionLoader.transition.SetTrigger("Start");
+        yield return new WaitForSeconds(transitionLoader.GetTransitionTime());
+
         // Carica la scena in modo asincrono
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 
@@ -61,6 +65,10 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator LoadSceneAndContinue(string sceneName)
     {
+        TransitionLoader transitionLoader = FindAnyObjectByType<TransitionLoader>();
+        transitionLoader.transition.SetTrigger("Start");
+        yield return new WaitForSeconds(transitionLoader.GetTransitionTime());
+
         // Carica la scena in modo asincrono
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 
