@@ -230,7 +230,7 @@ public class ChessBoardModel
         log.AppendLine($"{moves.Count} moves found for {piece.PieceType} at position ({riga},{colonna})");
 
         // Stampa del log completo in un'unica chiamata
-        Debug.Log(log.ToString());
+        //Debug.Log(log.ToString());
 
         return moves;
     }
