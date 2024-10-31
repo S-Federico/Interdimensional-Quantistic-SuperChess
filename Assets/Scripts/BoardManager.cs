@@ -303,10 +303,7 @@ public class BoardManager : MonoBehaviour
 
 
         // Perform phisical movement
-        Debug.Log($"Dovrei andare qua {boardBehaviour.GetSquare((int)destination.x, (int)destination.y).gameObject.name} {destination.x};{destination.y}: {newp.x} ; {newp.y} ; {newp.z}");
         piece.transform.position = boardBehaviour.GetSquare((int)destination.x, (int)destination.y).gameObject.transform.position;
-        Debug.Log($"E invece sto qua:{piece.transform.position.x}  {piece.transform.position.y}  {piece.transform.position.z}");
-
     }
 
     public bool CanPlacePiece(PieceStatus piece)

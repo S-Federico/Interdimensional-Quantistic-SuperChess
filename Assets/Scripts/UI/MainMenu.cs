@@ -36,7 +36,6 @@ public class MainMenu : MonoBehaviour
             for (i = 0; i < saveFiles.Length && i < MaxSaves; i++)
             {
                 GameInfo gameInfo = SaveManager.Instance.Load<GameInfo>(saveFiles[i], true);
-                Debug.Log($"Is gameInfo != null? {gameInfo != null}");
                 savedGames[i] = gameInfo;
                 GameObject profileItem = Instantiate(this.ProfileItemPrefab, ProfilesContainer);
                 profileItem.GetComponentInChildren<TextMeshProUGUI>().text = gameInfo.ProfileName;

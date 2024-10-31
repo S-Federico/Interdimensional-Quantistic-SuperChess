@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class State
 {
-    public int[] lastMove { get; private set; } // Salviamo la mossa fatta in questo stato
-
+    public int[] lastMove { get; private set; }
     public PieceStatus movedPiece { get; private set; }
     public PieceStatus capturedPiece { get; set; }
     public bool hasMoved = false;
@@ -27,9 +26,8 @@ public class ChessAI
     private Stack<State> Hist;
     private int maxDepth;
     private int winningValue = 0;
-    private ChessBoardModel cbm; // Variabile di istanza per ChessBoardModel
-    private PieceStatus bestPiece; // Variabile per salvare il miglior pezzo
-    private int bestMoveX, bestMoveY; // Variabili per salvare la miglior mossa
+    private ChessBoardModel cbm;
+    private List<(int value, int[] move, int depth)> moves;
     private List<GameObject> toDestroy;
     public List<GameObject> ToDestroy { get => toDestroy; }
     List<PieceStatus> allBlackPieces;
@@ -38,10 +36,11 @@ public class ChessAI
     {
         Hist = new Stack<State>();
         toDestroy = new List<GameObject>();
+        moves = new List<(int value, int[] move, int depth)>();
         this.cbm = cbm; // Inizializzazione del modello della scacchiera
     }
 
-    public int[] GetBestMoveFromPosition(PieceStatus[,] board, int depth, List<PieceStatus> opponentavaible, List<PieceStatus> playeravaible)
+    public int[] GetBestMoveFromPosition(PieceStatus[,] board, int depth, List<PieceStatus> opponentavaible, List<PieceStatus> playeravaible, int aiDebuff = 0)
     {
         // Copia la board iniziale
         copiedOpponentAvaiblePieces = CopyList(opponentavaible);
@@ -65,22 +64,12 @@ public class ChessAI
         }
         Think(depth);
 
-        int[] move = new int[] { (int)bestPiece.Position.x, (int)bestPiece.Position.y, bestMoveX, bestMoveY, bestPiece.ID };
-
-        Debug.Log($"History stack count after AlphaBeta: {Hist.Count}");
-
-        /*
-        foreach(GameObject obj in toDestroy){
-            if(obj != null){
-                Destroy(obj);
-            }
-        }*/
-
-        // Ritorna la migliore mossa (pezzo e destinazione)
-        PrintBoard(copiedBoard);
-        Debug.Log($"RigaStart:{(int)bestPiece.Position.x} ColonnaStart{(int)bestPiece.Position.y}");
-
+        moves.Sort((x, y) => y.value.CompareTo(x.value));
+        int moveIndex = Mathf.Min(0 + aiDebuff, moves.Count - 1);
+        int[] move = moves[moveIndex].move;
+        moves.Clear();
         return move;
+
     }
 
     private void Think(int d)
@@ -113,12 +102,9 @@ public class ChessAI
                 {
                     int targetRow = move[0];
                     int targetCol = move[1];
-                    //Debug.Log($"Black testing move: ({piece.Position.x}, {piece.Position.y}) -> ({targetRow}, {targetCol})");
 
                     Move(new int[] { (int)piece.Position.x, (int)piece.Position.y, targetRow, targetCol }, copiedBoard, piece);
                     int thisMoveValue = AlphaBeta(depth - 1, !isMax, alpha, beta);
-                    //Debug.Log($"Value:{thisMoveValue}");
-
                     Undo();
 
                     if (hValue < thisMoveValue)
@@ -126,9 +112,8 @@ public class ChessAI
                         hValue = thisMoveValue;
                         if (depth == maxDepth - 1)
                         {
-                            bestPiece = piece;
-                            bestMoveX = targetRow;
-                            bestMoveY = targetCol;
+                            int[] m = new int[] { (int)piece.Position.x, (int)piece.Position.y, targetRow, targetCol, piece.ID };
+                            moves.Add((thisMoveValue, m, depth));
                         }
                     }
 
