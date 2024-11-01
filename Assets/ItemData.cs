@@ -12,11 +12,9 @@ public class ItemData : MonoBehaviour, IClickable
 {
     public ScriptableItem scriptableItem;
     public string ScriptableItemPath;
-
-
-
     public bool bought;
     public bool selected;
+    public bool used;
     public bool alreadyElevated;
     public float el;
 
@@ -33,6 +31,7 @@ public class ItemData : MonoBehaviour, IClickable
     public PieceData pieceData = null;
 
     public int pieceprice = 10;
+    BoardManager boardManager = null;
 
     public void Start()
     {
@@ -83,7 +82,10 @@ public class ItemData : MonoBehaviour, IClickable
         if (GameObject.FindObjectOfType<ShopManager>() == null)
         {
             bought = true;
+            boardManager = GameObject.FindObjectOfType<BoardManager>();
+
         }
+        used = false;
 
     }
 
@@ -139,6 +141,44 @@ public class ItemData : MonoBehaviour, IClickable
                     FindAnyObjectByType<BoardManager>().selectedConsumable = null;
             }
 
+        }
+
+        if (used && boardManager != null)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                BoardSquare square = hit.collider.GetComponent<BoardSquare>();
+
+                if (square != null)
+                {
+                    Vector2 position = square.Position;
+                    ScriptableConsumable consumable = scriptableItem as ScriptableConsumable;
+                    int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(consumable.ApplicationMatrix);
+
+                    for (int i = 0; i < applicationMatrix.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < applicationMatrix.GetLength(1); j++)
+                        {
+                            if (applicationMatrix[i, j] == 1)
+                            {
+                                int relativeX = (int)position.x + i;
+                                int relativeY = (int)position.y + j;
+                                var key = (relativeX, relativeY);
+
+                                int value = consumable.ConsumableType == ConsumablesType.Cell ? 3 : 4;
+
+                                boardManager.highlightedSquares[key] = value;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("Nessun oggetto sotto il mouse.");
+            }
         }
     }
 
@@ -225,6 +265,7 @@ public class ItemData : MonoBehaviour, IClickable
                 break;
             case ButtonType.Use:
                 FindAnyObjectByType<BoardManager>().selectedConsumable = this;
+                used = true;
                 break;
             case ButtonType.PriceTag:
                 ToggleSelected();

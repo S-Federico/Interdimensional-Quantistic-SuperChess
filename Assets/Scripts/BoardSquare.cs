@@ -41,6 +41,9 @@ public class BoardSquare : MonoBehaviour, IClickable
                     case 2:
                         renderer.material.color = Color.red;
                         break;
+                    case 3:
+                        renderer.material.color = Color.black;
+                        break;
                     default:
                         renderer.material.color = Color.white;
                         break;
