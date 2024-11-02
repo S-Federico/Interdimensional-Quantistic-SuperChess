@@ -46,7 +46,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             pieces.RemoveAt(pieceIndex);
         }
 
-        if (currentDifficulty < difficultyToReach)
+        if (currentDifficulty < difficultyToReach && !Utility.IsListEmpty(ModifierPrefabs))
         {
             while (currentDifficulty < difficultyToReach)
             {

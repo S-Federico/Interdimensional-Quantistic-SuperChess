@@ -23,9 +23,11 @@ public class MainMenu : MonoBehaviour
     private GameInfo[] savedGames;
 
     private GameInfo selectedGameInfo;
+    private Button continueGameButton;
 
     void Start()
     {
+        continueGameButton = continueButton.GetComponent<Button>();
         savedGames = new GameInfo[MaxSaves];
         gameManager = GameManager.Instance;
         Reset();
@@ -79,6 +81,7 @@ public class MainMenu : MonoBehaviour
     public void NewGame()
     {
         this.selectedGameInfo.Reset();
+        this.selectedGameInfo.GameStarted = true;
         GameManager.Instance.NewGame(this.selectedGameInfo);
     }
 
@@ -121,5 +124,9 @@ public class MainMenu : MonoBehaviour
             this.selectedGameInfo = null;
             GameManager.Instance.RestartGame();
         }, () => {});
+    }
+
+    void Update() {
+      continueGameButton.interactable = this.selectedGameInfo != null && this.selectedGameInfo.GameStarted;
     }
 }

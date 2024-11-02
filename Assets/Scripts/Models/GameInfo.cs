@@ -27,6 +27,7 @@ public class GameInfo
         this.OpponentInfo = new PlayerInfo();
         this.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
         this.GameState = GameState.RUNNING;
+        this.GameStarted = false;
     }
 
     List<Consumable> UnlockedConsumables = new List<Consumable>();
@@ -35,4 +36,5 @@ public class GameInfo
     public PieceColor? Winner;
 
     public GameState GameState = GameState.RUNNING;
+    public bool GameStarted = false; // This flag indicates if the game was started. If false, the load game button should be disabled
 }
