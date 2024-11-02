@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using System;
+
+[System.Serializable]
 public class GameInfo
 {
     public string ProfileName = null; //Game1.save

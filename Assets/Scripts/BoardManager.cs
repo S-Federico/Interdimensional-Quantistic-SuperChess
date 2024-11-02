@@ -304,6 +304,9 @@ public class BoardManager : MonoBehaviour
 
         // Perform phisical movement
         piece.transform.position = boardBehaviour.GetSquare((int)destination.x, (int)destination.y).gameObject.transform.position;
+
+        // Play sound
+        SoundManager.PlaySoundOneShot(Sound.PIECE_MOVE);
     }
 
     public bool CanPlacePiece(PieceStatus piece)
