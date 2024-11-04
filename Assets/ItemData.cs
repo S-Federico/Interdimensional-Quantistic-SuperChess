@@ -5,10 +5,11 @@ using Array2DEditor;
 using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-public class ItemData : MonoBehaviour, IClickable
+public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointerExitHandler
 {
     public Dictionary<(int, int), int> affectedCells;
     public ScriptableItem scriptableItem;
@@ -33,6 +34,7 @@ public class ItemData : MonoBehaviour, IClickable
 
     public int pieceprice = 10;
     BoardManager boardManager = null;
+    public bool showCells = false;
 
     public void Start()
     {
@@ -87,7 +89,7 @@ public class ItemData : MonoBehaviour, IClickable
 
         }
         used = false;
-        affectedCells=new Dictionary<(int, int), int>();
+        affectedCells = new Dictionary<(int, int), int>();
     }
 
     public void SetButton(GameObject b, Vector3 anchor, ButtonType type, string text)
@@ -145,7 +147,7 @@ public class ItemData : MonoBehaviour, IClickable
         }
 
         if (!selected)
-        used=false;
+            used = false;
 
         if (used && boardManager != null)
         {
@@ -154,10 +156,12 @@ public class ItemData : MonoBehaviour, IClickable
             if (Physics.Raycast(ray, out hit))
             {
                 BoardSquare square = hit.collider.GetComponent<BoardSquare>();
-                if(square==null){
+                if (square == null)
+                {
                     hit.collider.TryGetComponent<PieceStatus>(out PieceStatus piece);
-                    if(piece!=null && piece.Position.x>=0){
-                        square=boardManager.GetSquare((int)piece.Position.x, (int)piece.Position.y).GetComponent<BoardSquare>();
+                    if (piece != null && piece.Position.x >= 0)
+                    {
+                        square = boardManager.GetSquare((int)piece.Position.x, (int)piece.Position.y).GetComponent<BoardSquare>();
                     }
                 }
                 if (square != null)
@@ -192,7 +196,26 @@ public class ItemData : MonoBehaviour, IClickable
                         }
                     }
                 }
-                
+
+            }
+        }
+
+        if (showCells && scriptableItem is ScriptableManual)
+        {
+            ScriptableManual manual = scriptableItem as ScriptableManual;
+            int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(manual.ApplicationMatrix);
+
+            for (int i = 0; i < applicationMatrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < applicationMatrix.GetLength(1); j++)
+                {
+                    if (applicationMatrix[i, j] == 1)
+                    {
+                        var key = (i, j);
+                        int value = 5;
+                        boardManager.highlightedSquares[key] = value;
+                    }
+                }
             }
         }
     }
@@ -400,6 +423,18 @@ public class ItemData : MonoBehaviour, IClickable
         }
 
         return result;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Debug.Log("Dovrei mostrare il tooltip");
+        showCells = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        Debug.Log("Dovrei nascondere il tooltip");
+        showCells = false;
     }
 }
 

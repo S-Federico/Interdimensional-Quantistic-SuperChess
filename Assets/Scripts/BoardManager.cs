@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Array2DEditor;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
 
 
 public class BoardManager : MonoBehaviour
@@ -72,9 +73,6 @@ public class BoardManager : MonoBehaviour
                     draggableBehaviour.isDraggable = true;
                 }
             }
-
-            UpdateHighlightedSquares();
-
         }
         else if (currentTurn == Turn.AI)
         {
@@ -86,7 +84,13 @@ public class BoardManager : MonoBehaviour
             }
         }
 
+    }
+
+    void LateUpdate()
+    {
+        UpdateHighlightedSquares();
         highlightedSquares.Clear();
+
     }
 
     public void UpdateHighlightedSquares()
@@ -118,7 +122,6 @@ public class BoardManager : MonoBehaviour
     {
         highlightedSquares.Clear();
     }
-
 
 
     public void SelectPiece(GameObject piece)
