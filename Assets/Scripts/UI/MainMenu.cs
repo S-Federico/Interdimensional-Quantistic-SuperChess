@@ -66,6 +66,7 @@ public class MainMenu : MonoBehaviour
 
     private void OnFileButtonClick(GameInfo gameInfo)
     {
+        PlayButtonSound();
         this.selectedGameInfo = gameInfo;
         if (!gameInfo.HasSaveFile())
         {
@@ -80,9 +81,15 @@ public class MainMenu : MonoBehaviour
 
     public void NewGame()
     {
+        PlayButtonSound();
         this.selectedGameInfo.Reset();
         this.selectedGameInfo.GameStarted = true;
         GameManager.Instance.NewGame(this.selectedGameInfo);
+    }
+
+    public void BackButtonPressed() {
+        PlayButtonSound();
+        Reset();
     }
 
     public void Reset()
@@ -94,6 +101,7 @@ public class MainMenu : MonoBehaviour
 
     public void LoadMenuPanel()
     {
+        PlayButtonSound();
         LoadGamePanel.SetActive(false);
         MainMenuPanel.SetActive(true);
         ChooseProfileNamePanel.SetActive(false);
@@ -101,6 +109,7 @@ public class MainMenu : MonoBehaviour
 
     public void CreateNewProfilePressed()
     {
+        PlayButtonSound();
         LoadGamePanel.SetActive(false);
         MainMenuPanel.SetActive(false);
         ChooseProfileNamePanel.SetActive(true);
@@ -108,25 +117,35 @@ public class MainMenu : MonoBehaviour
 
     public void CreatenewProfileConfirmed()
     {
+        PlayButtonSound();
         this.selectedGameInfo.ProfileName = ProfileNameInput.text;
         LoadMenuPanel();
         this.ProfileNameInput.text = null;
     }
 
     public void LoadGamePressed() {
+        PlayButtonSound();
         GameManager.Instance.ContinueGame(this.selectedGameInfo);
     }
 
     public void DeleteProfilePressed() {
+        PlayButtonSound();
         PopupManager.Instance.ShowPopup("Are you sure?", () => {
+            PlayButtonSound();
             //TODO: Delete file from selectedGameInfo
             SaveManager.Instance.DeleteFile(this.selectedGameInfo.ProfileName);
             this.selectedGameInfo = null;
             GameManager.Instance.RestartGame();
-        }, () => {});
+        }, () => {
+            PlayButtonSound();
+        });
     }
 
     void Update() {
       continueGameButton.interactable = this.selectedGameInfo != null && this.selectedGameInfo.GameStarted;
+    }
+
+    private void PlayButtonSound() {
+        SoundManager.PlaySoundOneShot(Sound.BUTTON_PRESSED);
     }
 }

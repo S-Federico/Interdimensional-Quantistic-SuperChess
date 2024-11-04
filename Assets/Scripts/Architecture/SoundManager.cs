@@ -12,6 +12,9 @@ public class SoundManager
         AudioSource audioSource = gameObject.AddComponent<AudioSource>();
         AudioClip audioClip = GetSoundInfo(sound)?.AudioClip;
         audioSource.PlayOneShot(audioClip);
+
+        // Prevent object destruction through scenes
+        GameObject.DontDestroyOnLoad(gameObject);
         
         // Destroy the temporary sound gameObject after it finishes playig
         GameObject.Destroy(gameObject, audioClip.length);
