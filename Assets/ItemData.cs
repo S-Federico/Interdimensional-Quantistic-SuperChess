@@ -10,6 +10,7 @@ using UnityEngine.UIElements;
 
 public class ItemData : MonoBehaviour, IClickable
 {
+    public Dictionary<(int, int), int> affectedCells;
     public ScriptableItem scriptableItem;
     public string ScriptableItemPath;
     public bool bought;
@@ -86,7 +87,7 @@ public class ItemData : MonoBehaviour, IClickable
 
         }
         used = false;
-
+        affectedCells=new Dictionary<(int, int), int>();
     }
 
     public void SetButton(GameObject b, Vector3 anchor, ButtonType type, string text)
@@ -157,27 +158,32 @@ public class ItemData : MonoBehaviour, IClickable
                     ScriptableConsumable consumable = scriptableItem as ScriptableConsumable;
                     int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(consumable.ApplicationMatrix);
 
+                    // Calcola l'offset centrale per centrare la matrice sulla casella centrale
+                    int offsetX = applicationMatrix.GetLength(0) / 2;
+                    int offsetY = applicationMatrix.GetLength(1) / 2;
+
                     for (int i = 0; i < applicationMatrix.GetLength(0); i++)
                     {
                         for (int j = 0; j < applicationMatrix.GetLength(1); j++)
                         {
                             if (applicationMatrix[i, j] == 1)
                             {
-                                int relativeX = (int)position.x + i;
-                                int relativeY = (int)position.y + j;
-                                var key = (relativeX, relativeY);
+                                int relativeX = (int)position.x + i - offsetX;
+                                int relativeY = (int)position.y + j - offsetY;
 
-                                int value = consumable.ConsumableType == ConsumablesType.Cell ? 3 : 4;
+                                if (relativeX >= 0 && relativeX <= 7 && relativeY >= 0 && relativeY <= 7)
+                                {
+                                    var key = (relativeX, relativeY);
 
-                                boardManager.highlightedSquares[key] = value;
+                                    int value = consumable.ConsumableType == ConsumablesType.Cell ? 3 : 4;
+
+                                    boardManager.highlightedSquares[key] = value;
+
+                                }
                             }
                         }
                     }
                 }
-            }
-            else
-            {
-                Debug.Log("Nessun oggetto sotto il mouse.");
             }
         }
     }

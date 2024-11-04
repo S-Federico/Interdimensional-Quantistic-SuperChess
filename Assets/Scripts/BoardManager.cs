@@ -72,14 +72,9 @@ public class BoardManager : MonoBehaviour
                     draggableBehaviour.isDraggable = true;
                 }
             }
-            // Gestione input del giocatore
-            if (showMovesFlag)
-            {
-                if (selectedPiece != null && selectedPiece.GetComponent<PieceStatus>().Position != new Vector2(-1f, -1f))
-                {
-                    UpdateHighlightedSquares();
-                }
-            }
+
+            UpdateHighlightedSquares();
+
         }
         else if (currentTurn == Turn.AI)
         {
@@ -92,28 +87,36 @@ public class BoardManager : MonoBehaviour
         }
 
         showMovesFlag = false;
+        highlightedSquares.Clear();
     }
 
-    void UpdateHighlightedSquares()
+    public void UpdateHighlightedSquares()
     {
-        highlightedSquares.Clear();
-
-        PieceStatus pieceStatus = selectedPiece.GetComponent<PieceStatus>();
-        HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(pieceStatus, Pieces);
-
-        foreach (int[] move in possibleMoves)
+        if (showMovesFlag && selectedPiece != null && selectedPiece.GetComponent<PieceStatus>().Position != new Vector2(-1f, -1f))
         {
-            if (move.Length >= 3)
-            {
-                (int, int) key = (move[0], move[1]);
-                int value = move[2];
+            PieceStatus pieceStatus = selectedPiece.GetComponent<PieceStatus>();
+            HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(pieceStatus, Pieces);
 
-                highlightedSquares[key] = value;
+            foreach (int[] move in possibleMoves)
+            {
+                if (move.Length >= 3)
+                {
+                    (int, int) key = (move[0], move[1]);
+                    int value = move[2];
+
+                    highlightedSquares[key] = value;
+                }
             }
+        }
+
+        foreach (GameObject square in boardBehaviour.squares)
+        {
+            square.GetComponent<BoardSquare>().Highlight();
         }
     }
 
-    public void HideMoves(){
+    public void HideMoves()
+    {
         highlightedSquares.Clear();
     }
 
