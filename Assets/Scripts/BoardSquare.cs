@@ -19,9 +19,6 @@ public class BoardSquare : MonoBehaviour, IClickable
 
     public void Update()
     {
-        if (boardManager == null) return;
-        Highlight();
-
     }
 
     public void Highlight()
@@ -40,6 +37,9 @@ public class BoardSquare : MonoBehaviour, IClickable
                         break;
                     case 2:
                         renderer.material.color = Color.red;
+                        break;
+                    case 3:
+                        renderer.material.color = Color.blue;
                         break;
                     default:
                         renderer.material.color = Color.white;

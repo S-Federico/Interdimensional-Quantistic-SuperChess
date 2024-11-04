@@ -32,7 +32,7 @@ public class GameInfo
         this.GameStarted = false;
     }
 
-    List<Consumable> UnlockedConsumables = new List<Consumable>();
+    //List<Consumable> UnlockedConsumables = new List<Consumable>();
 
     public BoardData BoardData;
     public PieceColor? Winner;
