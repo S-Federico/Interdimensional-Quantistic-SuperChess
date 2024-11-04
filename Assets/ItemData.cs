@@ -144,6 +144,9 @@ public class ItemData : MonoBehaviour, IClickable
 
         }
 
+        if (!selected)
+        used=false;
+
         if (used && boardManager != null)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -151,7 +154,12 @@ public class ItemData : MonoBehaviour, IClickable
             if (Physics.Raycast(ray, out hit))
             {
                 BoardSquare square = hit.collider.GetComponent<BoardSquare>();
-
+                if(square==null){
+                    hit.collider.TryGetComponent<PieceStatus>(out PieceStatus piece);
+                    if(piece!=null && piece.Position.x>=0){
+                        square=boardManager.GetSquare((int)piece.Position.x, (int)piece.Position.y).GetComponent<BoardSquare>();
+                    }
+                }
                 if (square != null)
                 {
                     Vector2 position = square.Position;
@@ -184,6 +192,7 @@ public class ItemData : MonoBehaviour, IClickable
                         }
                     }
                 }
+                
             }
         }
     }
