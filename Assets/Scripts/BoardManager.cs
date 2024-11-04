@@ -86,7 +86,6 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        showMovesFlag = false;
         highlightedSquares.Clear();
     }
 
