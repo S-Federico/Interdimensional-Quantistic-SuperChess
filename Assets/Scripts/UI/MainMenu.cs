@@ -62,6 +62,8 @@ public class MainMenu : MonoBehaviour
             }
         }
 
+        SoundManager.PlaySoud(Sound.OST, true, true);
+
     }
 
     private void OnFileButtonClick(GameInfo gameInfo)
