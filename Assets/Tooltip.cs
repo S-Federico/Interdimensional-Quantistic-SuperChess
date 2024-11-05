@@ -11,9 +11,11 @@ public class Tooltip : MonoBehaviour
     public LayoutElement layoutElement;
     public int characterWrapLimit;
     public Vector2 offset; // Offset to avoid the tooltip covering the mouse cursor
-
+    public CanvasGroup group;
     private void Start()
     {
+        group=transform.parent.GetComponent<CanvasGroup>();
+        group.alpha = 0.0f;
     }
 
     private void Update()
@@ -60,5 +62,6 @@ public class Tooltip : MonoBehaviour
         Vector2 adjustedPosition = mousePosition + offset;
         transform.position = adjustedPosition;
     }
+
 
 }

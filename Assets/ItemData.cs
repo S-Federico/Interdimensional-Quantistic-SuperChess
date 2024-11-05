@@ -431,8 +431,13 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
     {
         if (tooltip != null)
         {
-            tooltip.SetText(scriptableItem.Name, scriptableItem.Description);
-            tooltip.gameObject.SetActive(true);
+            if (scriptableItem != null)
+            {
+                tooltip.SetText(scriptableItem.Name, scriptableItem.Description);
+            }
+            else
+                tooltip.SetText("Pezzo", "OnePiece");
+            tooltip.group.alpha = 1.0f;
         }
         showCells = true;
     }
@@ -441,7 +446,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
     {
         if (tooltip != null)
         {
-            tooltip.gameObject.SetActive(false);
+            tooltip.group.alpha = 0.0f;
         }
         showCells = false;
     }
