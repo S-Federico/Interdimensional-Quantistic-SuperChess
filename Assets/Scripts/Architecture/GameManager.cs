@@ -33,12 +33,16 @@ public class GameManager : Singleton<GameManager>
         transitionLoader.transition.SetTrigger("Start");
         yield return new WaitForSeconds(transitionLoader.GetTransitionTime());
 
+        LoadingScreenManager.Istance.m_LoadingScreenObjct.SetActive(true);
+        LoadingScreenManager.Istance.ProgressBar.value = 0;
+
         // Carica la scena in modo asincrono
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 
         // Aspetta fino a quando la scena non è completamente caricata
         while (!asyncLoad.isDone)
         {
+            LoadingScreenManager.Istance.ProgressBar.value = asyncLoad.progress;
             yield return null; // Aspetta un frame
         }
         /*
@@ -48,6 +52,9 @@ public class GameManager : Singleton<GameManager>
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
         boardManager.LoadBoardFromBoardData();
         boardManager.InitializePiecesPlanes(true);
+
+        yield return new WaitForSeconds(0.5f);
+        LoadingScreenManager.Istance.m_LoadingScreenObjct.SetActive(false);
     }
 
     public void NewGame(GameInfo gameInfo)
@@ -69,17 +76,24 @@ public class GameManager : Singleton<GameManager>
         transitionLoader.transition.SetTrigger("Start");
         yield return new WaitForSeconds(transitionLoader.GetTransitionTime());
 
+        LoadingScreenManager.Istance.m_LoadingScreenObjct.SetActive(true);
+        LoadingScreenManager.Istance.ProgressBar.value = 0;
+
         // Carica la scena in modo asincrono
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 
         // Aspetta fino a quando la scena non è completamente caricata
         while (!asyncLoad.isDone)
         {
+            LoadingScreenManager.Istance.ProgressBar.value = asyncLoad.progress;
             yield return null; // Aspetta un frame
         }
 
         // La scena è caricata completamente, ora puoi chiamare il metodo per caricare i dati di gioco
         LoadGameFromFile();
+
+        yield return new WaitForSeconds(0.5f);
+        LoadingScreenManager.Istance.m_LoadingScreenObjct.SetActive(false);
     }
 
     public void RestartGame()
