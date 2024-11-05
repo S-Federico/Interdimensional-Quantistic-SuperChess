@@ -47,4 +47,8 @@ public static class Utility
         return avaiblePieces;
     }
 
+    public static bool IsListEmpty<T>(List<T> list) {
+        return list == null || list.Count == 0;
+    }
+
 }

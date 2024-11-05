@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Array2DEditor;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
 
 
 public class BoardManager : MonoBehaviour
@@ -72,14 +73,6 @@ public class BoardManager : MonoBehaviour
                     draggableBehaviour.isDraggable = true;
                 }
             }
-            // Gestione input del giocatore
-            if (showMovesFlag)
-            {
-                if (selectedPiece != null && selectedPiece.GetComponent<PieceStatus>().Position != new Vector2(-1f, -1f))
-                {
-                    UpdateHighlightedSquares();
-                }
-            }
         }
         else if (currentTurn == Turn.AI)
         {
@@ -91,32 +84,44 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        showMovesFlag = false;
     }
 
-    void UpdateHighlightedSquares()
+    void LateUpdate()
     {
+        UpdateHighlightedSquares();
         highlightedSquares.Clear();
 
-        PieceStatus pieceStatus = selectedPiece.GetComponent<PieceStatus>();
-        HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(pieceStatus, Pieces);
+    }
 
-        foreach (int[] move in possibleMoves)
+    public void UpdateHighlightedSquares()
+    {
+        if (showMovesFlag && selectedPiece != null && selectedPiece.GetComponent<PieceStatus>().Position != new Vector2(-1f, -1f))
         {
-            if (move.Length >= 3)
-            {
-                (int, int) key = (move[0], move[1]);
-                int value = move[2];
+            PieceStatus pieceStatus = selectedPiece.GetComponent<PieceStatus>();
+            HashSet<int[]> possibleMoves = cbm.GetPossibleMovesForPiece(pieceStatus, Pieces);
 
-                highlightedSquares[key] = value;
+            foreach (int[] move in possibleMoves)
+            {
+                if (move.Length >= 3)
+                {
+                    (int, int) key = (move[0], move[1]);
+                    int value = move[2];
+
+                    highlightedSquares[key] = value;
+                }
             }
+        }
+
+        foreach (GameObject square in boardBehaviour.squares)
+        {
+            square.GetComponent<BoardSquare>().Highlight();
         }
     }
 
-    public void HideMoves(){
+    public void HideMoves()
+    {
         highlightedSquares.Clear();
     }
-
 
 
     public void SelectPiece(GameObject piece)
@@ -304,6 +309,9 @@ public class BoardManager : MonoBehaviour
 
         // Perform phisical movement
         piece.transform.position = boardBehaviour.GetSquare((int)destination.x, (int)destination.y).gameObject.transform.position;
+
+        // Play sound
+        SoundManager.PlaySoundOneShot(Sound.PIECE_MOVE);
     }
 
     public bool CanPlacePiece(PieceStatus piece)

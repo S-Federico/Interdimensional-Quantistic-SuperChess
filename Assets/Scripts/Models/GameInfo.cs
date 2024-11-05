@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using System;
+
+[System.Serializable]
 public class GameInfo
 {
     public string ProfileName = null; //Game1.save
@@ -27,12 +29,14 @@ public class GameInfo
         this.OpponentInfo = new PlayerInfo();
         this.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
         this.GameState = GameState.RUNNING;
+        this.GameStarted = false;
     }
 
-    List<Consumable> UnlockedConsumables = new List<Consumable>();
+    //List<Consumable> UnlockedConsumables = new List<Consumable>();
 
     public BoardData BoardData;
     public PieceColor? Winner;
 
     public GameState GameState = GameState.RUNNING;
+    public bool GameStarted = false; // This flag indicates if the game was started. If false, the load game button should be disabled
 }

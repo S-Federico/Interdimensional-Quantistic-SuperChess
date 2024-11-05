@@ -5,18 +5,18 @@ using Array2DEditor;
 using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-public class ItemData : MonoBehaviour, IClickable
+public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointerExitHandler
 {
+    public Dictionary<(int, int), int> affectedCells;
     public ScriptableItem scriptableItem;
     public string ScriptableItemPath;
-
-
-
     public bool bought;
     public bool selected;
+    public bool used;
     public bool alreadyElevated;
     public float el;
 
@@ -33,6 +33,8 @@ public class ItemData : MonoBehaviour, IClickable
     public PieceData pieceData = null;
 
     public int pieceprice = 10;
+    BoardManager boardManager = null;
+    public bool showCells = false;
 
     public void Start()
     {
@@ -83,8 +85,11 @@ public class ItemData : MonoBehaviour, IClickable
         if (GameObject.FindObjectOfType<ShopManager>() == null)
         {
             bought = true;
-        }
+            boardManager = GameObject.FindObjectOfType<BoardManager>();
 
+        }
+        used = false;
+        affectedCells = new Dictionary<(int, int), int>();
     }
 
     public void SetButton(GameObject b, Vector3 anchor, ButtonType type, string text)
@@ -139,6 +144,79 @@ public class ItemData : MonoBehaviour, IClickable
                     FindAnyObjectByType<BoardManager>().selectedConsumable = null;
             }
 
+        }
+
+        if (!selected)
+            used = false;
+
+        if (used && boardManager != null)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                BoardSquare square = hit.collider.GetComponent<BoardSquare>();
+                if (square == null)
+                {
+                    hit.collider.TryGetComponent<PieceStatus>(out PieceStatus piece);
+                    if (piece != null && piece.Position.x >= 0)
+                    {
+                        square = boardManager.GetSquare((int)piece.Position.x, (int)piece.Position.y).GetComponent<BoardSquare>();
+                    }
+                }
+                if (square != null)
+                {
+                    Vector2 position = square.Position;
+                    ScriptableConsumable consumable = scriptableItem as ScriptableConsumable;
+                    int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(consumable.ApplicationMatrix);
+
+                    // Calcola l'offset centrale per centrare la matrice sulla casella centrale
+                    int offsetX = applicationMatrix.GetLength(0) / 2;
+                    int offsetY = applicationMatrix.GetLength(1) / 2;
+
+                    for (int i = 0; i < applicationMatrix.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < applicationMatrix.GetLength(1); j++)
+                        {
+                            if (applicationMatrix[i, j] == 1)
+                            {
+                                int relativeX = (int)position.x + i - offsetX;
+                                int relativeY = (int)position.y + j - offsetY;
+
+                                if (relativeX >= 0 && relativeX <= 7 && relativeY >= 0 && relativeY <= 7)
+                                {
+                                    var key = (relativeX, relativeY);
+
+                                    int value = consumable.ConsumableType == ConsumablesType.Cell ? 3 : 4;
+
+                                    boardManager.highlightedSquares[key] = value;
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        if (showCells && scriptableItem is ScriptableManual)
+        {
+            ScriptableManual manual = scriptableItem as ScriptableManual;
+            int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(manual.ApplicationMatrix);
+
+            for (int i = 0; i < applicationMatrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < applicationMatrix.GetLength(1); j++)
+                {
+                    if (applicationMatrix[i, j] == 1)
+                    {
+                        var key = (i, j);
+                        int value = 5;
+                        boardManager.highlightedSquares[key] = value;
+                    }
+                }
+            }
         }
     }
 
@@ -225,6 +303,7 @@ public class ItemData : MonoBehaviour, IClickable
                 break;
             case ButtonType.Use:
                 FindAnyObjectByType<BoardManager>().selectedConsumable = this;
+                used = true;
                 break;
             case ButtonType.PriceTag:
                 ToggleSelected();
@@ -344,6 +423,18 @@ public class ItemData : MonoBehaviour, IClickable
         }
 
         return result;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Debug.Log("Dovrei mostrare il tooltip");
+        showCells = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        Debug.Log("Dovrei nascondere il tooltip");
+        showCells = false;
     }
 }
 

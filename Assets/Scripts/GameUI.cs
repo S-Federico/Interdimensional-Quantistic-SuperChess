@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameUI : MonoBehaviour
 {
@@ -23,6 +24,20 @@ public class GameUI : MonoBehaviour
     {
         HideAll();
     }
+
+    // void Awake() {
+    //     MenuButton.GetComponent<Button>().onClick.AddListener(PlayButtonSound);
+    //     NextLevelBtn.GetComponent<Button>().onClick.AddListener(PlayButtonSound);
+    //     GoToShopBtn.GetComponent<Button>().onClick.AddListener(PlayButtonSound);
+    //     BackToMenuBtn.GetComponent<Button>().onClick.AddListener(PlayButtonSound);
+    // }
+
+    // void OnDestroy() {
+    //     MenuButton.GetComponent<Button>().onClick.RemoveListener(PlayButtonSound);
+    //     NextLevelBtn.GetComponent<Button>().onClick.RemoveListener(PlayButtonSound);
+    //     GoToShopBtn.GetComponent<Button>().onClick.RemoveListener(PlayButtonSound);
+    //     BackToMenuBtn.GetComponent<Button>().onClick.RemoveListener(PlayButtonSound);
+    // }
 
     void Update()
     {
@@ -93,5 +108,9 @@ public class GameUI : MonoBehaviour
     public void GoToShop()
     {
         SceneManager.LoadScene("ShopMockup");
+    }
+
+    private void PlayButtonSound() {
+        SoundManager.PlaySoundOneShot(Sound.BUTTON_PRESSED);
     }
 }
