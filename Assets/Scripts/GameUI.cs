@@ -25,21 +25,7 @@ public class GameUI : MonoBehaviour
         HideAll();
     }
 
-    // void Awake() {
-    //     MenuButton.GetComponent<Button>().onClick.AddListener(PlayButtonSound);
-    //     NextLevelBtn.GetComponent<Button>().onClick.AddListener(PlayButtonSound);
-    //     GoToShopBtn.GetComponent<Button>().onClick.AddListener(PlayButtonSound);
-    //     BackToMenuBtn.GetComponent<Button>().onClick.AddListener(PlayButtonSound);
-    // }
-
-    // void OnDestroy() {
-    //     MenuButton.GetComponent<Button>().onClick.RemoveListener(PlayButtonSound);
-    //     NextLevelBtn.GetComponent<Button>().onClick.RemoveListener(PlayButtonSound);
-    //     GoToShopBtn.GetComponent<Button>().onClick.RemoveListener(PlayButtonSound);
-    //     BackToMenuBtn.GetComponent<Button>().onClick.RemoveListener(PlayButtonSound);
-    // }
-
-    void Update()
+   void Update()
     {
         // Menu button has to be shown only if is not in GameOver
         MenuButton.SetActive(!GameManager.Instance.IsGameOver);

@@ -35,9 +35,11 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
     public int pieceprice = 10;
     BoardManager boardManager = null;
     public bool showCells = false;
-
+    public Tooltip tooltip;
     public void Start()
     {
+        tooltip = GameObject.FindObjectOfType<Tooltip>();
+
         // Calcola il bounding box del modello del GameObject padre (assumendo che il modello abbia un MeshRenderer)
         Renderer modelRenderer = this.gameObject.GetComponentInChildren<Renderer>();
         if (modelRenderer != null)
@@ -427,13 +429,20 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("Dovrei mostrare il tooltip");
+        if (tooltip != null)
+        {
+            tooltip.SetText(scriptableItem.Name, scriptableItem.Description);
+            tooltip.gameObject.SetActive(true);
+        }
         showCells = true;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("Dovrei nascondere il tooltip");
+        if (tooltip != null)
+        {
+            tooltip.gameObject.SetActive(false);
+        }
         showCells = false;
     }
 }
