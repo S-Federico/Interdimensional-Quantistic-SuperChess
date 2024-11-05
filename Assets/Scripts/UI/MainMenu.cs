@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
@@ -17,6 +18,8 @@ public class MainMenu : MonoBehaviour
     public GameObject ChooseProfileNamePanel;
     public TMP_InputField ProfileNameInput;
     public int MaxSaves = 3;
+
+    public Button LoadGamePanelBackButton;
 
     // Private variables
     private GameManager gameManager;
@@ -64,6 +67,9 @@ public class MainMenu : MonoBehaviour
 
         SoundManager.PlaySoud(Sound.OST, true, true);
 
+        LoadGamePanelBackButton.onClick.AddListener(OnGamePanelBackButtonPressed);
+        LoadGamePanelBackButton.onClick.AddListener(PlayButtonSound);
+
     }
 
     private void OnFileButtonClick(GameInfo gameInfo)
@@ -89,7 +95,8 @@ public class MainMenu : MonoBehaviour
         GameManager.Instance.NewGame(this.selectedGameInfo);
     }
 
-    public void BackButtonPressed() {
+    public void BackButtonPressed()
+    {
         PlayButtonSound();
         Reset();
     }
@@ -125,29 +132,46 @@ public class MainMenu : MonoBehaviour
         this.ProfileNameInput.text = null;
     }
 
-    public void LoadGamePressed() {
+    public void LoadGamePressed()
+    {
         PlayButtonSound();
         GameManager.Instance.ContinueGame(this.selectedGameInfo);
     }
 
-    public void DeleteProfilePressed() {
+    public void DeleteProfilePressed()
+    {
         PlayButtonSound();
-        PopupManager.Instance.ShowPopup("Are you sure?", () => {
+        PopupManager.Instance.ShowPopup("Are you sure?", () =>
+        {
             PlayButtonSound();
             //TODO: Delete file from selectedGameInfo
             SaveManager.Instance.DeleteFile(this.selectedGameInfo.ProfileName);
             this.selectedGameInfo = null;
             GameManager.Instance.RestartGame();
-        }, () => {
+        }, () =>
+        {
             PlayButtonSound();
         });
     }
 
-    void Update() {
-      continueGameButton.interactable = this.selectedGameInfo != null && this.selectedGameInfo.GameStarted;
+    void Update()
+    {
+        continueGameButton.interactable = this.selectedGameInfo != null && this.selectedGameInfo.GameStarted;
     }
 
-    private void PlayButtonSound() {
+    private void PlayButtonSound()
+    {
         SoundManager.PlaySoundOneShot(Sound.BUTTON_PRESSED);
+    }
+
+    private void OnGamePanelBackButtonPressed()
+    {
+        SceneManager.LoadScene(Constants.Scenes.START_SCREEN);
+    }
+
+    void OnDestroy()
+    {
+        LoadGamePanelBackButton.onClick.RemoveListener(OnGamePanelBackButtonPressed);
+        LoadGamePanelBackButton.onClick.RemoveListener(PlayButtonSound);
     }
 }

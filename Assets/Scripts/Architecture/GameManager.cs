@@ -21,10 +21,20 @@ public class GameManager : Singleton<GameManager>
     public bool IsGameOver { get => isGameOver; set => isGameOver = value; }
     public bool IsPaused { get => isPaused; set => isPaused = value; }
 
+    public Options Options;
+
     void Awake()
     {
         Debug.Log("Game Manager instantiated!");
         levels = new List<ScriptableLevel>(Resources.LoadAll<ScriptableLevel>("ScriptableObjects/Levels"));
+
+        // Try to load options. If fail, set default
+        try {
+            Options = SaveManager.Instance.Load<Options>($"{Application.persistentDataPath}/options.json",true) ?? new Options();
+        } catch (Exception)
+        {
+            Options = new Options();
+        }
     }
 
     public IEnumerator NewGameCoroutine(string sceneName)
@@ -258,6 +268,10 @@ public class GameManager : Singleton<GameManager>
     {
         int randomIndex = UnityEngine.Random.Range(0, levels.Count);
         return levels[randomIndex];
+    }
+
+    public void SaveOptions() {
+        SaveManager.Instance.Save(Options, $"{Application.persistentDataPath}/options.json");
     }
 
 }
