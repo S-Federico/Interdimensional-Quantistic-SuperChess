@@ -5,31 +5,24 @@ using UnityEngine.UI;
 
 public class LoadingScreenManager : MonoBehaviour
 {
-    public static LoadingScreenManager Istance;
+    public static LoadingScreenManager Instance;
     public GameObject m_LoadingScreenObjct;
     public Slider ProgressBar;
 
     void Awake()
     {
-        if (Istance != null && Istance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
-            Debug.Log("LoadingScreenManager distrutto");
         }
         else
         {
-            Istance = this;
+            Instance = this;
             DontDestroyOnLoad(this.gameObject);
         }
     }
     void Start()
     {
         m_LoadingScreenObjct.SetActive(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
