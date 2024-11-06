@@ -19,10 +19,7 @@ public class LoadingScreenManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
+            m_LoadingScreenObjct.SetActive(false);
         }
-    }
-    void Start()
-    {
-        m_LoadingScreenObjct.SetActive(false);
     }
 }
