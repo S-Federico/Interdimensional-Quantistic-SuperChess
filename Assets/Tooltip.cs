@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Collections; 
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,8 +18,8 @@ public class Tooltip : MonoBehaviour
     {
         group = transform.parent.GetComponent<CanvasGroup>();
         group.alpha = 0.0f;
-        offset.x = 1.0f;
-        offset.y = 5.0f;
+        offset.x = 0.0f;
+        offset.y = 0.0f;
         rectTransform = GetComponent<RectTransform>();
         rectTransform.pivot = new Vector2(0, 0); // Pivot in basso a sinistra
     }
@@ -83,4 +83,14 @@ public class Tooltip : MonoBehaviour
         targetalpha = 0.0f;
         this.group.alpha = 0.0f;
     }
+    public void ShowAfterDelay(float delay)
+    {
+        StartCoroutine(ShowWithDelay(delay));
+    }
+    private IEnumerator ShowWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Show();
+    }
+
 }

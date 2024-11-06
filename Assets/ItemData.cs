@@ -437,7 +437,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             }
             else
                 tooltip.SetText("Pezzo", "OnePiece");
-            tooltip.Show();
+            tooltip.ShowAfterDelay(2.0f);
         }
         showCells = true;
     }
