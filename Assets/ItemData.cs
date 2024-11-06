@@ -202,7 +202,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             }
         }
 
-        if (showCells && scriptableItem is ScriptableManual)
+        if (showCells && scriptableItem is ScriptableManual && boardManager!=null)
         {
             ScriptableManual manual = scriptableItem as ScriptableManual;
             int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(manual.ApplicationMatrix);
@@ -437,7 +437,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             }
             else
                 tooltip.SetText("Pezzo", "OnePiece");
-            tooltip.group.alpha = 1.0f;
+            tooltip.Show();
         }
         showCells = true;
     }
@@ -446,7 +446,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
     {
         if (tooltip != null)
         {
-            tooltip.group.alpha = 0.0f;
+            tooltip.Hide();
         }
         showCells = false;
     }

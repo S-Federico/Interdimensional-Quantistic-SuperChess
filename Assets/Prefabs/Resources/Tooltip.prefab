@@ -153,9 +153,9 @@ RectTransform:
   - {fileID: 6301541239183999981}
   m_Father: {fileID: 2799817556272040774}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -49, y: 437.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 674.5, y: 811}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &774790281428906095
@@ -272,7 +272,9 @@ MonoBehaviour:
   contentField: {fileID: 6097979807797188545}
   layoutElement: {fileID: 7924777287899486286}
   characterWrapLimit: 36
-  offset: {x: 0, y: 0}
+  offset: {x: 1, y: 5}
+  group: {fileID: 6577504248746601588}
+  targetalpha: 0
 --- !u!1 &2704873054574958625
 GameObject:
   m_ObjectHideFlags: 0
@@ -472,7 +474,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ewfewfewfewfewfewfewfwefewfewfewfewfeeeeeeefewfdsvadsvcxzvcxzvcxzvcxzvcxzvcxzvcxzvcxzvcxzvcxzvcxzvcxzvcxzvcxzvcxzvcxzv
+  m_text: "ciao sono federicosjvrionviornivreniovnrii2vorfnieon3viofneiwovnfioenviofewnivop\xF2fnieow\xF2pnvifp\xF2newvoip\xF2nfdobnmiobntriowpbntriopwbnriownbiotrwnbiotrnwbiotrniowio\xE8nwy"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

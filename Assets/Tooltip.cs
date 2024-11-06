@@ -12,16 +12,28 @@ public class Tooltip : MonoBehaviour
     public int characterWrapLimit;
     public Vector2 offset; // Offset to avoid the tooltip covering the mouse cursor
     public CanvasGroup group;
+    public float targetalpha;
+    RectTransform rectTransform;
     private void Start()
     {
-        group=transform.parent.GetComponent<CanvasGroup>();
+        group = transform.parent.GetComponent<CanvasGroup>();
         group.alpha = 0.0f;
+        offset.x = 1.0f;
+        offset.y = 5.0f;
+        rectTransform = GetComponent<RectTransform>();
+        rectTransform.pivot = new Vector2(0, 0); // Pivot in basso a sinistra
     }
 
     private void Update()
     {
         FollowMouse();
         AdjustLayout();
+        AdjustAlpha();
+    }
+
+    public void AdjustAlpha()
+    {
+        group.alpha = Mathf.Lerp(group.alpha, targetalpha, 0.05f);
     }
 
     public void SetText(string headerText, string contentText)
@@ -57,11 +69,18 @@ public class Tooltip : MonoBehaviour
 
     private void FollowMouse()
     {
-        // Get the current mouse position and add the offset to prevent overlap
         Vector2 mousePosition = Input.mousePosition;
         Vector2 adjustedPosition = mousePosition + offset;
         transform.position = adjustedPosition;
     }
 
-
+    public void Show()
+    {
+        targetalpha = 1.0f;
+    }
+    public void Hide()
+    {
+        targetalpha = 0.0f;
+        this.group.alpha = 0.0f;
+    }
 }
