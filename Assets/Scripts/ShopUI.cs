@@ -7,14 +7,6 @@ using UnityEngine.SceneManagement;
 
 public class ShopUI : MonoBehaviour
 {
-    void Start()
-    {
-    }
-
-    void Update()
-    {
-    }
-
     public void BackToMainMenu()
     {
         GameManager.Instance.RestartGame();
@@ -23,6 +15,6 @@ public class ShopUI : MonoBehaviour
 
     public void GoToNextLevel()
     {
-       GameManager.Instance.GoToNextLevelFromShop();
+        GameManager.Instance.GoToNextLevelFromShop();
     }
 }

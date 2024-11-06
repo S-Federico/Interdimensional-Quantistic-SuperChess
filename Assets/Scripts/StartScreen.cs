@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class StartScreen : MonoBehaviour
 {
-   public Button StartGameButton;
+    public Button StartGameButton;
     public Button OptionsButton;
     // Start is called before the first frame update
     void Start()
@@ -33,12 +33,14 @@ public class StartScreen : MonoBehaviour
 
     private void StartGamePressed()
     {
-        SceneManager.LoadScene(Constants.Scenes.MENU);
+        //SceneManager.LoadScene(Constants.Scenes.MENU);
+        GameManager.Instance.RestartGame();
     }
 
     private void OptionsPressed()
     {
-        SceneManager.LoadScene(Constants.Scenes.OPTIONS);
+        //SceneManager.LoadScene(Constants.Scenes.OPTIONS);
+        GameManager.Instance.LoadScene(Constants.Scenes.OPTIONS);
     }
 
     private void PlayButtonSound()

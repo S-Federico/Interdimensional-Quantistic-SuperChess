@@ -25,7 +25,7 @@ public class GameUI : MonoBehaviour
         HideAll();
     }
 
-   void Update()
+    void Update()
     {
         // Menu button has to be shown only if is not in GameOver
         MenuButton.SetActive(!GameManager.Instance.IsGameOver);
@@ -39,14 +39,17 @@ public class GameUI : MonoBehaviour
         if (GameManager.Instance.IsGameOver)
         {
             GameInfo gameInfo = GameManager.Instance.GameInfo;
-            if (gameInfo.Winner != null && gameInfo.Winner == PieceColor.White) {
+            if (gameInfo.Winner != null && gameInfo.Winner == PieceColor.White)
+            {
                 GameOverText.text = Constants.VICTORY_TEXT;
                 EarnedMoneyText.text = $"Money won: {GameManager.Instance.MoneyWonFromCurrentRound}$";
                 TotalMoneyText.text = $"Total money: {GameManager.Instance.GameInfo.PlayerInfo.Money}$";
                 NextLevelBtn.SetActive(true);
                 GoToShopBtn.SetActive(true);
                 BackToMenuBtn.SetActive(false);
-            } else {
+            }
+            else
+            {
                 GameOverText.text = Constants.DEFEAT_TEXT;
                 EarnedMoneyText.text = "";
                 TotalMoneyText.text = "";
@@ -93,10 +96,12 @@ public class GameUI : MonoBehaviour
 
     public void GoToShop()
     {
-        SceneManager.LoadScene("ShopMockup");
+        //SceneManager.LoadScene("ShopMockup");
+        GameManager.Instance.LoadScene(Constants.Scenes.SHOP);
     }
 
-    private void PlayButtonSound() {
+    private void PlayButtonSound()
+    {
         SoundManager.PlaySoundOneShot(Sound.BUTTON_PRESSED);
     }
 }

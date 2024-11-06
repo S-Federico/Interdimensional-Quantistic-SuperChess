@@ -166,7 +166,8 @@ public class MainMenu : MonoBehaviour
 
     private void OnGamePanelBackButtonPressed()
     {
-        SceneManager.LoadScene(Constants.Scenes.START_SCREEN);
+        //SceneManager.LoadScene(Constants.Scenes.START_SCREEN);
+        GameManager.Instance.LoadScene(Constants.Scenes.START_SCREEN);
     }
 
     void OnDestroy()

@@ -29,9 +29,11 @@ public class GameManager : Singleton<GameManager>
         levels = new List<ScriptableLevel>(Resources.LoadAll<ScriptableLevel>("ScriptableObjects/Levels"));
 
         // Try to load options. If fail, set default
-        try {
-            Options = SaveManager.Instance.Load<Options>($"{Application.persistentDataPath}/options.json",true) ?? new Options();
-        } catch (Exception)
+        try
+        {
+            Options = SaveManager.Instance.Load<Options>($"{Application.persistentDataPath}/options.json", true) ?? new Options();
+        }
+        catch (Exception)
         {
             Options = new Options();
         }
@@ -68,19 +70,6 @@ public class GameManager : Singleton<GameManager>
         yield return new WaitForSeconds(TransitionLoader.Instance.GetTransitionTime());
     }
 
-    public void NewGame(GameInfo gameInfo)
-    {
-        this.GameInfo = gameInfo;
-
-        StartCoroutine(NewGameCoroutine("SampleScene"));
-    }
-
-    public void ContinueGame(GameInfo gameInfo)
-    {
-        this.GameInfo = gameInfo;
-        StartCoroutine(LoadSceneAndContinue("SampleScene"));
-    }
-
     private IEnumerator LoadSceneAndContinue(string sceneName)
     {
         TransitionLoader.Instance.transition.SetTrigger("Start");
@@ -110,19 +99,52 @@ public class GameManager : Singleton<GameManager>
         yield return new WaitForSeconds(TransitionLoader.Instance.GetTransitionTime());
     }
 
+    public IEnumerator Load(string sceneName)
+    {
+        TransitionLoader.Instance.transition.SetTrigger("Start");
+        yield return new WaitForSeconds(TransitionLoader.Instance.GetTransitionTime());
+
+        // Carica la scena in modo asincrono
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+        // Aspetta fino a quando la scena non è completamente caricata
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+
+        TransitionLoader.Instance.transition.SetTrigger("End");
+        yield return new WaitForSeconds(TransitionLoader.Instance.GetTransitionTime());
+    }
+
+    public void NewGame(GameInfo gameInfo)
+    {
+        this.GameInfo = gameInfo;
+
+        StartCoroutine(NewGameCoroutine(Constants.Scenes.SAMPLE_SCENE));
+    }
+
+    public void ContinueGame(GameInfo gameInfo)
+    {
+        this.GameInfo = gameInfo;
+        StartCoroutine(LoadSceneAndContinue(Constants.Scenes.SAMPLE_SCENE));
+    }
+
     public void RestartGame()
     {
         // When game restarts, load the main menu scene
-        SceneManager.LoadScene("Menu");
+        StartCoroutine(Load(Constants.Scenes.MENU));
         isGameOver = false;
+    }
+
+    public void LoadScene(string scene){
+        StartCoroutine(Load(scene));
     }
 
     public void SaveGameToFile(GameInfo gameInfo)
     {
         SaveManager.Instance.Save(gameInfo, gameInfo.ProfileName);
     }
-
-
 
     public void SaveGameToFile()
     {
@@ -296,7 +318,8 @@ public class GameManager : Singleton<GameManager>
         return levels[randomIndex];
     }
 
-    public void SaveOptions() {
+    public void SaveOptions()
+    {
         SaveManager.Instance.Save(Options, $"{Application.persistentDataPath}/options.json");
     }
 
