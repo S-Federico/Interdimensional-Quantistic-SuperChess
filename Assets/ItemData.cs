@@ -35,9 +35,11 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
     public int pieceprice = 10;
     BoardManager boardManager = null;
     public bool showCells = false;
-
+    public Tooltip tooltip;
     public void Start()
     {
+        tooltip = GameObject.FindObjectOfType<Tooltip>();
+
         // Calcola il bounding box del modello del GameObject padre (assumendo che il modello abbia un MeshRenderer)
         Renderer modelRenderer = this.gameObject.GetComponentInChildren<Renderer>();
         if (modelRenderer != null)
@@ -200,7 +202,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             }
         }
 
-        if (showCells && scriptableItem is ScriptableManual)
+        if (showCells && scriptableItem is ScriptableManual && boardManager!=null)
         {
             ScriptableManual manual = scriptableItem as ScriptableManual;
             int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(manual.ApplicationMatrix);
@@ -427,13 +429,25 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("Dovrei mostrare il tooltip");
+        if (tooltip != null)
+        {
+            if (scriptableItem != null)
+            {
+                tooltip.SetText(scriptableItem.Name, scriptableItem.Description);
+            }
+            else
+                tooltip.SetText("Pezzo", "OnePiece");
+            tooltip.ShowAfterDelay(2.0f);
+        }
         showCells = true;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("Dovrei nascondere il tooltip");
+        if (tooltip != null)
+        {
+            tooltip.Hide();
+        }
         showCells = false;
     }
 }

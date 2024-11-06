@@ -469,13 +469,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2438585666f8a245bf3d8bb4170e820, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory: []
-  Money: 0
-  TemporaryManuals:
-  - {fileID: 179376, guid: 20fba2d07ecf8bf4f949e6e9c195c7b5, type: 3}
-  - {fileID: 142830, guid: 9f3ef59f783322441a01e041c6c6351f, type: 3}
-  - {fileID: 140880, guid: e9155916723d2f541a53f1db112851c8, type: 3}
   PManuals: []
+  PConsumables: []
   pieces: []
 --- !u!4 &116903477
 Transform:
@@ -716,6 +711,13 @@ MonoBehaviour:
   PauseMenu: {fileID: 1533487903}
   GameOverMenu: {fileID: 1426559822}
   MenuButton: {fileID: 1558608785}
+  TotalMoneyText: {fileID: 0}
+  EarnedMoneyText: {fileID: 0}
+  CurrentMoneyText: {fileID: 0}
+  GameOverText: {fileID: 0}
+  NextLevelBtn: {fileID: 0}
+  GoToShopBtn: {fileID: 0}
+  BackToMenuBtn: {fileID: 0}
 --- !u!1 &358879902
 GameObject:
   m_ObjectHideFlags: 0
@@ -1323,6 +1325,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pieces: []
   boardManager: {fileID: 0}
+  playerManager: {fileID: 0}
 --- !u!1 &830993130
 GameObject:
   m_ObjectHideFlags: 0
@@ -1655,6 +1658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f25b6923c1a929d41976773b28511c42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentTurn: 0
   board: {fileID: 1000394052}
   BoardData:
     gridSize: {x: 8, y: 8}
@@ -1684,6 +1688,11 @@ MonoBehaviour:
   - {fileID: 196802, guid: b6c7ad354ac474944ba26b2895a59759, type: 3}
   selectedPiece: {fileID: 0}
   opponent: {fileID: 0}
+  plane_consumables: {fileID: 0}
+  playerPiecesPlane: {fileID: 0}
+  opponentPiecesPlane: {fileID: 0}
+  consumables: []
+  selectedConsumable: {fileID: 0}
 --- !u!4 &965710760
 Transform:
   m_ObjectHideFlags: 0
