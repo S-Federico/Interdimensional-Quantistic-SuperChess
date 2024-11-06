@@ -399,6 +399,9 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     void OnMouseEnter()
     {
+        // Do nothing if game is paused
+        if (GameManager.Instance.IsPaused) return;
+        
         // Change the color when the mouse enters the model
         //modelRenderer.material.color = highlightColor;
         if (auraParticle != null)
@@ -410,6 +413,9 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     void OnMouseExit()
     {
+        // Do nothing if game is paused
+        if (GameManager.Instance.IsPaused) return;
+        
         // Revert back to the original color when the mouse exits
         //modelRenderer.material.color = originalColor;
         if (auraParticle != null)

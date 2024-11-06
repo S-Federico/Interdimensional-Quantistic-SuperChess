@@ -15,13 +15,24 @@ public class GameManager : Singleton<GameManager>
     public List<ScriptableLevel> levels = null;
 
     public GameInfo GameInfo;
-    private bool isPaused = false;
     private bool isGameOver = false;
 
     public bool IsGameOver { get => isGameOver; set => isGameOver = value; }
-    public bool IsPaused { get => isPaused; set => isPaused = value; }
+    public bool IsPaused = false;
 
     public Options Options;
+
+    void Update() {
+        
+        // Disable updates when game is paused
+        Time.timeScale = IsPaused ? 0f : 1f;
+
+        // Stop InputManager if game is paused
+        InputManager inputManager = FindAnyObjectByType<InputManager>();
+        if (inputManager != null) {
+            inputManager.SendMessage(IsPaused ? "OnDisable" : "OnEnable");
+        }
+    }
 
     void Awake()
     {

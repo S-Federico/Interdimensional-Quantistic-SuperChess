@@ -59,6 +59,8 @@ public class GameUI : MonoBehaviour
             }
         }
         CurrentMoneyText.text = $"Total money: {GameManager.Instance.GameInfo.PlayerInfo.Money}$";
+
+        
     }
 
     public void HideAll()

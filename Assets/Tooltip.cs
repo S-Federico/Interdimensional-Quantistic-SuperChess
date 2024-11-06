@@ -28,6 +28,9 @@ public class Tooltip : MonoBehaviour
 
     private void Update()
     {
+        // Do nothing if game paused
+        if (GameManager.Instance.IsPaused) return;
+
         FollowMouse();
         AdjustLayout();
         AdjustAlpha();
