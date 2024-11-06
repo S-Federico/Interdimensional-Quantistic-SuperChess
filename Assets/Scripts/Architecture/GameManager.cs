@@ -39,21 +39,33 @@ public class GameManager : Singleton<GameManager>
 
     public IEnumerator NewGameCoroutine(string sceneName)
     {
+        TransitionLoader.Instance.transition.SetTrigger("Start");
+        yield return new WaitForSeconds(TransitionLoader.Instance.GetTransitionTime());
+
+        LoadingScreenManager.Instance.m_LoadingScreenObjct.SetActive(true);
+        LoadingScreenManager.Instance.ProgressBar.value = 0;
+
         // Carica la scena in modo asincrono
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 
         // Aspetta fino a quando la scena non è completamente caricata
         while (!asyncLoad.isDone)
         {
-            yield return null; // Aspetta un frame
+            LoadingScreenManager.Instance.ProgressBar.value = Mathf.Clamp01(asyncLoad.progress / 0.9f);
+            yield return null;
         }
-        /*
-            GameInfo.PlayerInfo.Manuals.Add("Assets/ScriptableObjects/Manuals/Manual Second.asset");
-            GameInfo.PlayerInfo.Consumables.Add("Assets/ScriptableObjects/Consumables/FirstConsumable.asset");
-        */
+
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
         boardManager.LoadBoardFromBoardData();
         boardManager.InitializePiecesPlanes(true);
+
+        // Imposta il progresso al 100% quando il caricamento è completo.
+        LoadingScreenManager.Instance.ProgressBar.value = 1f;
+
+        yield return new WaitForSeconds(0.2f);
+        LoadingScreenManager.Instance.m_LoadingScreenObjct.SetActive(false);
+        TransitionLoader.Instance.transition.SetTrigger("End");
+        yield return new WaitForSeconds(TransitionLoader.Instance.GetTransitionTime());
     }
 
     public void NewGame(GameInfo gameInfo)
@@ -71,17 +83,31 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator LoadSceneAndContinue(string sceneName)
     {
+        TransitionLoader.Instance.transition.SetTrigger("Start");
+        yield return new WaitForSeconds(TransitionLoader.Instance.GetTransitionTime());
+
+        LoadingScreenManager.Instance.m_LoadingScreenObjct.SetActive(true);
+        LoadingScreenManager.Instance.ProgressBar.value = 0;
+
         // Carica la scena in modo asincrono
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 
         // Aspetta fino a quando la scena non è completamente caricata
         while (!asyncLoad.isDone)
         {
-            yield return null; // Aspetta un frame
+            LoadingScreenManager.Instance.ProgressBar.value = Mathf.Clamp01(asyncLoad.progress / 0.9f);
+            yield return null;
         }
 
         // La scena è caricata completamente, ora puoi chiamare il metodo per caricare i dati di gioco
         LoadGameFromFile();
+        // Imposta il progresso al 100% quando il caricamento è completo.
+        LoadingScreenManager.Instance.ProgressBar.value = 1f;
+
+        yield return new WaitForSeconds(0.2f);
+        LoadingScreenManager.Instance.m_LoadingScreenObjct.SetActive(false);
+        TransitionLoader.Instance.transition.SetTrigger("End");
+        yield return new WaitForSeconds(TransitionLoader.Instance.GetTransitionTime());
     }
 
     public void RestartGame()
