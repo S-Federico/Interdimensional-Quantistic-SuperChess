@@ -1,4 +1,4 @@
-using System.Collections; 
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +13,8 @@ public class Tooltip : MonoBehaviour
     public Vector2 offset; // Offset to avoid the tooltip covering the mouse cursor
     public CanvasGroup group;
     public float targetalpha;
+    public const float defaultDelay=0.7f;
+
     RectTransform rectTransform;
     private void Start()
     {
@@ -83,7 +85,7 @@ public class Tooltip : MonoBehaviour
         targetalpha = 0.0f;
         this.group.alpha = 0.0f;
     }
-    public void ShowAfterDelay(float delay)
+    public void ShowAfterDelay(float delay = defaultDelay)
     {
         StartCoroutine(ShowWithDelay(delay));
     }
