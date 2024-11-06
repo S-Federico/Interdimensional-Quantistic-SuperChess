@@ -22,4 +22,20 @@ public class Options
         get => soundVolume;
         set => soundVolume = Mathf.Clamp(value, 0f, 1f);
     }
+
+    public void SetMusicEnabled(bool value) {
+        MusicEnabled = value;
+    }
+
+    public void SetMusicVolume(float value) {
+        MusicVolume = value;
+    }
+
+    public void SetSoundEnabled(bool value) {
+        SoundEnabled = value;
+    }
+
+    public void SetSoundVolume(float value) {
+        SoundVolume = value;
+    }
 }
