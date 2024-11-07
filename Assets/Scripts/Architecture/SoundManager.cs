@@ -12,9 +12,13 @@ public class SoundManager
 
     public static void PlaySoundOneShot(Sound sound)
     {
+        Options options = GameManager.Instance.Options;
+        if (!options.SoundEnabled) return;
+
         GameObject gameObject = new GameObject("SOUND");
         AudioSource audioSource = gameObject.AddComponent<AudioSource>();
         AudioClip audioClip = GetSoundInfo(sound)?.AudioClip;
+        audioSource.volume = options.SoundVolumeClamped;
         audioSource.PlayOneShot(audioClip);
 
         // Prevent object destruction through scenes
@@ -33,6 +37,9 @@ public class SoundManager
     /// /// <param name="forceRestart">If true, the song will restart also if it was already playing</param>
     public static void PlaySoud(Sound sound, bool looping = true, bool alone = false, bool forceRestart=false)
     {
+        Options options = GameManager.Instance.Options;
+        if (!options.SoundEnabled) return;
+        
         // If not forceRestart, then check if there is the sound already playing
         if (!forceRestart && NonOneShotSounds.ContainsKey(sound)) {
             GameObject soundObj = NonOneShotSounds[sound];
@@ -71,6 +78,7 @@ public class SoundManager
         audioSource.clip = audioClip;
         audioSource.playOnAwake = false;
         audioSource.loop = looping;
+        audioSource.volume = options.MusicVolumeClamped;
 
         // Play sound
         audioSource.Play();

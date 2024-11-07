@@ -7,6 +7,7 @@ public class AssetsManager : MonoBehaviour
     // Assets
     public List<SoundInfo> Sounds;
     public GameObject BooleanOptionPrefab;
+    public GameObject SliderOptionPrefab;
 
     // Singleton Pattern
     public static AssetsManager Instance;

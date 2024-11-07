@@ -43,6 +43,7 @@ public class BooleanOptionHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        toggle.isOn = Value;
         toggle.interactable = Enabled;
     }
 
