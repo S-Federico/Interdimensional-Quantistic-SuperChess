@@ -12,7 +12,9 @@ public class Tooltip : MonoBehaviour
     public Vector2 offset; // Offset to avoid the tooltip covering the mouse cursor
     public CanvasGroup group;
     public float targetalpha;
-    public const float defaultDelay=0.7f;
+    public const float defaultDelay = 0.7f;
+
+    private int toShowInstanceId;
 
     RectTransform rectTransform;
     private void Start()
@@ -87,14 +89,18 @@ public class Tooltip : MonoBehaviour
         targetalpha = 0.0f;
         this.group.alpha = 0.0f;
     }
-    public void ShowAfterDelay(float delay = defaultDelay)
+    public void ShowAfterDelay(int instanceId, float delay = defaultDelay)
     {
-        StartCoroutine(ShowWithDelay(delay));
+        toShowInstanceId = instanceId;
+        StartCoroutine(ShowWithDelay(instanceId, delay));
     }
-    private IEnumerator ShowWithDelay(float delay)
+    private IEnumerator ShowWithDelay(int instanceId, float delay)
     {
         yield return new WaitForSeconds(delay);
-        Show();
+        if (instanceId == toShowInstanceId)
+        {
+            Show();
+        }
     }
 
 }

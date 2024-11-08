@@ -313,6 +313,12 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                 ToggleSelected();
                 break;
         }
+
+        // Always invoke method to free tooltip
+        if (tooltip != null) {
+            OnPointerExit(null);
+        }
+
     }
 
     public void UseItem(BoardSquare boardSquare)
@@ -376,6 +382,12 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
     {
         PlayerManager player = GameObject.Find("Player").GetComponent<PlayerManager>();
         player.RemoveItem(this);
+
+        // Before destroying the object, free the tooltip
+        if (tooltip != null) {
+            OnPointerExit(null);
+        }
+
         Destroy(this.gameObject);
     }
 
@@ -436,7 +448,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             }
             else
                 tooltip.SetText("Pezzo", "OnePiece");
-            tooltip.ShowAfterDelay();
+            tooltip.ShowAfterDelay(scriptableItem?.GetInstanceID() ?? 0);
         }
         showCells = true;
     }
