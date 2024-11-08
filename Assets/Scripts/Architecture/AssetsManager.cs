@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class AssetsManager : MonoBehaviour
 {
+    // Assets
     public List<SoundInfo> Sounds;
+    public GameObject BooleanOptionPrefab;
+    public GameObject SliderOptionPrefab;
+
+    // Singleton Pattern
     public static AssetsManager Instance;
     private GameManager gameManager;
     private AssetsManager() {}
@@ -16,11 +21,5 @@ public class AssetsManager : MonoBehaviour
 
         // Spawn GameManager
         gameManager = GameManager.Instance;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
