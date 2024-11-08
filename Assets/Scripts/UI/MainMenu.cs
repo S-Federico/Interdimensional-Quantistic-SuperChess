@@ -16,6 +16,7 @@ public class MainMenu : MonoBehaviour
     public GameObject ProfileItemPrefab;
     public GameObject MainMenuPanel;
     public GameObject ChooseProfileNamePanel;
+    public Button ProfileNameConfirmButton;
     public TMP_InputField ProfileNameInput;
     public int MaxSaves = 3;
 
@@ -157,6 +158,7 @@ public class MainMenu : MonoBehaviour
     void Update()
     {
         continueGameButton.interactable = this.selectedGameInfo != null && this.selectedGameInfo.GameStarted;
+        ProfileNameConfirmButton.interactable = ProfileNameInput.isActiveAndEnabled && ProfileNameInput.text != null && !ProfileNameInput.text.Trim().Equals("");
     }
 
     private void PlayButtonSound()
