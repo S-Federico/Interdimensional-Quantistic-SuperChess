@@ -96,14 +96,15 @@ public class ShopManager : MonoBehaviour
 
         for (int i = 0; i < inventory_items.Count; i++)
         {
+            Quaternion newRotation = Quaternion.Euler(0, 0, 0);
             Vector3 newPosition = new Vector3(
                 planeStartPosition.x,
                 planeStartPosition.y,
                 planeMinZ + spacing * (i + 1) + padding * i
             );
 
-            //Quaternion rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
-            item.gameObject.transform.position = newPosition;
+            inventory_items[i].gameObject.transform.position = newPosition;
+            inventory_items[i].gameObject.transform.rotation = newRotation;
         }
     }
 
