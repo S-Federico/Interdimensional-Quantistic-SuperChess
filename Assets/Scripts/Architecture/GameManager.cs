@@ -251,7 +251,12 @@ public class GameManager : Singleton<GameManager>
         }
 
         // Move currentPieces in inventory (player only because enemy will be overridden in other function)
-        GameInfo.PlayerInfo.CurrentlyUsedExtraPieces.ForEach(p => GameInfo.PlayerInfo.ExtraPieces.Add(p));
+        GameInfo.PlayerInfo.CurrentlyUsedExtraPieces.ForEach(p => {
+            // Remove modifiers from piece
+            p.Modifiers.Clear();
+            p.AppliedModifierPaths.Clear();
+            GameInfo.PlayerInfo.ExtraPieces.Add(p);
+        });
         GameInfo.PlayerInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
         GameInfo.OpponentInfo.CurrentlyUsedExtraPieces = new List<PieceData>();
     }
