@@ -10,23 +10,6 @@ using Palmmedia.ReportGenerator.Core.Reporting.Builders.Rendering;
 
 public class ShopManager : MonoBehaviour
 {
-    // Il compito di questo manager è quello di popolare lo shop.
-    // Nello specifico va a prendere tra gli oggetti "sbloccati" dal player le cose da usare. (1)
-    // Ovviamente deve far avvenire le transazioni (banalmente scalare i soldi al player ed effettivamente popolare le collezioni) (2)
-
-    /*
-        (1)
-        Ci saranno due elenchi: uno di tutti gli oggetti esistenti nel gioco, l'altro per le cose che il giocatore ha sbloccato (ossia che sono già state acquistate almeno una volta o altri modi che comunque non importano adesso)
-        Gli oggetti sono di tipi diversi. Al momento non sappiamo effettivamente che forma avranno, ma sicuramente avranno un TIPO. Nello shop ne servono N in totale.
-        Il prezzo delle cose è ancora da definire come verrà scelto.
-    */
-
-    /*
-        (2)
-        Serve un controllo per garantire che il player abbia abbastanza soldi per effettuare un acquisto.
-        Serve anche un metodo(?) per effettuare questo "scambio"
-    */
-
     public GameObject plane_manuals;
     public GameObject plane_pieces;
     public GameObject plane_consumable;
@@ -239,18 +222,6 @@ public class ShopManager : MonoBehaviour
                 item.bought = false;
             }
 
-            Renderer objRenderer = obj.GetComponent<Renderer>();
-            if (objRenderer != null)
-            {
-                float objHeight = objRenderer.bounds.size.y;
-                position.y = planeStartPosition.y + objHeight / 2;
-                obj.transform.position = position;
-            }
-            else
-            {
-                Debug.LogWarning("Il prefab non ha un Renderer. Non posso calcolare la sua altezza.");
-            }
-
             obj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
             consumables.Add(obj);
             tempList.RemoveAt(randomIndex);
@@ -357,7 +328,4 @@ public class ShopManager : MonoBehaviour
         }
         return null;
     }
-
-
-
 }
