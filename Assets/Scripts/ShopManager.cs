@@ -6,23 +6,6 @@ using UnityEngine;
 
 public class ShopManager : MonoBehaviour
 {
-    // Il compito di questo manager è quello di popolare lo shop.
-    // Nello specifico va a prendere tra gli oggetti "sbloccati" dal player le cose da usare. (1)
-    // Ovviamente deve far avvenire le transazioni (banalmente scalare i soldi al player ed effettivamente popolare le collezioni) (2)
-
-    /*
-        (1)
-        Ci saranno due elenchi: uno di tutti gli oggetti esistenti nel gioco, l'altro per le cose che il giocatore ha sbloccato (ossia che sono già state acquistate almeno una volta o altri modi che comunque non importano adesso)
-        Gli oggetti sono di tipi diversi. Al momento non sappiamo effettivamente che forma avranno, ma sicuramente avranno un TIPO. Nello shop ne servono N in totale.
-        Il prezzo delle cose è ancora da definire come verrà scelto.
-    */
-
-    /*
-        (2)
-        Serve un controllo per garantire che il player abbia abbastanza soldi per effettuare un acquisto.
-        Serve anche un metodo(?) per effettuare questo "scambio"
-    */
-
     public GameObject plane_manuals;
     public GameObject plane_pieces;
     public GameObject plane_consumable;
@@ -33,6 +16,8 @@ public class ShopManager : MonoBehaviour
     public List<GameObject> pieces = new List<GameObject>();
 
     private PlayerManager player;
+    private GameObject plane_inventory;
+    private List<ItemData> inventory_items = new List<ItemData>();
 
     int numPieces = 2;
 
@@ -48,6 +33,7 @@ public class ShopManager : MonoBehaviour
         SelectRandomConsumables(scriptableConsumableDict.Count, 0.1f);
         SelectRandomPieces(numPieces, 0.1f);
         player = GameObject.Find("Player").GetComponent<PlayerManager>();
+        plane_inventory = GameObject.Find("PlayerInventory");
 
     }
 
@@ -68,8 +54,6 @@ public class ShopManager : MonoBehaviour
                 if (item.pieceData != null)
                 {
                     GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces.Add(item.pieceData);
-                    Destroy(item.gameObject);
-                    return;
                 }
                 else
                 {
@@ -83,13 +67,44 @@ public class ShopManager : MonoBehaviour
                     }
                 }
                 item.bought = true;
-                //cambia la transform (prima o poi sarà responsabilità del player o dell'inventario stesso)
-                item.gameObject.transform.position = GameObject.Find("PlayerInventory").transform.position;
+                MoveToInventoryPlane(item);
             }
             else
             {
                 Debug.Log("Item non comprato.");
             }
+        }
+    }
+
+    private void MoveToInventoryPlane(ItemData item)
+    {
+        inventory_items.Add(item);
+        float padding = 0.05f;
+
+        float planeSpace = plane_inventory.GetComponent<Renderer>().bounds.size.z;
+        float totalRequiredSpace = inventory_items.Count * padding;
+
+        if (planeSpace < totalRequiredSpace)
+        {
+            Debug.LogError("Non c'è abbastanza spazio nell'inventario (plane).");
+            return;
+        }
+
+        float spacing = (planeSpace - (padding * (inventory_items.Count - 1))) / (inventory_items.Count + 1);
+        Vector3 planeStartPosition = plane_inventory.transform.position;
+        float planeMinZ = planeStartPosition.z - planeSpace / 2;
+
+        for (int i = 0; i < inventory_items.Count; i++)
+        {
+            Quaternion newRotation = Quaternion.Euler(0, 0, 0);
+            Vector3 newPosition = new Vector3(
+                planeStartPosition.x,
+                planeStartPosition.y,
+                planeMinZ + spacing * (i + 1) + padding * i
+            );
+
+            inventory_items[i].gameObject.transform.position = newPosition;
+            inventory_items[i].gameObject.transform.rotation = newRotation;
         }
     }
 
@@ -235,18 +250,6 @@ public class ShopManager : MonoBehaviour
                 item.bought = false;
             }
 
-            Renderer objRenderer = obj.GetComponent<Renderer>();
-            if (objRenderer != null)
-            {
-                float objHeight = objRenderer.bounds.size.y;
-                position.y = planeStartPosition.y + objHeight / 2;
-                obj.transform.position = position;
-            }
-            else
-            {
-                Debug.LogWarning("Il prefab non ha un Renderer. Non posso calcolare la sua altezza.");
-            }
-
             obj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
             consumables.Add(obj);
             tempList.RemoveAt(randomIndex);
@@ -353,7 +356,4 @@ public class ShopManager : MonoBehaviour
         }
         return null;
     }
-
-
-
 }

@@ -25,6 +25,7 @@ public class BoardManager : MonoBehaviour
     public OpponentManager opponent;
     private BoardBehaviour boardBehaviour;
     public GameObject plane_consumables;
+    private GameObject plane_manuals;
     public GameObject playerPiecesPlane;
     public GameObject opponentPiecesPlane;
 
@@ -48,6 +49,9 @@ public class BoardManager : MonoBehaviour
         AssignModifiers();
 
         LoadConsumables();
+
+        plane_manuals = GameObject.Find("ManualPlane");
+        LoadManuals();
 
         showMovesFlag = false;
         alreadyExcecuting = false;
@@ -399,6 +403,8 @@ public class BoardManager : MonoBehaviour
         float padding = 0.1f;
         int numberOfConsumables = Player.PConsumables.Count;
         Debug.Log("Consumabili da istanziare " + numberOfConsumables);
+        if(numberOfConsumables < 1) return;
+
         float totalRequiredSpace = numberOfConsumables * padding;
         if (planeLength < totalRequiredSpace)
         {
@@ -437,6 +443,59 @@ public class BoardManager : MonoBehaviour
             else
             {
                 Debug.LogError("Consumabile " + i + " nullo");
+            }
+            i++;
+        }
+    }
+
+    public void LoadManuals()
+    {
+        // Recuperiamo le dimensioni del piano
+        float planeLength = plane_manuals.GetComponent<Renderer>().bounds.size.x;
+
+        // Verifichiamo che lo spazio disponibile sia sufficiente per includere il padding tra i consumables
+        float padding = 0.01f;
+        int numberOfManuals = Player.PManuals.Count;
+        Debug.Log("Manuali da istanziare " + numberOfManuals);
+        if(numberOfManuals < 1) return;
+
+        float totalRequiredSpace = numberOfManuals * padding;
+        if (planeLength < totalRequiredSpace)
+        {
+            Debug.LogError("Non c'è abbastanza spazio per posizionare i manuali con il padding richiesto.");
+            return;
+        }
+
+        // Calcoliamo la distanza tra ogni consumable (incluso il padding) sull'asse X
+        float spacing = (planeLength - (padding * (numberOfManuals - 1))) / (numberOfManuals + 1);  // +1 per evitare di posizionare manuali fuori dal bordo
+
+        // Recuperiamo la posizione di partenza del piano
+        Vector3 planeStartPosition = plane_manuals.transform.position;
+        float planeMinX = planeStartPosition.x - planeLength / 2;
+
+        int i = 0;
+        foreach (ItemData manual in Player.PManuals)
+        {
+            if (manual != null)
+            {
+                ScriptableItem scriptableMan = manual.scriptableItem;
+                // Calcoliamo la posizione in cui piazzare l'oggetto
+                Vector3 position = new Vector3(
+                    planeMinX + spacing * (i + 1) + padding * i,  // Posizionamento lungo l'asse X con padding
+                    planeStartPosition.y,                        // Stessa altezza Y del piano
+                    planeStartPosition.z                         // Stessa posizione Z del piano
+                );
+                // Istanziamo il consumable selezionato
+                Quaternion rotation = Quaternion.Euler(0, 0, 0);
+                GameObject obj = Instantiate(scriptableMan.Prefab, position, rotation);
+                obj.GetComponent<ItemData>().shopScaling = false;
+
+                // Stampa per debug
+                Debug.Log("Selezionato manual: " + scriptableMan.name + " alla posizione " + position);
+            }
+            else
+            {
+                Debug.LogError("Manuale " + i + " nullo");
             }
             i++;
         }
