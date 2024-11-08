@@ -401,27 +401,29 @@ public class PieceStatus : MonoBehaviour, IClickable
     {
         // Do nothing if game is paused
         if (GameManager.Instance.IsPaused) return;
-        
+
         // Change the color when the mouse enters the model
         //modelRenderer.material.color = highlightColor;
         if (auraParticle != null)
         {
-            auraParticle.Play();
+            //auraParticle.Play();
             stats.SetActive(true);
         }
+        GameUI.SetCursor(CursorType.Hand);
     }
 
     void OnMouseExit()
     {
         // Do nothing if game is paused
         if (GameManager.Instance.IsPaused) return;
-        
+
         // Revert back to the original color when the mouse exits
         //modelRenderer.material.color = originalColor;
         if (auraParticle != null)
         {
-            auraParticle.Stop();
+            //auraParticle.Stop();
             stats.SetActive(false);
         }
+        GameUI.SetCursor(CursorType.Default);
     }
 }

@@ -201,7 +201,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             }
         }
 
-        if (showCells && scriptableItem is ScriptableManual && boardManager!=null)
+        if (showCells && scriptableItem is ScriptableManual && boardManager != null)
         {
             ScriptableManual manual = scriptableItem as ScriptableManual;
             int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(manual.ApplicationMatrix);
@@ -315,7 +315,8 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
         }
 
         // Always invoke method to free tooltip
-        if (tooltip != null) {
+        if (tooltip != null)
+        {
             OnPointerExit(null);
         }
 
@@ -384,7 +385,8 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
         player.RemoveItem(this);
 
         // Before destroying the object, free the tooltip
-        if (tooltip != null) {
+        if (tooltip != null)
+        {
             OnPointerExit(null);
         }
 
@@ -451,6 +453,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             tooltip.ShowAfterDelay(scriptableItem?.GetInstanceID() ?? 0);
         }
         showCells = true;
+        GameUI.SetCursor(CursorType.Hand);
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -460,6 +463,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             tooltip.Hide();
         }
         showCells = false;
+        GameUI.SetCursor(CursorType.Default);
     }
 }
 

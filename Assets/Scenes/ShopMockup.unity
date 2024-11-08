@@ -3805,6 +3805,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d33493085d4f249418e457b612c9019a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultCursor: {fileID: 2800000, guid: 8c085ce828281f84fa6c36d2eaeab6ff, type: 3}
+  handCursor: {fileID: 2800000, guid: 2485c90d0e8f3cc4e8c55f383f70b51d, type: 3}
 --- !u!1001 &1992554166
 PrefabInstance:
   m_ObjectHideFlags: 0

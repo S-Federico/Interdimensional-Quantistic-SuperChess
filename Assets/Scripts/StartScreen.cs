@@ -8,6 +8,8 @@ public class StartScreen : MonoBehaviour
 {
     public Button StartGameButton;
     public Button OptionsButton;
+    public Texture2D defaultCursor;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,6 +20,8 @@ public class StartScreen : MonoBehaviour
         // Options button events
         OptionsButton.onClick.AddListener(OptionsPressed);
         OptionsButton.onClick.AddListener(PlayButtonSound);
+        Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
+
     }
 
     void OnDestroy()

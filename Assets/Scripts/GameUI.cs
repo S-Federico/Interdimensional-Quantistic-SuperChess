@@ -19,9 +19,17 @@ public class GameUI : MonoBehaviour
     public GameObject NextLevelBtn;
     public GameObject GoToShopBtn;
     public GameObject BackToMenuBtn;
+    public Texture2D defaultCursor;
+    public Texture2D handCursor;
+
+    private static Texture2D _defaultCursor;
+    private static Texture2D _handCursor;
 
     void Start()
     {
+        _defaultCursor = defaultCursor;
+        _handCursor = handCursor;
+        
         HideAll();
     }
 
@@ -59,8 +67,6 @@ public class GameUI : MonoBehaviour
             }
         }
         CurrentMoneyText.text = $"Total money: {GameManager.Instance.GameInfo.PlayerInfo.Money}$";
-
-        
     }
 
     public void HideAll()
@@ -106,4 +112,21 @@ public class GameUI : MonoBehaviour
     {
         SoundManager.Instance.PlaySoundOneShot(Sound.BUTTON_PRESSED);
     }
+
+    public static void SetCursor(CursorType cursorType)
+    {
+        switch (cursorType)
+        {
+            case CursorType.Default:
+                Cursor.SetCursor(_defaultCursor, Vector2.zero, CursorMode.Auto);
+                break;
+            case CursorType.Hand:
+                Cursor.SetCursor(_handCursor, Vector2.zero, CursorMode.Auto);
+                break;
+            default:
+                Cursor.SetCursor(_defaultCursor, Vector2.zero, CursorMode.Auto);
+                break;
+        }
+    }
 }
+

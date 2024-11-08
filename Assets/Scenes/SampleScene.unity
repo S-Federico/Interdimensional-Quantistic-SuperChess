@@ -1054,6 +1054,8 @@ MonoBehaviour:
   NextLevelBtn: {fileID: 600278701}
   GoToShopBtn: {fileID: 513326238}
   BackToMenuBtn: {fileID: 1465265432}
+  defaultCursor: {fileID: 2800000, guid: 8c085ce828281f84fa6c36d2eaeab6ff, type: 3}
+  handCursor: {fileID: 2800000, guid: 2485c90d0e8f3cc4e8c55f383f70b51d, type: 3}
 --- !u!1 &190006706
 GameObject:
   m_ObjectHideFlags: 0
