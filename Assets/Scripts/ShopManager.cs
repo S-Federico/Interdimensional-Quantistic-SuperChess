@@ -20,6 +20,8 @@ public class ShopManager : MonoBehaviour
     public List<GameObject> pieces = new List<GameObject>();
 
     private PlayerManager player;
+    private GameObject plane_inventory;
+    private List<ItemData> inventory_items = new List<ItemData>();
 
     int numPieces = 2;
 
@@ -35,6 +37,7 @@ public class ShopManager : MonoBehaviour
         SelectRandomConsumables(scriptableConsumableDict.Count, 0.1f);
         SelectRandomPieces(numPieces, 0.1f);
         player = GameObject.Find("Player").GetComponent<PlayerManager>();
+        plane_inventory = GameObject.Find("PlayerInventory");
 
     }
 
@@ -55,8 +58,6 @@ public class ShopManager : MonoBehaviour
                 if (item.pieceData != null)
                 {
                     GameManager.Instance.GameInfo.PlayerInfo.ExtraPieces.Add(item.pieceData);
-                    Destroy(item.gameObject);
-                    return;
                 }
                 else
                 {
@@ -70,13 +71,43 @@ public class ShopManager : MonoBehaviour
                     }
                 }
                 item.bought = true;
-                //cambia la transform (prima o poi sarà responsabilità del player o dell'inventario stesso)
-                item.gameObject.transform.position = GameObject.Find("PlayerInventory").transform.position;
+                MoveToInventoryPlane(item);
             }
             else
             {
                 Debug.Log("Item non comprato.");
             }
+        }
+    }
+
+    private void MoveToInventoryPlane(ItemData item)
+    {
+        inventory_items.Add(item);
+        float padding = 0.05f;
+
+        float planeSpace = plane_inventory.GetComponent<Renderer>().bounds.size.z;
+        float totalRequiredSpace = inventory_items.Count * padding;
+
+        if (planeSpace < totalRequiredSpace)
+        {
+            Debug.LogError("Non c'è abbastanza spazio nell'inventario (plane).");
+            return;
+        }
+
+        float spacing = (planeSpace - (padding * (inventory_items.Count - 1))) / (inventory_items.Count + 1);
+        Vector3 planeStartPosition = plane_inventory.transform.position;
+        float planeMinZ = planeStartPosition.z - planeSpace / 2;
+
+        for (int i = 0; i < inventory_items.Count; i++)
+        {
+            Vector3 newPosition = new Vector3(
+                planeStartPosition.x,
+                planeStartPosition.y,
+                planeMinZ + spacing * (i + 1) + padding * i
+            );
+
+            //Quaternion rotation = Quaternion.Euler(0, UnityEngine.Random.Range(70, 100), 0);
+            item.gameObject.transform.position = newPosition;
         }
     }
 
