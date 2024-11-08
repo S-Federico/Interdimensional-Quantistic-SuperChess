@@ -42,7 +42,7 @@ public class GameManager : Singleton<GameManager>
         // Try to load options. If fail, set default
         try
         {
-            Options = SaveManager.Instance.Load<Options>($"{Application.persistentDataPath}/options.json", true) ?? new Options();
+            Options = SaveManager.Instance.Load<Options>("options") ?? new Options();
         }
         catch (Exception)
         {
@@ -331,7 +331,7 @@ public class GameManager : Singleton<GameManager>
 
     public void SaveOptions()
     {
-        SaveManager.Instance.Save(Options, $"{Application.persistentDataPath}/options.json");
+        SaveManager.Instance.Save(Options, "options");
     }
 
 }

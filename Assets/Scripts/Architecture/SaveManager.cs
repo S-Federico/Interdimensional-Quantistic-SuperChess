@@ -25,6 +25,9 @@ public class SaveManager : Singleton<SaveManager>
         string filePath = $"{baseSavePath}/{fileName}.{SAVE_FILE_EXTENSION}";
         string jsonData = JsonConvert.SerializeObject(obj);
 
+        // Create file path folders if necessary
+        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
         File.WriteAllText(filePath, jsonData);
     }
 
