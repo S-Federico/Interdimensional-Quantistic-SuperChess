@@ -13,7 +13,7 @@ public class Tooltip : MonoBehaviour
     public CanvasGroup group;
     public float targetalpha;
     public const float defaultDelay = 0.7f;
-
+    private Coroutine showCoroutine;
     private int toShowInstanceId;
 
     RectTransform rectTransform;
@@ -87,13 +87,27 @@ public class Tooltip : MonoBehaviour
     public void Hide()
     {
         targetalpha = 0.0f;
-        this.group.alpha = 0.0f;
+        group.alpha = 0.0f;
+
+        if (showCoroutine != null)
+        {
+            StopCoroutine(showCoroutine);
+            showCoroutine = null;
+        }
     }
+
     public void ShowAfterDelay(int instanceId, float delay = defaultDelay)
     {
         toShowInstanceId = instanceId;
-        StartCoroutine(ShowWithDelay(instanceId, delay));
+
+        if (showCoroutine != null)
+        {
+            StopCoroutine(showCoroutine);
+        }
+
+        showCoroutine = StartCoroutine(ShowWithDelay(instanceId, delay));
     }
+
     private IEnumerator ShowWithDelay(int instanceId, float delay)
     {
         yield return new WaitForSeconds(delay);
