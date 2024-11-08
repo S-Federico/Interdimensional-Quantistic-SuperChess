@@ -59,7 +59,7 @@ public class SliderOptionHandler : MonoBehaviour
 
     // private void PlayToggleSwitchSound(bool newToggleValue)
     // {
-    //     SoundManager.PlaySoundOneShot(Sound.BUTTON_PRESSED);
+    //     SoundManager.Instance.PlaySoundOneShot(Sound.BUTTON_PRESSED);
     // }
 
     private float GetValueWithMode(float value, bool intStepMode) {

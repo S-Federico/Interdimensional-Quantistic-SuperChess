@@ -311,7 +311,7 @@ public class BoardManager : MonoBehaviour
         piece.transform.position = boardBehaviour.GetSquare((int)destination.x, (int)destination.y).gameObject.transform.position;
 
         // Play sound
-        SoundManager.PlaySoundOneShot(Sound.PIECE_MOVE);
+        SoundManager.Instance.PlaySoundOneShot(Sound.PIECE_MOVE);
     }
 
     public bool CanPlacePiece(PieceStatus piece)

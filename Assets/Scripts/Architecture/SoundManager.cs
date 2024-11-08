@@ -5,14 +5,35 @@ using System.Data;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class SoundManager
+public class SoundManager : Singleton<SoundManager>
 {
+    private Options options;
 
-    private static Dictionary<Sound, GameObject> NonOneShotSounds = new Dictionary<Sound, GameObject>();
+    private Dictionary<Sound, GameObject> NonOneShotSounds = new Dictionary<Sound, GameObject>();
 
-    public static void PlaySoundOneShot(Sound sound)
+    void Awake() {
+        options = GameManager.Instance.Options;
+    }
+
+    void Update() {
+
+        if (NonOneShotSounds.Keys.Count == 0) return;
+
+        if (!options.MusicEnabled) {
+            StopAllSounds();
+        }
+
+        foreach (var item in NonOneShotSounds.Keys)
+        {
+            AudioSource audioSource = NonOneShotSounds[item]?.GetComponent<AudioSource>();
+            if (audioSource != null) {
+                audioSource.volume = GameManager.Instance.Options.MusicVolume;
+            }
+        }
+    }
+
+    public void PlaySoundOneShot(Sound sound)
     {
-        Options options = GameManager.Instance.Options;
         if (!options.SoundEnabled) return;
 
         GameObject gameObject = new GameObject("SOUND");
@@ -35,19 +56,20 @@ public class SoundManager
     /// <param name="looping">Looping mode on/off</param>
     /// <param name="alone">If this sound should pause all other sounds playing</param>
     /// /// <param name="forceRestart">If true, the song will restart also if it was already playing</param>
-    public static void PlaySoud(Sound sound, bool looping = true, bool alone = false, bool forceRestart=false)
+    public void PlaySoud(Sound sound, bool looping = true, bool alone = false, bool forceRestart = false)
     {
-        Options options = GameManager.Instance.Options;
         if (!options.SoundEnabled) return;
-        
+
         // If not forceRestart, then check if there is the sound already playing
-        if (!forceRestart && NonOneShotSounds.ContainsKey(sound)) {
+        if (!forceRestart && NonOneShotSounds.ContainsKey(sound))
+        {
             GameObject soundObj = NonOneShotSounds[sound];
-            if (soundObj != null && soundObj.GetComponent<AudioSource>().isPlaying) {
+            if (soundObj != null && soundObj.GetComponent<AudioSource>().isPlaying)
+            {
                 return;
             }
         }
-        
+
         GameObject gameObject = new GameObject($"Sound_{sound}");
         AudioSource audioSource = gameObject.AddComponent<AudioSource>();
         AudioClip audioClip = GetSoundInfo(sound)?.AudioClip;
@@ -58,16 +80,7 @@ public class SoundManager
         // Check if it is alone, so other sounds should stop
         if (alone)
         {
-            List<Sound> playingSoundsToRemove = new List<Sound>();
-            foreach (var item in NonOneShotSounds.Keys)
-            {
-                StopSound(item, false);
-                playingSoundsToRemove.Add(item);
-            }
-            foreach (var item in playingSoundsToRemove)
-            {
-                NonOneShotSounds.Remove(item);
-            }
+            StopAllSounds();
         }
 
 
@@ -82,12 +95,23 @@ public class SoundManager
 
         // Play sound
         audioSource.Play();
-
-
-
     }
 
-    public static void StopSound(Sound sound, bool removeFromDict = true)
+    private void StopAllSounds()
+    {
+        List<Sound> playingSoundsToRemove = new List<Sound>();
+        foreach (var item in NonOneShotSounds.Keys)
+        {
+            StopSound(item, false);
+            playingSoundsToRemove.Add(item);
+        }
+        foreach (var item in playingSoundsToRemove)
+        {
+            NonOneShotSounds.Remove(item);
+        }
+    }
+
+    public void StopSound(Sound sound, bool removeFromDict = true)
     {
         // Find obj if exists
         GameObject gameObject = NonOneShotSounds[sound];
@@ -110,7 +134,7 @@ public class SoundManager
 
     }
 
-    public static void SetVolumeForPlayingSound(Sound sound, float volume)
+    public void SetVolumeForPlayingSound(Sound sound, float volume)
     {
         GameObject playingSoundObj = NonOneShotSounds[sound];
         if (playingSoundObj != null)
@@ -120,7 +144,7 @@ public class SoundManager
 
     }
 
-    private static SoundInfo GetSoundInfo(Sound sound)
+    private SoundInfo GetSoundInfo(Sound sound)
     {
         foreach (SoundInfo item in AssetsManager.Instance.Sounds)
         {

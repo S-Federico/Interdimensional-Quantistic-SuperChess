@@ -45,6 +45,6 @@ public class StartScreen : MonoBehaviour
 
     private void PlayButtonSound()
     {
-        SoundManager.PlaySoundOneShot(Sound.BUTTON_PRESSED);
+        SoundManager.Instance.PlaySoundOneShot(Sound.BUTTON_PRESSED);
     }
 }
