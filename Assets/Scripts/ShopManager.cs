@@ -2,11 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Array2DEditor;
-using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEngine;
-using System.Linq;
-using Unity.VisualScripting;
-using Palmmedia.ReportGenerator.Core.Reporting.Builders.Rendering;
 
 public class ShopManager : MonoBehaviour
 {
