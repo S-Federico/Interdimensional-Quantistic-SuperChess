@@ -149,6 +149,7 @@ public class MainMenu : MonoBehaviour
             SaveManager.Instance.DeleteFile(this.selectedGameInfo.ProfileName);
             this.selectedGameInfo = null;
             GameManager.Instance.RestartGame();
+            selectedGameInfo = null;
         }, () =>
         {
             PlayButtonSound();
