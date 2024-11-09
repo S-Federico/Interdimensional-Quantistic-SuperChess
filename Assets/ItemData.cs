@@ -446,10 +446,18 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
         {
             if (scriptableItem != null)
             {
-                tooltip.SetText(scriptableItem.Name, scriptableItem.Description);
+                string description = GenerateTooltipDescription();
+                tooltip.SetText(scriptableItem.Name, description);
+            }
+            else if (pieceData != null)
+            {
+                string description = GenerateTooltipDescription();
+                tooltip.SetText("One Piece", description);
             }
             else
-                tooltip.SetText("Pezzo", "OnePiece");
+            {
+                tooltip.SetText("Elemento Sconosciuto", "");
+            }
             tooltip.ShowAfterDelay(scriptableItem?.GetInstanceID() ?? 0);
         }
         showCells = true;
@@ -465,6 +473,79 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
         showCells = false;
         GameUI.SetCursor(CursorType.Default);
     }
+
+    private string GenerateTooltipDescription()
+    {
+        string description = "";
+        if (scriptableItem is ScriptableConsumable)
+        {
+            // Caso consumabile
+            ScriptableConsumable consumable = scriptableItem as ScriptableConsumable;
+            if (consumable.Description != null && consumable.Description != string.Empty)
+                description += $"{consumable.Description}\n";
+            if (consumable.Modifiers.Count > 0)
+                description += $"Modifiers:\n";
+            foreach (ScriptableStatusModifier modifier in consumable.Modifiers)
+            {
+                if (modifier.modifierType == ModifierType.AttributeModifier)
+                {
+                    description += $"{modifier.name}: {modifier.value:+#;-#;0} {modifier.attributeType}\n";
+                }
+                else
+                {
+                    description += $"{modifier.name}: gives {modifier.statusEffectType}\n";
+                }
+            }
+            return description;
+        }
+        else if (scriptableItem is ScriptableManual)
+        {
+            // Caso manuale
+            ScriptableManual manual = scriptableItem as ScriptableManual;
+            if (manual.Description != null && manual.Description != string.Empty)
+                description += $"{manual.Description}\n";
+            if (manual.Modifiers.Count > 0)
+                description += $"Modifiers:\n";
+            foreach (ScriptableStatusModifier modifier in manual.Modifiers)
+            {
+                if (modifier.modifierType == ModifierType.AttributeModifier)
+                {
+                    description += $"{modifier.name}: {modifier.value:+#;-#;0} {modifier.attributeType}\n";
+                }
+                else
+                {
+                    description += $"{modifier.name}: gives {modifier.statusEffectType}\n";
+                }
+            }
+            return description;
+        }
+        else if (pieceData != null)
+        {
+            description += $"{pieceData.PieceType}\n";
+            description += $"Hp: {pieceData.Hp}\nAttack:{pieceData.Attack}\n";
+            if (pieceData.Modifiers.Count > 0)
+                description += $"Modifiers:\n";
+            foreach (ScriptableStatusModifier modifier in pieceData.Modifiers)
+            {
+                if (modifier.modifierType == ModifierType.AttributeModifier)
+                {
+                    description += $"{modifier.name}: {modifier.value:+#;-#;0} {modifier.attributeType}\n";
+                }
+                else
+                {
+                    description += $"{modifier.statusEffectType}\n";
+                }
+            }
+            return description;
+        }
+        else
+        {
+            // Caso predefinito
+            return scriptableItem?.Description ?? "";
+        }
+    }
+
+
 }
 
 
