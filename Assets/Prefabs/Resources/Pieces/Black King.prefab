@@ -121,7 +121,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PieceType: 5
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   DamageTaken: 0
   cloaked: 0
   ethereal: 0
@@ -133,7 +132,7 @@ MonoBehaviour:
   scary: 0
   PieceColor: 0
   PrefabID: 2
-  Position: {x: 1, y: 0}
+  Position: {x: 0, y: 4}
   MovementMatrixInfo:
     gridSize: {x: 5, y: 5}
     cellSize: {x: 32, y: 16}
