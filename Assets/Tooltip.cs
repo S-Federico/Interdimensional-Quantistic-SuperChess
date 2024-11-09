@@ -21,8 +21,6 @@ public class Tooltip : MonoBehaviour
     {
         group = transform.parent.GetComponent<CanvasGroup>();
         group.alpha = 0.0f;
-        offset.x = 0.0f;
-        offset.y = 0.0f;
         rectTransform = GetComponent<RectTransform>();
         rectTransform.pivot = new Vector2(0, 0); // Pivot in basso a sinistra
     }
