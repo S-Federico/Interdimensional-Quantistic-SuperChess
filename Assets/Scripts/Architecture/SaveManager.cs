@@ -9,9 +9,11 @@ using System;
 public class SaveManager : Singleton<SaveManager>
 {
     private string baseSavePath = $"{Application.dataPath}/Saves";
+    private string optionsSavePath = $"{Application.dataPath}/Options";
     public const string SAVE_FILE_EXTENSION = "json";
 
     public string BaseSavePath { get => baseSavePath; }
+    public string OptionsSavePath { get => optionsSavePath; }
 
     void Start()
     {
@@ -29,6 +31,19 @@ public class SaveManager : Singleton<SaveManager>
         Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
         File.WriteAllText(filePath, jsonData);
+    }
+
+    public void SaveOptions(Options options) {
+        string filePath = $"{optionsSavePath}/options.{SAVE_FILE_EXTENSION}";
+        string jsonData = JsonConvert.SerializeObject(options);
+        // Create file path folders if necessary
+        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+        File.WriteAllText(filePath, jsonData);
+    }
+
+    public Options LoadOptions() {
+        return Load<Options>($"{optionsSavePath}/options.{SAVE_FILE_EXTENSION}", true);
     }
 
     public T Load<T>(string fileName, bool isFullPath = false)

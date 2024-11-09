@@ -42,7 +42,7 @@ public class GameManager : Singleton<GameManager>
         // Try to load options. If fail, set default
         try
         {
-            Options = SaveManager.Instance.Load<Options>("options") ?? new Options();
+            Options = SaveManager.Instance.LoadOptions() ?? new Options();
         }
         catch (Exception)
         {
@@ -336,7 +336,7 @@ public class GameManager : Singleton<GameManager>
 
     public void SaveOptions()
     {
-        SaveManager.Instance.Save(Options, "options");
+        SaveManager.Instance.SaveOptions(Options);
     }
 
 }
