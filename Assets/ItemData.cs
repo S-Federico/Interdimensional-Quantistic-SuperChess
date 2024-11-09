@@ -30,7 +30,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
     Vector3 bottomRight;
     Vector3 bottomCenter;
     public PieceData pieceData = null;
-
+    public bool inGameSceneFlag = false;
     public int pieceprice = 10;
     BoardManager boardManager = null;
     public bool showCells = false;
@@ -123,6 +123,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                 el = 1f;
             }
             shopScaling = true;
+            inGameSceneFlag = true;
         }
 
         if (selected)
@@ -496,7 +497,23 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                     description += $"{modifier.name}: gives {modifier.statusEffectType}\n";
                 }
             }
+            if (!inGameSceneFlag)
+            {
+                description += "Area of Effect:\n";
+                int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(consumable.ApplicationMatrix);
+
+                for (int i = 0; i < applicationMatrix.GetLength(0); i++)
+                {
+                    for (int j = 0; j < applicationMatrix.GetLength(1); j++)
+                    {
+                        description += applicationMatrix[i, j] == 1 ? "X " : "O ";
+                    }
+                    description += "\n";
+                }
+            }
+
             return description;
+
         }
         else if (scriptableItem is ScriptableManual)
         {
@@ -515,6 +532,32 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                 else
                 {
                     description += $"{modifier.name}: gives {modifier.statusEffectType}\n";
+                }
+            }
+            if (!inGameSceneFlag)
+            {
+                description += "\nArea of Effect:\n";
+                int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(manual.ApplicationMatrix);
+                description += "  "; // Spazio iniziale per allineare le etichette di colonna
+
+                // Aggiungi le etichette delle colonne (lettere)
+                for (int j = 0; j < applicationMatrix.GetLength(1); j++)
+                {
+                    description += $"{(char)('A' + j)}";
+                }
+                description += "\n";
+
+                for (int i = 0; i < applicationMatrix.GetLength(0); i++)
+                {
+                    description += $"{applicationMatrix.GetLength(0) - i} "; // Aggiungi il numero di riga all'inizio
+
+                    for (int j = 0; j < applicationMatrix.GetLength(1); j++)
+                    {
+                        // Aggiungi la cella con "X" o "O" e un separatore verticale "|"
+                        description += (applicationMatrix[i, j] == 1 ? "X" : "O");
+                    }
+
+                    description += "\n"; // Fine riga
                 }
             }
             return description;
