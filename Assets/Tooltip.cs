@@ -61,15 +61,23 @@ public class Tooltip : MonoBehaviour
         AdjustLayout();
     }
 
-    private void AdjustLayout()
-    {
-        // Controlla che i campi di testo non siano nulli prima di leggere la loro lunghezza
-        int headerLength = headerField != null ? headerField.text.Length : 0;
-        int contentLength = contentField != null ? contentField.text.Length : 0;
+private void AdjustLayout()
+{
+    // Controlla che i campi di testo non siano nulli prima di leggere la loro lunghezza
+    int headerLength = headerField != null ? headerField.text.Length : 0;
 
-        // Abilita o disabilita il layoutElement in base alla lunghezza del testo
-        layoutElement.enabled = (headerLength > characterWrapLimit || contentLength > characterWrapLimit);
+    int firstLineContentLength = 0;
+    if (contentField != null && !string.IsNullOrEmpty(contentField.text))
+    {
+        // Ottieni la prima riga del testo della descrizione
+        string firstLine = contentField.text.Split('\n')[0];
+        firstLineContentLength = firstLine.Length;
     }
+
+    // Abilita o disabilita il layoutElement in base alla lunghezza della prima riga del testo
+    layoutElement.enabled = (headerLength > characterWrapLimit || firstLineContentLength > characterWrapLimit);
+}
+
 
     private void FollowMouse()
     {

@@ -30,7 +30,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
     Vector3 bottomRight;
     Vector3 bottomCenter;
     public PieceData pieceData = null;
-
+    public bool inGameSceneFlag = false;
     public int pieceprice = 10;
     BoardManager boardManager = null;
     public bool showCells = false;
@@ -123,6 +123,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                 el = 1f;
             }
             shopScaling = true;
+            inGameSceneFlag = true;
         }
 
         if (selected)
@@ -446,10 +447,18 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
         {
             if (scriptableItem != null)
             {
-                tooltip.SetText(scriptableItem.Name, scriptableItem.Description);
+                string description = GenerateTooltipDescription();
+                tooltip.SetText(scriptableItem.Name, description);
+            }
+            else if (pieceData != null)
+            {
+                string description = GenerateTooltipDescription();
+                tooltip.SetText("One Piece", description);
             }
             else
-                tooltip.SetText("Pezzo", "OnePiece");
+            {
+                tooltip.SetText("Elemento Sconosciuto", "");
+            }
             tooltip.ShowAfterDelay(scriptableItem?.GetInstanceID() ?? 0);
         }
         showCells = true;
@@ -465,6 +474,121 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
         showCells = false;
         GameUI.SetCursor(CursorType.Default);
     }
+
+    private string GenerateTooltipDescription()
+    {
+        string description = "";
+        if (scriptableItem is ScriptableConsumable)
+        {
+            // Caso consumabile
+            ScriptableConsumable consumable = scriptableItem as ScriptableConsumable;
+            if (consumable.Description != null && consumable.Description != string.Empty)
+                description += $"{consumable.Description}\n";
+            if (consumable.Modifiers.Count > 0)
+                description += $"Modifiers:\n";
+            foreach (ScriptableStatusModifier modifier in consumable.Modifiers)
+            {
+                if (modifier.modifierType == ModifierType.AttributeModifier)
+                {
+                    description += $"{modifier.name}: {modifier.value:+#;-#;0} {modifier.attributeType}\n";
+                }
+                else
+                {
+                    description += $"{modifier.name}: gives {modifier.statusEffectType}\n";
+                }
+            }
+            if (!inGameSceneFlag)
+            {
+                description += "Area of Effect:\n";
+                int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(consumable.ApplicationMatrix);
+
+                for (int i = 0; i < applicationMatrix.GetLength(0); i++)
+                {
+                    for (int j = 0; j < applicationMatrix.GetLength(1); j++)
+                    {
+                        description += applicationMatrix[i, j] == 1 ? "X " : "O ";
+                    }
+                    description += "\n";
+                }
+            }
+
+            return description;
+
+        }
+        else if (scriptableItem is ScriptableManual)
+        {
+            // Caso manuale
+            ScriptableManual manual = scriptableItem as ScriptableManual;
+            if (manual.Description != null && manual.Description != string.Empty)
+                description += $"{manual.Description}\n";
+            if (manual.Modifiers.Count > 0)
+                description += $"Modifiers:\n";
+            foreach (ScriptableStatusModifier modifier in manual.Modifiers)
+            {
+                if (modifier.modifierType == ModifierType.AttributeModifier)
+                {
+                    description += $"{modifier.name}: {modifier.value:+#;-#;0} {modifier.attributeType}\n";
+                }
+                else
+                {
+                    description += $"{modifier.name}: gives {modifier.statusEffectType}\n";
+                }
+            }
+            if (!inGameSceneFlag)
+            {
+                description += "\nArea of Effect:\n";
+                int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(manual.ApplicationMatrix);
+                description += "  "; // Spazio iniziale per allineare le etichette di colonna
+
+                // Aggiungi le etichette delle colonne (lettere)
+                for (int j = 0; j < applicationMatrix.GetLength(1); j++)
+                {
+                    description += $"{(char)('A' + j)}";
+                }
+                description += "\n";
+
+                for (int i = 0; i < applicationMatrix.GetLength(0); i++)
+                {
+                    description += $"{applicationMatrix.GetLength(0) - i} "; // Aggiungi il numero di riga all'inizio
+
+                    for (int j = 0; j < applicationMatrix.GetLength(1); j++)
+                    {
+                        // Aggiungi la cella con "X" o "O" e un separatore verticale "|"
+                        description += (applicationMatrix[i, j] == 1 ? "X" : "O");
+                    }
+
+                    description += "\n"; // Fine riga
+                }
+            }
+            return description;
+        }
+        else if (pieceData != null)
+        {
+            description += $"{pieceData.PieceType}\n";
+            description += $"Hp: {pieceData.Hp}\nAttack:{pieceData.Attack}\n";
+            if (pieceData.Modifiers.Count > 0)
+                description += $"Modifiers:\n";
+            foreach (ScriptableStatusModifier modifier in pieceData.Modifiers)
+            {
+                if (modifier.modifierType == ModifierType.AttributeModifier)
+                {
+                    description += $"{modifier.name}: {modifier.value:+#;-#;0} {modifier.attributeType}\n";
+                }
+                else
+                {
+                    description += $"{modifier.statusEffectType}\n";
+                }
+            }
+            return description;
+        }
+        else
+        {
+            // Caso predefinito
+            return scriptableItem?.Description ?? "";
+        }
+    }
+
+
 }
 
 
