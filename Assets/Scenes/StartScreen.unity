@@ -454,6 +454,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Transition
       objectReference: {fileID: 0}
+    - target: {fileID: 1840714140749899663, guid: d94e84e2b8139a04cb33693206ee1cd7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3778968125069647363, guid: d94e84e2b8139a04cb33693206ee1cd7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -534,10 +538,10 @@ RectTransform:
   - {fileID: 345210047}
   m_Father: {fileID: 1192617412}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -172.49}
-  m_SizeDelta: {x: -421.205, y: 122.74869}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0.23555434}
+  m_AnchoredPosition: {x: 0, y: -0.49002075}
+  m_SizeDelta: {x: -421.205, y: 16.748688}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &920345943
 MonoBehaviour:
@@ -977,6 +981,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LoadingScreenManager
       objectReference: {fileID: 0}
+    - target: {fileID: 123631797507007859, guid: 2f14e7a514adc8a41968b6f374eabab9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4407757761534424703, guid: 2f14e7a514adc8a41968b6f374eabab9, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1056,6 +1064,18 @@ PrefabInstance:
     - target: {fileID: 4407757761534424703, guid: 2f14e7a514adc8a41968b6f374eabab9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6719019172914734344, guid: 2f14e7a514adc8a41968b6f374eabab9, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.218
+      objectReference: {fileID: 0}
+    - target: {fileID: 6719019172914734344, guid: 2f14e7a514adc8a41968b6f374eabab9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6719019172914734344, guid: 2f14e7a514adc8a41968b6f374eabab9, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.218
       objectReference: {fileID: 0}
     - target: {fileID: 8989520114305933600, guid: 2f14e7a514adc8a41968b6f374eabab9, type: 3}
       propertyPath: m_AnchorMax.x
