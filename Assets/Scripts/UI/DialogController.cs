@@ -69,12 +69,12 @@ public class DialogController : MonoBehaviour
     private void OnNextClick()
     {
         currentLineIndex++;
-        OnNewLineHandler.Invoke(currentLineIndex);
+        OnNewLineHandler?.Invoke(currentLineIndex);
     }
 
     private void OnFinishClick()
     {
-        OnFinishDialogueHandler.Invoke();
+        OnFinishDialogueHandler?.Invoke();
     }
 
     private void PlayButtonSound()

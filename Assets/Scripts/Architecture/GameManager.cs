@@ -374,6 +374,6 @@ public class GameManager : Singleton<GameManager>
 
     internal void PlayTutorial(GameInfo selectedGameInfo)
     {
-        StartCoroutine(PlayTutorialCoroutine(Constants.Scenes.SAMPLE_SCENE));
+        StartCoroutine(PlayTutorialCoroutine(Constants.Scenes.TUTORIAL));
     }
 }
