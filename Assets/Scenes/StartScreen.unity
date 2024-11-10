@@ -1150,6 +1150,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AssetsManager
       objectReference: {fileID: 0}
+    - target: {fileID: 5592779974338967678, guid: e64de14f84bbbc844a86cba4ad83b312, type: 3}
+      propertyPath: Sounds.Array.data[2].AudioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: dcfd68e5ad4f5104a95c6e4dac7d4a68, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
