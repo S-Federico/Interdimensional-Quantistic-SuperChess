@@ -10,6 +10,8 @@ using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
     // Inspector references
+    public GameObject PlayTutorialButton;
+    private Button TutorialButton;
     public GameObject continueButton;
     public GameObject LoadGamePanel;
     public Transform ProfilesContainer;
@@ -31,6 +33,7 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
+        TutorialButton = PlayTutorialButton.GetComponent<Button>();
         continueGameButton = continueButton.GetComponent<Button>();
         savedGames = new GameInfo[MaxSaves];
         gameManager = GameManager.Instance;
@@ -70,7 +73,8 @@ public class MainMenu : MonoBehaviour
 
         LoadGamePanelBackButton.onClick.AddListener(OnGamePanelBackButtonPressed);
         LoadGamePanelBackButton.onClick.AddListener(PlayButtonSound);
-
+        TutorialButton.onClick.AddListener(OnPlayTutorialButtonPressed);
+        TutorialButton.onClick.AddListener(PlayButtonSound);
     }
 
     private void OnFileButtonClick(GameInfo gameInfo)
@@ -172,7 +176,10 @@ public class MainMenu : MonoBehaviour
         //SceneManager.LoadScene(Constants.Scenes.START_SCREEN);
         GameManager.Instance.LoadScene(Constants.Scenes.START_SCREEN);
     }
-
+    private void OnPlayTutorialButtonPressed()
+    {
+        GameManager.Instance.LoadScene(Constants.Scenes.TUTORIAL);
+    }
     void OnDestroy()
     {
         LoadGamePanelBackButton.onClick.RemoveListener(OnGamePanelBackButtonPressed);
