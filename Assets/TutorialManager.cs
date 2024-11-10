@@ -42,11 +42,6 @@ public class TutorialManager : MonoBehaviour
     }
     void Update()
     {
-        if (!storybeatstestfinished)
-        {
-            storybeatstestfinished = true;
-            FirstStoryBeat();
-        }
     }
 
     public void NextBeat(int newBeat)
@@ -98,7 +93,7 @@ public class TutorialManager : MonoBehaviour
     private void PlacePiece((int x, int y) position, GameObject piecePrefab)
     {
         Vector3 targetPosition = boardManager.GetSquare(position.x, position.y).transform.position;
-        piecePrefab = Instantiate(piecePrefab, targetPosition, Quaternion.identity);
+        piecePrefab.transform.position=targetPosition;
         PieceStatus pieceStatus = piecePrefab.GetComponent<PieceStatus>();
         pieceStatus.Position = new Vector2(position.x, position.y);
         if (pieceStatus.Position.x >= 0)

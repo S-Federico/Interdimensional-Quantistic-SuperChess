@@ -12,7 +12,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private GameObject board;
     public Array2DInt BoardData;
     public List<GameObject> PiecePrefabs;
-    public PieceStatus[,] Pieces;
+    public PieceStatus[,] Pieces = new PieceStatus[8, 8];
     private int Riga;
     private int Colonna;
     private ChessBoardModel cbm;
@@ -53,7 +53,6 @@ public class BoardManager : MonoBehaviour
 
         plane_manuals = GameObject.Find("ManualPlane");
         LoadManuals();
-
         showMovesFlag = false;
         alreadyExcecuting = false;
 
@@ -91,7 +90,8 @@ public class BoardManager : MonoBehaviour
                 currentTurn = Turn.Player;
             }
         }
-        if(isTutorial){
+        if (isTutorial)
+        {
             //Tutorial();
         }
     }
@@ -174,7 +174,8 @@ public class BoardManager : MonoBehaviour
 
     public GameObject GetSquare(int x, int y)
     {
-        if(x < 0 || y < 0){
+        if (x < 0 || y < 0)
+        {
             return playerPiecesPlane;
         }
         return boardBehaviour.GetSquare(x, y);
