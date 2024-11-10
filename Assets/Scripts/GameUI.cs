@@ -15,7 +15,7 @@ public class GameUI : MonoBehaviour
     public TMP_Text CurrentMoneyText;
     public TMP_Text GameOverText;
 
-    public GameObject NextLevelBtn;
+    // public GameObject NextLevelBtn;
     public GameObject GoToShopBtn;
     public GameObject BackToMenuBtn;
     public Texture2D defaultCursor;
@@ -50,7 +50,7 @@ public class GameUI : MonoBehaviour
             {
                 GameOverText.text = Constants.VICTORY_TEXT;
                 EarnedMoneyText.text = $"Money won: {GameManager.Instance.MoneyWonFromCurrentRound}$";
-                NextLevelBtn.SetActive(true);
+                // NextLevelBtn.SetActive(true);
                 GoToShopBtn.SetActive(true);
                 BackToMenuBtn.SetActive(false);
             }
@@ -59,7 +59,7 @@ public class GameUI : MonoBehaviour
                 GameOverText.text = Constants.DEFEAT_TEXT;
                 EarnedMoneyText.text = "";
                 BackToMenuBtn.SetActive(true);
-                NextLevelBtn.SetActive(false);
+                // NextLevelBtn.SetActive(false);
                 GoToShopBtn.SetActive(false);
             }
         }
