@@ -30,6 +30,7 @@ public class GameInfo
         this.BoardData = LevelGenerator.Instance.GenerateDefaultBoardData();
         this.GameState = GameState.RUNNING;
         this.GameStarted = false;
+        this.Winner = null;
     }
 
     //List<Consumable> UnlockedConsumables = new List<Consumable>();
