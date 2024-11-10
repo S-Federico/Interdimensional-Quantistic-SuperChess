@@ -25,12 +25,12 @@ public class GameManager : Singleton<GameManager>
     void Update() {
         
         // Disable updates when game is paused
-        Time.timeScale = (IsPaused || IsGameOver) ? 0f : 1f;
+        Time.timeScale = IsPaused ? 0f : 1f;
 
         // Stop InputManager if game is paused
         InputManager inputManager = FindAnyObjectByType<InputManager>();
         if (inputManager != null) {
-            inputManager.SendMessage((IsPaused || IsGameOver) ? "OnDisable" : "OnEnable");
+            inputManager.SendMessage(IsPaused ? "OnDisable" : "OnEnable");
         }
     }
 
