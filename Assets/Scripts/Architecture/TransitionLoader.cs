@@ -4,7 +4,8 @@ public class TransitionLoader : MonoBehaviour
 {
     public static TransitionLoader Instance;
     public Animator transition;
-    private float transitionTime = 1f;
+    private float transitionTime = 0.2f;
+    public float AnimationSpeed = 0.2f;
 
     void Awake()
     {
@@ -24,4 +25,8 @@ public class TransitionLoader : MonoBehaviour
         return transitionTime;
     }
 
+    void Update()
+    {
+        transition.SetFloat("Speed", AnimationSpeed);
+    }
 }
