@@ -10,8 +10,7 @@ using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
     // Inspector references
-    public GameObject PlayTutorialButton;
-    private Button TutorialButton;
+    [SerializeField] private Button TutorialButton;
     public GameObject continueButton;
     public GameObject LoadGamePanel;
     public Transform ProfilesContainer;
@@ -33,7 +32,6 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
-        TutorialButton = PlayTutorialButton.GetComponent<Button>();
         continueGameButton = continueButton.GetComponent<Button>();
         savedGames = new GameInfo[MaxSaves];
         gameManager = GameManager.Instance;
@@ -70,11 +68,18 @@ public class MainMenu : MonoBehaviour
         }
 
         SoundManager.Instance.PlaySoud(Sound.OST, true, true);
+    }
 
+    void OnEnable() {
         LoadGamePanelBackButton.onClick.AddListener(OnGamePanelBackButtonPressed);
         LoadGamePanelBackButton.onClick.AddListener(PlayButtonSound);
         TutorialButton.onClick.AddListener(OnPlayTutorialButtonPressed);
         TutorialButton.onClick.AddListener(PlayButtonSound);
+    }
+
+    void OnDisable() {
+        LoadGamePanelBackButton.onClick.RemoveAllListeners();
+        TutorialButton.onClick.RemoveAllListeners();
     }
 
     private void OnFileButtonClick(GameInfo gameInfo)
@@ -119,6 +124,8 @@ public class MainMenu : MonoBehaviour
         LoadGamePanel.SetActive(false);
         MainMenuPanel.SetActive(true);
         ChooseProfileNamePanel.SetActive(false);
+
+        GameManager.Instance.GameInfo = selectedGameInfo;
     }
 
     public void CreateNewProfilePressed()

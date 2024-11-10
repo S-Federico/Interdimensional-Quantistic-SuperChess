@@ -627,7 +627,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 47.1
+  m_fontSize: 26
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -889,7 +889,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e8d58d5964cad43bb2def8293c33cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayTutorialButton: {fileID: 1281980374}
+  TutorialButton: {fileID: 1281980376}
   continueButton: {fileID: 1184939740}
   LoadGamePanel: {fileID: 1197014697}
   ProfilesContainer: {fileID: 1327264667}
