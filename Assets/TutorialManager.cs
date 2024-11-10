@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -40,8 +41,24 @@ public class TutorialManager : MonoBehaviour
     {
         consumable.SetActive(false);
         manual.SetActive(false);
-        dialogController.OnNewLineHandler += NextBeat;
+
     }
+
+    void OnEnable() {
+        dialogController.OnNewLineHandler += NextBeat;
+        dialogController.OnFinishDialogueHandler += OnFinishDialoguePressed;
+    }
+
+    void OnDisable() {
+        dialogController.OnNewLineHandler -= NextBeat;
+        dialogController.OnFinishDialogueHandler -= OnFinishDialoguePressed;
+    }
+
+    private void OnFinishDialoguePressed()
+    {
+        GameManager.Instance.LoadScene(Constants.Scenes.MENU);
+    }
+
     void Update()
     {
     }
