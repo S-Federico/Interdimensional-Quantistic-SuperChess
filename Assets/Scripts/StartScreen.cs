@@ -28,6 +28,9 @@ public class StartScreen : MonoBehaviour
 
         Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
 
+        // Play ost
+        SoundManager.Instance.PlaySoud(Sound.MAIN_MENU_OST, true, true, false);
+
     }
 
     void OnDestroy()

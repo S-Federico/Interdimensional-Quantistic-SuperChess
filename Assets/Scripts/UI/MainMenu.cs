@@ -66,7 +66,7 @@ public class MainMenu : MonoBehaviour
             }
         }
 
-        SoundManager.Instance.PlaySoud(Sound.OST, true, true);
+        SoundManager.Instance.PlaySoud(Sound.MAIN_MENU_OST, true, true);
 
         LoadGamePanelBackButton.onClick.AddListener(OnGamePanelBackButtonPressed);
         LoadGamePanelBackButton.onClick.AddListener(PlayButtonSound);
