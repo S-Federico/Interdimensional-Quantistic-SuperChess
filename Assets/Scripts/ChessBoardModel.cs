@@ -66,35 +66,6 @@ public class ChessBoardModel
 
         return allowedPlacements;
     }
-    public List<BoardSquare> GetAllowedPlacements(PieceStatus piece, PieceStatus[,] board, TutorialBoardManager boardManager)
-    {
-        List<BoardSquare> allowedPlacements = new List<BoardSquare>();
-
-        if (piece.PieceColor == PieceColor.Black)
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (board[i, j] == null)
-                        allowedPlacements.Add(boardManager.GetSquare(i, j).GetComponent<BoardSquare>());
-                }
-            }
-        }
-        else
-        {
-            for (int i = 6; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (board[i, j] == null)
-                        allowedPlacements.Add(boardManager.GetSquare(i, j).GetComponent<BoardSquare>());
-                }
-            }
-        }
-
-        return allowedPlacements;
-    }
     public HashSet<int[]> GetPossibleMovesForPiece(PieceStatus pieceStatus, PieceStatus[,] board)
     {
         HashSet<int[]> moves = new HashSet<int[]>();

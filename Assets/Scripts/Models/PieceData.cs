@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
-[System.Serializable]
 public class PieceData
 {
     public PieceType PieceType;

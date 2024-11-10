@@ -38,6 +38,8 @@ public class TutorialManager : MonoBehaviour
     bool storybeatstestfinished = false;
     void Start()
     {
+        consumable.SetActive(false);
+        manual.SetActive(false);
         dialogController.OnNewLineHandler += NextBeat;
     }
     void Update()
@@ -67,8 +69,6 @@ public class TutorialManager : MonoBehaviour
     }
     public void FirstStoryBeat()
     {
-        consumable.SetActive(false);
-        manual.SetActive(false);
         PlacePiece((7, 4), initialPlayerPiecePrefab);
     }
     public void TutorialBeatFight()
@@ -93,7 +93,7 @@ public class TutorialManager : MonoBehaviour
     private void PlacePiece((int x, int y) position, GameObject piecePrefab)
     {
         Vector3 targetPosition = boardManager.GetSquare(position.x, position.y).transform.position;
-        piecePrefab.transform.position=targetPosition;
+        piecePrefab.transform.position = targetPosition;
         PieceStatus pieceStatus = piecePrefab.GetComponent<PieceStatus>();
         pieceStatus.Position = new Vector2(position.x, position.y);
         if (pieceStatus.Position.x >= 0)
