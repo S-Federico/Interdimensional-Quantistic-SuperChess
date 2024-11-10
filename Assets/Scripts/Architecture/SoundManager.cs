@@ -10,6 +10,7 @@ public class SoundManager : Singleton<SoundManager>
     private Options options;
 
     private Dictionary<Sound, GameObject> NonOneShotSounds = new Dictionary<Sound, GameObject>();
+    private Dictionary<Sound, GameObject> OneShotSounds = new Dictionary<Sound, GameObject>();
 
     void Awake() {
         options = GameManager.Instance.Options;
@@ -32,9 +33,13 @@ public class SoundManager : Singleton<SoundManager>
         }
     }
 
-    public void PlaySoundOneShot(Sound sound)
+    public void PlaySoundOneShot(Sound sound, bool preventOverlapping = true)
     {
         if (!options.SoundEnabled) return;
+
+        if (preventOverlapping && OneShotSounds.ContainsKey(sound)) {
+            return;
+        }
 
         GameObject gameObject = new GameObject("SOUND");
         AudioSource audioSource = gameObject.AddComponent<AudioSource>();
@@ -42,11 +47,22 @@ public class SoundManager : Singleton<SoundManager>
         audioSource.volume = options.SoundVolumeClamped;
         audioSource.PlayOneShot(audioClip);
 
+        OneShotSounds[sound] = gameObject;
+
         // Prevent object destruction through scenes
         GameObject.DontDestroyOnLoad(gameObject);
 
         // Destroy the temporary sound gameObject after it finishes playig
         GameObject.Destroy(gameObject, audioClip.length);
+
+        StartCoroutine(DestroyOneShotFromDict(sound, audioClip.length));
+    }
+
+    private IEnumerator DestroyOneShotFromDict(Sound sound, float delay) {
+        yield return new WaitForSeconds(delay);
+        if (OneShotSounds.ContainsKey(sound)) {
+            OneShotSounds.Remove(sound);
+        }
     }
 
     /// <summary>
