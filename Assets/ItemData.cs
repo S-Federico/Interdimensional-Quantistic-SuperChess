@@ -414,7 +414,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                 // Controlla che la nuova posizione sia all'interno della scacchiera
                 if (newRiga >= 0 && newRiga < board.GetLength(0) && newColonna >= 0 && newColonna < board.GetLength(1))
                 {
-                    if (matrix[i, j] == 1)
+                    if (matrix[j, i] == 1)
                     {
                         result.Add(new Vector2Int(newRiga, newColonna));
                     }
