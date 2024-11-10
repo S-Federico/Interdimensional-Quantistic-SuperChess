@@ -185,7 +185,8 @@ public class MainMenu : MonoBehaviour
     }
     private void OnPlayTutorialButtonPressed()
     {
-        GameManager.Instance.LoadScene(Constants.Scenes.TUTORIAL);
+        GameManager.Instance.PlayTutorial(this.selectedGameInfo);
+        //GameManager.Instance.LoadScene(Constants.Scenes.TUTORIAL);
     }
     void OnDestroy()
     {

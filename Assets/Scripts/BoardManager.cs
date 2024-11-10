@@ -32,6 +32,9 @@ public class BoardManager : MonoBehaviour
     public List<GameObject> consumables;
     public ItemData selectedConsumable;
 
+    [SerializeField] private bool isTutorial = false;
+    public bool IsTutorial {get => isTutorial;}
+
     private GameInfo gameInfo;
 
     void Start()
