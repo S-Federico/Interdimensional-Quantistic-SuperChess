@@ -225,6 +225,8 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     private void CellModifiersCheck()
     {
+        if (Position.x < 0 || Position.y < 0)
+            return;
         GameObject cell = null;
         if (boardManager != null)
         {
