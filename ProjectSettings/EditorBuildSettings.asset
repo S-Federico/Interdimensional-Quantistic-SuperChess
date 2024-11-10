@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ShopMockup.unity
     guid: 7eb8935616d65244bb725002d92b1262
+  - enabled: 1
+    path: Assets/Scenes/TutorialScene.unity
+    guid: 5a7c8957df3a69640871163b88bc0139
   m_configObjects: {}

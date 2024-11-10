@@ -81,6 +81,39 @@ public class GameManager : Singleton<GameManager>
         yield return new WaitForSeconds(TransitionLoader.Instance.GetTransitionTime());
     }
 
+    public IEnumerator PlayTutorialCoroutine(string sceneName)
+    {
+        TransitionLoader.Instance.transition.SetTrigger("Start");
+        yield return new WaitForSeconds(TransitionLoader.Instance.GetTransitionTime());
+
+        LoadingScreenManager.Instance.m_LoadingScreenObjct.SetActive(true);
+        LoadingScreenManager.Instance.ProgressBar.value = 0;
+
+        // Carica la scena in modo asincrono
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+        // Aspetta fino a quando la scena non è completamente caricata
+        while (!asyncLoad.isDone)
+        {
+            LoadingScreenManager.Instance.ProgressBar.value = Mathf.Clamp01(asyncLoad.progress / 0.9f);
+            yield return null;
+        }
+
+        // START change
+        var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
+        boardManager.LoadBoardFromBoardData();
+        boardManager.InitializePiecesPlanes(true);
+        // END change
+
+        // Imposta il progresso al 100% quando il caricamento è completo.
+        LoadingScreenManager.Instance.ProgressBar.value = 1f;
+
+        yield return new WaitForSeconds(0.2f);
+        LoadingScreenManager.Instance.m_LoadingScreenObjct.SetActive(false);
+        TransitionLoader.Instance.transition.SetTrigger("End");
+        yield return new WaitForSeconds(TransitionLoader.Instance.GetTransitionTime());
+    }
+
     private IEnumerator LoadSceneAndContinue(string sceneName)
     {
         TransitionLoader.Instance.transition.SetTrigger("Start");
@@ -339,4 +372,8 @@ public class GameManager : Singleton<GameManager>
         SaveManager.Instance.SaveOptions(Options);
     }
 
+    internal void PlayTutorial(GameInfo selectedGameInfo)
+    {
+        StartCoroutine(PlayTutorialCoroutine(Constants.Scenes.TUTORIAL));
+    }
 }

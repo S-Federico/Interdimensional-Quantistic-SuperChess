@@ -66,7 +66,6 @@ public class ChessBoardModel
 
         return allowedPlacements;
     }
-
     public HashSet<int[]> GetPossibleMovesForPiece(PieceStatus pieceStatus, PieceStatus[,] board)
     {
         HashSet<int[]> moves = new HashSet<int[]>();

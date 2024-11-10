@@ -10,7 +10,7 @@ public class PlayerManager : MonoBehaviour
     public List<ItemData> PConsumables;
     public List<PieceStatus> pieces;
 
-    public void Start()
+    public void Awake()
     {
         BuildFromData(GameManager.Instance.GameInfo.PlayerInfo);
     }

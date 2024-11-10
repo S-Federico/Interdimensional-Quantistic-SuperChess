@@ -12,7 +12,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private GameObject board;
     public Array2DInt BoardData;
     public List<GameObject> PiecePrefabs;
-    public PieceStatus[,] Pieces;
+    public PieceStatus[,] Pieces = new PieceStatus[8, 8];
     private int Riga;
     private int Colonna;
     private ChessBoardModel cbm;
@@ -32,6 +32,9 @@ public class BoardManager : MonoBehaviour
     public List<GameObject> consumables;
     public ItemData selectedConsumable;
 
+    [SerializeField] private bool isTutorial = false;
+    public bool IsTutorial { get => isTutorial; }
+
     private GameInfo gameInfo;
 
     void Start()
@@ -42,17 +45,14 @@ public class BoardManager : MonoBehaviour
         boardBehaviour = board.GetComponent<BoardBehaviour>();
         boardBehaviour.InitializeBoard();
         highlightedSquares = new Dictionary<(int, int), int>();
-
-        //prima o poi questa cosa sarà fatta con scriptable object prendendo da una serie finita di opponent, 
-        //con le loro formazioni, buff ecc e livello, che fa scalare il tutto, oltre a opening lines e musiche
         opponent = GameObject.FindAnyObjectByType<OpponentManager>();
+
         AssignModifiers();
 
         LoadConsumables();
 
         plane_manuals = GameObject.Find("ManualPlane");
         LoadManuals();
-
         showMovesFlag = false;
         alreadyExcecuting = false;
 
@@ -61,12 +61,12 @@ public class BoardManager : MonoBehaviour
     void Update()
     {
         // Check on GameManager.Instance.IsGameover to avoit invoking GameOver function every frame
-        if (Pieces != null && ChessAI.IsGameOver(Pieces) && !GameManager.Instance.IsGameOver)
+        if (Pieces != null && ChessAI.IsGameOver(Pieces) && !GameManager.Instance.IsGameOver && !isTutorial)
         {
             PieceColor? winner = ChessAI.GetWinner(Pieces);
             GameManager.Instance.GameOver(winner);
-
         }
+
         if (currentTurn == Turn.Player)
         {
             alreadyExcecuting = false;
@@ -83,11 +83,17 @@ public class BoardManager : MonoBehaviour
             if (!alreadyExcecuting)
             {
                 alreadyExcecuting = true;
-                opponent.ExecuteAITurn(Pieces);
+
+                if (!isTutorial)
+                    opponent.ExecuteAITurn(Pieces);
+
                 currentTurn = Turn.Player;
             }
         }
-
+        if (isTutorial)
+        {
+            //Tutorial();
+        }
     }
 
     void LateUpdate()
@@ -168,6 +174,10 @@ public class BoardManager : MonoBehaviour
 
     public GameObject GetSquare(int x, int y)
     {
+        if (x < 0 || y < 0)
+        {
+            return playerPiecesPlane;
+        }
         return boardBehaviour.GetSquare(x, y);
     }
 
@@ -403,7 +413,7 @@ public class BoardManager : MonoBehaviour
         float padding = 0.1f;
         int numberOfConsumables = Player.PConsumables.Count;
         Debug.Log("Consumabili da istanziare " + numberOfConsumables);
-        if(numberOfConsumables < 1) return;
+        if (numberOfConsumables < 1) return;
 
         float totalRequiredSpace = numberOfConsumables * padding;
         if (planeLength < totalRequiredSpace)
@@ -457,7 +467,7 @@ public class BoardManager : MonoBehaviour
         float padding = 0.01f;
         int numberOfManuals = Player.PManuals.Count;
         Debug.Log("Manuali da istanziare " + numberOfManuals);
-        if(numberOfManuals < 1) return;
+        if (numberOfManuals < 1) return;
 
         float totalRequiredSpace = numberOfManuals * padding;
         if (planeLength < totalRequiredSpace)

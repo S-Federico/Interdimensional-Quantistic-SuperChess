@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
     // Inspector references
+    [SerializeField] private Button TutorialButton;
     public GameObject continueButton;
     public GameObject LoadGamePanel;
     public Transform ProfilesContainer;
@@ -67,10 +68,17 @@ public class MainMenu : MonoBehaviour
         }
 
         SoundManager.Instance.PlaySoud(Sound.MAIN_MENU_OST, true, true);
-
+    }
+    void OnEnable() {
         LoadGamePanelBackButton.onClick.AddListener(OnGamePanelBackButtonPressed);
         LoadGamePanelBackButton.onClick.AddListener(PlayButtonSound);
+        TutorialButton.onClick.AddListener(OnPlayTutorialButtonPressed);
+        TutorialButton.onClick.AddListener(PlayButtonSound);
+    }
 
+    void OnDisable() {
+        LoadGamePanelBackButton.onClick.RemoveAllListeners();
+        TutorialButton.onClick.RemoveAllListeners();
     }
 
     private void OnFileButtonClick(GameInfo gameInfo)
@@ -115,6 +123,8 @@ public class MainMenu : MonoBehaviour
         LoadGamePanel.SetActive(false);
         MainMenuPanel.SetActive(true);
         ChooseProfileNamePanel.SetActive(false);
+
+        GameManager.Instance.GameInfo = selectedGameInfo;
     }
 
     public void CreateNewProfilePressed()
@@ -172,7 +182,11 @@ public class MainMenu : MonoBehaviour
         //SceneManager.LoadScene(Constants.Scenes.START_SCREEN);
         GameManager.Instance.LoadScene(Constants.Scenes.START_SCREEN);
     }
-
+    private void OnPlayTutorialButtonPressed()
+    {
+        GameManager.Instance.PlayTutorial(this.selectedGameInfo);
+        //GameManager.Instance.LoadScene(Constants.Scenes.TUTORIAL);
+    }
     void OnDestroy()
     {
         LoadGamePanelBackButton.onClick.RemoveListener(OnGamePanelBackButtonPressed);

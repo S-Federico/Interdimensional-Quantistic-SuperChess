@@ -23,12 +23,13 @@ public class GameUI : MonoBehaviour
 
     private static Texture2D _defaultCursor;
     private static Texture2D _handCursor;
-
+    [SerializeField] private bool isTutorial = false;
+    public bool IsTutorial { get => isTutorial; }
     void Start()
     {
         _defaultCursor = defaultCursor;
         _handCursor = handCursor;
-        
+
         HideAll();
 
         // Play ost
@@ -46,7 +47,7 @@ public class GameUI : MonoBehaviour
         // GameOver UI should be visible only if is game over
         GameOverMenu.SetActive(GameManager.Instance.IsGameOver);
 
-        if (GameManager.Instance.IsGameOver)
+        if (GameManager.Instance.IsGameOver && !isTutorial)
         {
             GameInfo gameInfo = GameManager.Instance.GameInfo;
             if (gameInfo.Winner != null && gameInfo.Winner == PieceColor.White)

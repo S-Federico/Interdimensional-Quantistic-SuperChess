@@ -15,5 +15,7 @@ public static class Constants
         public const string START_SCREEN = "StartScreen";
         public const string SAMPLE_SCENE = "SampleScene";
         public const string SHOP = "ShopMockup";
+        public const string TUTORIAL = "TutorialScene";
+
     }
 }
