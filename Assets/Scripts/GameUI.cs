@@ -31,6 +31,9 @@ public class GameUI : MonoBehaviour
         _handCursor = handCursor;
 
         HideAll();
+
+        // Play ost
+        SoundManager.Instance.PlaySoud(Sound.OST_HEARTSONE, true, true, false);
     }
 
     void Update()

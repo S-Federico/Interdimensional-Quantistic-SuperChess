@@ -36,7 +36,7 @@ public class GameInfo
 
     public BoardData BoardData;
     public PieceColor? Winner;
-
+    
     public GameState GameState = GameState.RUNNING;
     public bool GameStarted = false; // This flag indicates if the game was started. If false, the load game button should be disabled
 }

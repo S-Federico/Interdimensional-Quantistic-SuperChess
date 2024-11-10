@@ -8,6 +8,7 @@ public class StartScreen : MonoBehaviour
 {
     public Button StartGameButton;
     public Button OptionsButton;
+    public Button ExitGameButton;
     public Texture2D defaultCursor;
 
     // Start is called before the first frame update
@@ -20,7 +21,15 @@ public class StartScreen : MonoBehaviour
         // Options button events
         OptionsButton.onClick.AddListener(OptionsPressed);
         OptionsButton.onClick.AddListener(PlayButtonSound);
+
+        // Exit game button
+        ExitGameButton.onClick.AddListener(ExitGameButtonPressed);
+        ExitGameButton.onClick.AddListener(PlayButtonSound);
+
         Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
+
+        // Play ost
+        SoundManager.Instance.PlaySoud(Sound.MAIN_MENU_OST, true, true, false);
 
     }
 
@@ -33,6 +42,10 @@ public class StartScreen : MonoBehaviour
         // Options button events
         OptionsButton.onClick.RemoveListener(OptionsPressed);
         OptionsButton.onClick.RemoveListener(PlayButtonSound);
+
+        // Exit game button
+        ExitGameButton.onClick.RemoveListener(ExitGameButtonPressed);
+        ExitGameButton.onClick.RemoveListener(PlayButtonSound);
     }
 
     private void StartGamePressed()
@@ -50,5 +63,11 @@ public class StartScreen : MonoBehaviour
     private void PlayButtonSound()
     {
         SoundManager.Instance.PlaySoundOneShot(Sound.BUTTON_PRESSED);
+    }
+
+    private void ExitGameButtonPressed() {
+
+        // Show confirmation popup
+        PopupManager.Instance.ShowPopup("Are you sure?", () => Application.Quit(), () => {});
     }
 }
