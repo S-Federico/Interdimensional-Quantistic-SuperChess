@@ -2807,6 +2807,7 @@ MonoBehaviour:
   fightPlayerPiecePrefab: {fileID: 979146699}
   extraPiecePrefab: {fileID: 1843516862}
   boardManager: {fileID: 965710759}
+  dialogController: {fileID: 7992901634427861685}
 --- !u!4 &742073611
 Transform:
   m_ObjectHideFlags: 0
@@ -3441,6 +3442,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -9035978931034140281, guid: 194de214eb20e4d40901662070320b7c, type: 3}
+      propertyPath: isDraggable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 103078, guid: 194de214eb20e4d40901662070320b7c, type: 3}
       propertyPath: m_Name
       value: White Queen (1)
@@ -4220,6 +4225,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -9035978931034140281, guid: 194de214eb20e4d40901662070320b7c, type: 3}
+      propertyPath: isDraggable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 103078, guid: 194de214eb20e4d40901662070320b7c, type: 3}
       propertyPath: m_Name
       value: White Queen
@@ -7235,6 +7244,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
+--- !u!114 &7992901634427861685 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
+  m_PrefabInstance: {fileID: 7992901634427861684}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c95d55c8fc6e2749807500876f1c44b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

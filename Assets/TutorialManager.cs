@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 /*
@@ -33,24 +34,53 @@ public class TutorialManager : MonoBehaviour
     public GameObject extraPiecePrefab;
     public BoardManager boardManager;
     private int dialogueBeat;
-
+    public DialogController dialogController;
+    bool storybeatstestfinished = false;
     void Start()
     {
-        PlacePiece((0, 4), initialPlayerPiecePrefab);
-        consumable.SetActive(false);
-        //Capire se anche da inattivi fanno cose
-        manual.SetActive(false);
+        dialogController.OnNewLineHandler += NextBeat;
     }
     void Update()
     {
-
+        if (!storybeatstestfinished)
+        {
+            storybeatstestfinished = true;
+            FirstStoryBeat();
+        }
     }
 
+    public void NextBeat(int newBeat)
+    {
+        switch (newBeat)
+        {
+            case 1:
+                FirstStoryBeat();
+                break;
+            case 4:
+                TutorialBeatFight();
+                break;
+            case 5:
+                TutorialBeatConsumable();
+                break;
+            case 6:
+                TutorialBeatManual();
+                break;
+            case 8:
+                TutorialBeatExtraPieces();
+                break;
+        }
+    }
+    public void FirstStoryBeat()
+    {
+        consumable.SetActive(false);
+        manual.SetActive(false);
+        PlacePiece((7, 4), initialPlayerPiecePrefab);
+    }
     public void TutorialBeatFight()
     {
         RemovePiece(initialPlayerPiecePrefab);
-        PlacePiece((4, 4), fightPlayerPiecePrefab);
-        PlacePiece((5, 4), opponentPiecePrefab);
+        PlacePiece((5, 4), fightPlayerPiecePrefab);
+        PlacePiece((4, 4), opponentPiecePrefab);
     }
     public void TutorialBeatConsumable()
     {
