@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PopupController : MonoBehaviour
 {
@@ -12,18 +13,35 @@ public class PopupController : MonoBehaviour
     private System.Action onConfirmAction;
     private System.Action onCancelAction;
     private System.Action onFinish;
+    [SerializeField] private Button confirmButton;
+    [SerializeField] private Button cancelButton;
 
     void Start()
     {
     }
 
+    void OnEnable() {
+        confirmButton.onClick.AddListener(PlayButtonSound);
+        cancelButton.onClick.AddListener(PlayButtonSound);
+    }
+
+    void OnDisable() {
+        confirmButton.onClick.RemoveListener(PlayButtonSound);
+        cancelButton.onClick.RemoveListener(PlayButtonSound);
+    }
+
     // Function to display the popup and pass the action to confirm
-    public void ShowPopup(string message, System.Action confirmAction, System.Action cancelAction, System.Action onFinish)
+    public void ShowPopup(string message, System.Action confirmAction, System.Action cancelAction, System.Action onFinish, string confirmButtonText = "Confirm",
+    string cancelButtonText = "Cancel")
     {
         Text.text = message;
         onConfirmAction = confirmAction;
         onCancelAction = cancelAction;
         this.onFinish = onFinish;
+
+        confirmButton.GetComponentInChildren<TextMeshProUGUI>().text = confirmButtonText;
+        cancelButton.GetComponentInChildren<TextMeshProUGUI>().text = cancelButtonText;
+
     }
 
     // Called when the confirm button is pressed
@@ -38,5 +56,9 @@ public class PopupController : MonoBehaviour
     {
         onCancelAction?.Invoke();
         onFinish?.Invoke();
+    }
+
+    private void PlayButtonSound() {
+        SoundManager.Instance.PlaySoundOneShot(Sound.BUTTON_PRESSED);
     }
 }
