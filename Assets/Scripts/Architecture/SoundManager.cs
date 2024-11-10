@@ -28,7 +28,7 @@ public class SoundManager : Singleton<SoundManager>
         {
             AudioSource audioSource = NonOneShotSounds[item]?.GetComponent<AudioSource>();
             if (audioSource != null) {
-                audioSource.volume = GameManager.Instance.Options.MusicVolume;
+                audioSource.volume = GameManager.Instance.Options.MusicVolumeClamped;
             }
         }
     }
