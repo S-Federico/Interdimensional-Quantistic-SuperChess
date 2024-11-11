@@ -102,7 +102,7 @@ public class GameManager : Singleton<GameManager>
         // START change
         var boardManager = GameObject.FindAnyObjectByType<BoardManager>();
         boardManager.LoadBoardFromBoardData();
-        boardManager.InitializePiecesPlanes(true);
+        //boardManager.InitializePiecesPlanes(true);
         // END change
 
         // Imposta il progresso al 100% quando il caricamento è completo.

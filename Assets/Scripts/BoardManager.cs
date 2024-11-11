@@ -49,10 +49,13 @@ public class BoardManager : MonoBehaviour
 
         AssignModifiers();
 
-        LoadConsumables();
+        if (!isTutorial)
+            LoadConsumables();
 
         plane_manuals = GameObject.Find("ManualPlane");
-        LoadManuals();
+
+        if (!isTutorial)
+            LoadManuals();
         showMovesFlag = false;
         alreadyExcecuting = false;
 
@@ -89,10 +92,6 @@ public class BoardManager : MonoBehaviour
 
                 currentTurn = Turn.Player;
             }
-        }
-        if (isTutorial)
-        {
-            //Tutorial();
         }
     }
 
@@ -376,7 +375,8 @@ public class BoardManager : MonoBehaviour
                 }
             }
             this.Pieces = result;
-            InitializePiecesPlanes(false);
+            if (!IsTutorial)
+                InitializePiecesPlanes(false);
         }
     }
 

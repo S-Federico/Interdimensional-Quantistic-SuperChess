@@ -265,6 +265,9 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             buyTag.SetActive(true);
             priceTag.SetActive(true);
         }
+        if (scriptableItem != null && scriptableItem is ScriptableManual && bought) {
+            useTag.SetActive(false);
+        }
     }
 
     public void OnClick()
@@ -447,17 +450,17 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
         {
             if (scriptableItem != null)
             {
-                string description = GenerateTooltipDescription();
-                tooltip.SetText(scriptableItem.Name, description);
+                (string description, string matrix) = GenerateTooltipDescription();
+                tooltip.SetText(scriptableItem.Name, description, matrix);
             }
             else if (pieceData != null)
             {
-                string description = GenerateTooltipDescription();
-                tooltip.SetText("One Piece", description);
+                (string description, string matrix) = GenerateTooltipDescription();
+                tooltip.SetText("One Piece", description, "");
             }
             else
             {
-                tooltip.SetText("Elemento Sconosciuto", "");
+                tooltip.SetText("Elemento Sconosciuto", "", "");
             }
             tooltip.ShowAfterDelay(scriptableItem?.GetInstanceID() ?? 0);
         }
@@ -475,9 +478,11 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
         GameUI.SetCursor(CursorType.Default);
     }
 
-    private string GenerateTooltipDescription()
+    private (string description, string matrix) GenerateTooltipDescription()
     {
         string description = "";
+        string matrix = "";
+
         if (scriptableItem is ScriptableConsumable)
         {
             // Caso consumabile
@@ -499,20 +504,19 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             }
             if (!inGameSceneFlag)
             {
-                description += "Area of Effect:\n";
                 int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(consumable.ApplicationMatrix);
 
                 for (int i = 0; i < applicationMatrix.GetLength(0); i++)
                 {
                     for (int j = 0; j < applicationMatrix.GetLength(1); j++)
                     {
-                        description += applicationMatrix[i, j] == 1 ? "X " : "O ";
+                        matrix += applicationMatrix[i, j] == 1 ? "[X]" : "[ ]";
                     }
-                    description += "\n";
+                    matrix += "\n";
                 }
             }
 
-            return description;
+            return (description, matrix);
 
         }
         else if (scriptableItem is ScriptableManual)
@@ -536,31 +540,19 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             }
             if (!inGameSceneFlag)
             {
-                description += "\nArea of Effect:\n";
                 int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(manual.ApplicationMatrix);
-                description += "  "; // Spazio iniziale per allineare le etichette di colonna
-
-                // Aggiungi le etichette delle colonne (lettere)
-                for (int j = 0; j < applicationMatrix.GetLength(1); j++)
-                {
-                    description += $"{(char)('A' + j)}";
-                }
-                description += "\n";
-
                 for (int i = 0; i < applicationMatrix.GetLength(0); i++)
                 {
-                    description += $"{applicationMatrix.GetLength(0) - i} "; // Aggiungi il numero di riga all'inizio
-
                     for (int j = 0; j < applicationMatrix.GetLength(1); j++)
                     {
                         // Aggiungi la cella con "X" o "O" e un separatore verticale "|"
-                        description += (applicationMatrix[i, j] == 1 ? "X" : "O");
+                        matrix += applicationMatrix[i, j] == 1 ? "[X]" : "[ ]";
                     }
 
-                    description += "\n"; // Fine riga
+                    matrix += "\n"; // Fine riga
                 }
             }
-            return description;
+            return (description, matrix);
         }
         else if (pieceData != null)
         {
@@ -579,12 +571,11 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                     description += $"{modifier.statusEffectType}\n";
                 }
             }
-            return description;
+            return (description, matrix);
         }
         else
         {
-            // Caso predefinito
-            return scriptableItem?.Description ?? "";
+            return (description, matrix);
         }
     }
 
