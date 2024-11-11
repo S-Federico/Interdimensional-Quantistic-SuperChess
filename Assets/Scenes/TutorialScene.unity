@@ -7553,35 +7553,70 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
       propertyPath: DialogueLines.Array.size
-      value: 11
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
+      propertyPath: DialogueLines.Array.data[0]
+      value: "Welcome to Interdimensional Quantistic Superchess! You're currently
+        in the Tutorial Dimension, where you'll learn the basics. In the upcoming
+        Tournament of Dimensions, each encounter will take place in a new realm with
+        unique challenges and exponentially stronger foes. Remember: you control
+        the white pieces, while the black pieces are your enemies. Let\u2019s begin!"
+      objectReference: {fileID: 0}
+    - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
+      propertyPath: DialogueLines.Array.data[1]
+      value: Hover over your piece to see its stats. H represents Health Points (HP),
+        and A is for Attack Power. When you attack, your piece will deal damage equal
+        to its Attack Power to the enemy's HP.
+      objectReference: {fileID: 0}
+    - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
+      propertyPath: DialogueLines.Array.data[2]
+      value: Click on a piece to reveal its movement grid. This shows where it can
+        move or attack. Just click on a highlighted square to execute the action.
       objectReference: {fileID: 0}
     - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
       propertyPath: DialogueLines.Array.data[3]
-      value: TEST4
+      value: "Move your piece to a highlighted square to engage in combat\u2014capturing
+        the enemy King is your ultimate objective, and combat is the heart of the
+        game. Plan each move carefully!"
       objectReference: {fileID: 0}
     - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
       propertyPath: DialogueLines.Array.data[4]
-      value: TEST5
+      value: "On the right, you\u2019ll see consumables\u2014single-use items that
+        provide temporary boosts to your pieces. Hover over a consumable to read
+        its description, and click on it to see the available actions."
       objectReference: {fileID: 0}
     - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
       propertyPath: DialogueLines.Array.data[5]
-      value: TEST6
+      value: When you select Use on a consumable, you can either place it on a cell
+        to enhance any piece that passes over it or apply it directly to a piece,
+        depending on what the description specifies. Choose strategically for the
+        best effect!
       objectReference: {fileID: 0}
     - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
       propertyPath: DialogueLines.Array.data[6]
-      value: TEST7
+      value: "Manuals provide upgrades that are placed on specific cells. When your
+        pieces pass over these cells, they gain the upgrade\u2014enemy pieces won\u2019t
+        benefit from these. Hover over a manual to see the affected cells. After
+        each encounter, you'll be able to restock on consumables and manuals at the
+        shop to strengthen your strategy."
       objectReference: {fileID: 0}
     - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
       propertyPath: DialogueLines.Array.data[7]
-      value: TEST8
+      value: You can look around by holding down the right mouse button (RMB) and
+        moving the mouse. Use this to get a better view of the board.
       objectReference: {fileID: 0}
     - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
       propertyPath: DialogueLines.Array.data[8]
-      value: TEST9
+      value: "At the bottom, you\u2019ll find your reserve pieces. To place a reserve
+        piece, drag it from the panel to the board while holding the left mouse button
+        (LMB). You can only position them within the first two rows."
       objectReference: {fileID: 0}
     - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
       propertyPath: DialogueLines.Array.data[9]
-      value: TEST10
+      value: That's all you need to get started! Remember, every move counts in Interdimensional
+        Quantistic Superchess. Plan carefully, adapt to each new dimension, and may
+        your strategy lead you to victory. Good luck!
       objectReference: {fileID: 0}
     - target: {fileID: 6700207840850814665, guid: 43a5b9752d7342541b732c4caac75e48, type: 3}
       propertyPath: DialogueLines.Array.data[10]

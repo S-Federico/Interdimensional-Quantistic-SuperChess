@@ -34,14 +34,11 @@ public class TutorialManager : MonoBehaviour
     public GameObject fightPlayerPiecePrefab;
     public GameObject extraPiecePrefab;
     public BoardManager boardManager;
-    private int dialogueBeat;
     public DialogController dialogController;
-    bool storybeatstestfinished = false;
     void Start()
     {
         consumable.SetActive(false);
         manual.SetActive(false);
-
     }
 
     void OnEnable() {
@@ -70,10 +67,10 @@ public class TutorialManager : MonoBehaviour
             case 1:
                 FirstStoryBeat();
                 break;
-            case 4:
+            case 3:
                 TutorialBeatFight();
                 break;
-            case 5:
+            case 4:
                 TutorialBeatConsumable();
                 break;
             case 6:
@@ -97,6 +94,9 @@ public class TutorialManager : MonoBehaviour
     public void TutorialBeatConsumable()
     {
         RemovePiece(fightPlayerPiecePrefab);
+        if(opponentPiecePrefab!=null){
+            RemovePiece(opponentPiecePrefab);
+        }
         consumable.SetActive(true);
     }
     public void TutorialBeatManual()
