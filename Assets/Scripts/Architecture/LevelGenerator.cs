@@ -6,10 +6,16 @@ using UnityEngine;
 
 public class LevelGenerator : Singleton<LevelGenerator>
 {
-    private const int BASE_DIFFICULTY = 10;
-    private const int VARIABLE_BASE_DIFFICULTY = 2;
+    private const double BASE_DIFFICULTY = 10.0;
+    private const double VARIABLE_BASE_DIFFICULTY = 2;
     private const int STAGES_PER_LEVEL = 3;
 
+
+    private double DifficultyToReach(int level, int stage) {
+        int stageLevelCombined = Math.Max(0, level - 1) * STAGES_PER_LEVEL + stage;
+        double difficultyToReach = BASE_DIFFICULTY * Math.Pow(stageLevelCombined, VARIABLE_BASE_DIFFICULTY); 
+        return difficultyToReach;
+    }
 
     public List<PieceData> GeneratePieces(ScriptableLevel level, PieceColor color,  int l = 1, int stage = 1, int maxPieces = 8, int minPieces = 1)
     {
@@ -35,10 +41,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         // Remove King from possible pieces
         pieces.RemoveAll(p => p.PieceType == PieceType.King);
 
-
-        int stageLevelCombined = Math.Max(0, l - 1) * STAGES_PER_LEVEL + stage;
-
-        double difficultyToReach = BASE_DIFFICULTY + Math.Pow(VARIABLE_BASE_DIFFICULTY, stageLevelCombined);
+        double difficultyToReach = DifficultyToReach(l, stage);
         double currentDifficulty = 0.0f;
 
         while ((currentDifficulty < difficultyToReach || result.Count <= minPieces) && result.Count < maxPieces && pieces.Count > 0)
@@ -81,10 +84,11 @@ public class LevelGenerator : Singleton<LevelGenerator>
     /// <returns></returns>
     public List<PieceData> GeneratePieces(string piecespath, string modpath, PieceColor color, int level = 1, int stage = 1, int maxPieces = 8, int minPieces = 1)
     {
+        ScriptableLevel scriptableLevel = GameManager.Instance.GetLevel(GameManager.Instance.GameInfo.Level);
         List<PieceData> result = new List<PieceData>();
 
         GameObject[] prefabs = Resources.LoadAll<GameObject>(piecespath);
-        ScriptableStatusModifier[] ModifierPrefabs = Resources.LoadAll<ScriptableStatusModifier>(modpath);
+        List<ScriptableStatusModifier> ModifierPrefabs = scriptableLevel.Modifiers; // Resources.LoadAll<ScriptableStatusModifier>(modpath);
 
         List<PieceData> pieces = new List<PieceData>();
 
@@ -103,7 +107,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         // Remove King from possible pieces
         pieces.RemoveAll(p => p.PieceType == PieceType.King);
 
-        double difficultyToReach = BASE_DIFFICULTY + Math.Pow(VARIABLE_BASE_DIFFICULTY, level * stage);
+        double difficultyToReach = DifficultyToReach(level, stage);
         double currentDifficulty = 0.0f;
 
         while ((currentDifficulty < difficultyToReach || result.Count <= minPieces) && result.Count < maxPieces && pieces.Count > 0)
@@ -115,14 +119,14 @@ public class LevelGenerator : Singleton<LevelGenerator>
             pieces.RemoveAt(pieceIndex);
         }
 
-        if (currentDifficulty < difficultyToReach)
+        if (currentDifficulty < difficultyToReach && ModifierPrefabs != null && ModifierPrefabs.Count > 0)
         {
             while (currentDifficulty < difficultyToReach)
             {
                 PieceData randomPiece = result[(int)UnityEngine.Random.Range(0, result.Count)];
                 currentDifficulty -= randomPiece.StrenghtValue;
 
-                ScriptableStatusModifier randomScriptableStatusModifier = ModifierPrefabs[(int)UnityEngine.Random.Range(0, ModifierPrefabs.Length)];
+                ScriptableStatusModifier randomScriptableStatusModifier = ModifierPrefabs[UnityEngine.Random.Range(0, ModifierPrefabs.Count)];
                 if (randomScriptableStatusModifier.modifierType == ModifierType.SpecialEffect && randomPiece.Modifiers.Find(m => m.name == randomScriptableStatusModifier.name) != null)
                 {
                     currentDifficulty += randomPiece.StrenghtValue;
