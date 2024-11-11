@@ -538,19 +538,8 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             if (!inGameSceneFlag)
             {
                 int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(manual.ApplicationMatrix);
-                matrix += "  "; // Spazio iniziale per allineare le etichette di colonna
-
-                // Aggiungi le etichette delle colonne (lettere)
-                for (int j = 0; j < applicationMatrix.GetLength(1); j++)
-                {
-                    matrix += $"{(char)('A' + j)} ";
-                }
-                matrix += "\n";
-
                 for (int i = 0; i < applicationMatrix.GetLength(0); i++)
                 {
-                    matrix += $"{applicationMatrix.GetLength(0) - i} "; // Aggiungi il numero di riga all'inizio
-
                     for (int j = 0; j < applicationMatrix.GetLength(1); j++)
                     {
                         // Aggiungi la cella con "X" o "O" e un separatore verticale "|"
