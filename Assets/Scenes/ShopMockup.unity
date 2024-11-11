@@ -2039,7 +2039,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1014017443}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
@@ -2111,8 +2111,24 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
-      propertyPath: NoiseModule.enabled
+      propertyPath: LightsModule.color
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.light
+      value: 
+      objectReference: {fileID: 6340433234315216965, guid: c9077f8320f82d1439b7d6c66b5735f8, type: 3}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.range
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.ratio
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: NoiseModule.enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: NoiseModule.octaves
@@ -2123,12 +2139,24 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: NoiseModule.frequency
       value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: ShapeModule.arc.value
       value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.intensity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.maxLights
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: CollisionModule.enabled
@@ -2140,11 +2168,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: ShapeModule.radiusThickness
-      value: 1.0000
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: InitialModule.startSize.scalar
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.rangeCurve.scalar
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: CollisionModule.m_Dampen.scalar
@@ -2155,8 +2187,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.randomDistribution
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.intensityCurve.scalar
+      value: 1.1
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.key0.b

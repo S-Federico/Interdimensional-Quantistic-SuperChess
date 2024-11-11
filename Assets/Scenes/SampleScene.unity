@@ -1785,6 +1785,10 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2149857149831209931, guid: 34534f9a2d6df1c4f8dee201f8d50aaa, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149857149831209931, guid: 34534f9a2d6df1c4f8dee201f8d50aaa, type: 3}
       propertyPath: m_Shadows.m_NearPlane
       value: 0.1
       objectReference: {fileID: 0}
@@ -4961,8 +4965,44 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.light
+      value: 
+      objectReference: {fileID: 6340433234315216965, guid: c9077f8320f82d1439b7d6c66b5735f8, type: 3}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.range
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.ratio
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.intensity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.maxLights
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: ShapeModule.radiusThickness
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.rangeCurve.scalar
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.randomDistribution
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
+      propertyPath: LightsModule.intensityCurve.scalar
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 3489102539311889299, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: m_Name
