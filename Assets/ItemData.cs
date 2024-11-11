@@ -265,6 +265,9 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             buyTag.SetActive(true);
             priceTag.SetActive(true);
         }
+        if (scriptableItem != null && scriptableItem is ScriptableManual && bought) {
+            useTag.SetActive(false);
+        }
     }
 
     public void OnClick()
