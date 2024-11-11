@@ -90,10 +90,6 @@ public class BoardManager : MonoBehaviour
                 currentTurn = Turn.Player;
             }
         }
-        if (isTutorial)
-        {
-            //Tutorial();
-        }
     }
 
     void LateUpdate()
@@ -376,7 +372,8 @@ public class BoardManager : MonoBehaviour
                 }
             }
             this.Pieces = result;
-            InitializePiecesPlanes(false);
+            if (!IsTutorial)
+                InitializePiecesPlanes(false);
         }
     }
 
