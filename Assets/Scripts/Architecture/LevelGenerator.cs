@@ -8,6 +8,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
 {
     private const int BASE_DIFFICULTY = 10;
     private const int VARIABLE_BASE_DIFFICULTY = 2;
+    private const int STAGES_PER_LEVEL = 3;
 
 
     public List<PieceData> GeneratePieces(ScriptableLevel level, PieceColor color,  int l = 1, int stage = 1, int maxPieces = 8, int minPieces = 1)
@@ -34,7 +35,10 @@ public class LevelGenerator : Singleton<LevelGenerator>
         // Remove King from possible pieces
         pieces.RemoveAll(p => p.PieceType == PieceType.King);
 
-        double difficultyToReach = BASE_DIFFICULTY + Math.Pow(VARIABLE_BASE_DIFFICULTY, l * stage);
+
+        int stageLevelCombined = Math.Max(0, l - 1) * STAGES_PER_LEVEL + stage;
+
+        double difficultyToReach = BASE_DIFFICULTY + Math.Pow(VARIABLE_BASE_DIFFICULTY, stageLevelCombined);
         double currentDifficulty = 0.0f;
 
         while ((currentDifficulty < difficultyToReach || result.Count <= minPieces) && result.Count < maxPieces && pieces.Count > 0)

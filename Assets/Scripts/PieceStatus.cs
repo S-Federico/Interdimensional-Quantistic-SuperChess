@@ -10,8 +10,8 @@ public class PieceStatus : MonoBehaviour, IClickable
     public PieceType PieceType;
 
     // Variabili base private
-    private int baseHp = 1;
-    private int baseAttack = 1;
+    [SerializeField] private int baseHp = 1;
+    [SerializeField] private int baseAttack = 1;
     private int baseNumberOfMoves = 1;
     private ParticleSystem auraParticle;
 
@@ -114,7 +114,7 @@ public class PieceStatus : MonoBehaviour, IClickable
         // modelRenderer = GetComponent<Renderer>();
         // originalColor = modelRenderer.material.color;
         auraParticle = GetComponentInChildren<ParticleSystem>();
-        auraParticle.Stop();
+        auraParticle?.Stop();
         boardManager = FindAnyObjectByType<BoardManager>();
         BuildMovementMatrix();
         CellModifiers = new List<ScriptableStatusModifier>();
@@ -144,7 +144,7 @@ public class PieceStatus : MonoBehaviour, IClickable
         }
         else
         {
-            Debug.LogError("Non è stato trovato un Renderer nel GameObject padre o nei suoi figli.");
+            Debug.Log("Non è stato trovato un Renderer nel GameObject padre o nei suoi figli.");
         }
         stats = Instantiate(Resources.Load<GameObject>("StatsPrefab"));
         stats.transform.position = this.gameObject.transform.position;

@@ -177,6 +177,7 @@ public class SoundManager : Singleton<SoundManager>
     public void StopSound(Sound sound, bool removeFromDict = true)
     {
         // Find obj if exists
+        if (!NonOneShotSounds.ContainsKey(sound)) return;
         GameObject gameObject = NonOneShotSounds[sound];
         if (gameObject == null)
         {
