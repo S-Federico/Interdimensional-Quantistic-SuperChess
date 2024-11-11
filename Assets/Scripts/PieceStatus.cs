@@ -275,7 +275,7 @@ public class PieceStatus : MonoBehaviour, IClickable
 
     public PieceData GetPieceData()
     {
-        return new PieceData(PieceType, Hp, Attack, PieceColor, PrefabID, Position, _MovementMatrix, appliedModifiers);
+        return new PieceData(PieceType, BaseHp, BaseAttack, PieceColor, PrefabID, Position, _MovementMatrix, appliedModifiers);
     }
 
     public void BuildFromData(PieceData pData)
