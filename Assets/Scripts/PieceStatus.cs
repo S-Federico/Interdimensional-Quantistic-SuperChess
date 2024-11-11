@@ -25,7 +25,10 @@ public class PieceStatus : MonoBehaviour, IClickable
     {
         get
         {
-            return baseHp + CalculateBuff(appliedModifiers, AttributeType.Hp) + CalculateBuff(CellModifiers, AttributeType.Hp) - DamageTaken;
+            int health = baseHp + CalculateBuff(appliedModifiers, AttributeType.Hp) - DamageTaken;
+            if (PieceColor == PieceColor.White)
+                health += CalculateBuff(CellModifiers, AttributeType.Hp);
+            return health;
         }
         set
         {
@@ -39,7 +42,10 @@ public class PieceStatus : MonoBehaviour, IClickable
     {
         get
         {
-            return baseAttack + CalculateBuff(appliedModifiers, AttributeType.Attack) + CalculateBuff(CellModifiers, AttributeType.Attack);
+            int attack = baseAttack + CalculateBuff(appliedModifiers, AttributeType.Attack);
+            if (PieceColor == PieceColor.White)
+                attack += CalculateBuff(CellModifiers, AttributeType.Attack);
+            return attack;
         }
         set
         {
