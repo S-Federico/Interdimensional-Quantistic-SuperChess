@@ -7,6 +7,8 @@ public class Tooltip : MonoBehaviour
 {
     public TextMeshProUGUI headerField;
     public TextMeshProUGUI contentField;
+    public TextMeshProUGUI matrixField;
+    public GameObject matrixTooltip;
     public LayoutElement layoutElement;
     public int characterWrapLimit;
     public Vector2 offset; // Offset to avoid the tooltip covering the mouse cursor
@@ -40,7 +42,7 @@ public class Tooltip : MonoBehaviour
         group.alpha = Mathf.Lerp(group.alpha, targetalpha, 0.05f);
     }
 
-    public void SetText(string headerText, string contentText)
+    public void SetText(string headerText, string contentText, string matrixText)
     {
         // Assicurati che i parametri non siano null, altrimenti imposta a stringa vuota
         headerText = headerText ?? string.Empty;
@@ -57,26 +59,35 @@ public class Tooltip : MonoBehaviour
             contentField.text = contentText;
         }
 
+        if (matrixText == null || matrixText == string.Empty)
+        {
+            matrixTooltip.SetActive(false);
+        }
+        else if (matrixField != null)
+        {
+            matrixTooltip.SetActive(true);
+            matrixField.text = matrixText;
+        }
         // Aggiorna il layout in base alla lunghezza dei nuovi testi
         AdjustLayout();
     }
 
-private void AdjustLayout()
-{
-    // Controlla che i campi di testo non siano nulli prima di leggere la loro lunghezza
-    int headerLength = headerField != null ? headerField.text.Length : 0;
-
-    int firstLineContentLength = 0;
-    if (contentField != null && !string.IsNullOrEmpty(contentField.text))
+    private void AdjustLayout()
     {
-        // Ottieni la prima riga del testo della descrizione
-        string firstLine = contentField.text.Split('\n')[0];
-        firstLineContentLength = firstLine.Length;
-    }
+        // Controlla che i campi di testo non siano nulli prima di leggere la loro lunghezza
+        int headerLength = headerField != null ? headerField.text.Length : 0;
 
-    // Abilita o disabilita il layoutElement in base alla lunghezza della prima riga del testo
-    layoutElement.enabled = (headerLength > characterWrapLimit || firstLineContentLength > characterWrapLimit);
-}
+        int firstLineContentLength = 0;
+        if (contentField != null && !string.IsNullOrEmpty(contentField.text))
+        {
+            // Ottieni la prima riga del testo della descrizione
+            string firstLine = contentField.text.Split('\n')[0];
+            firstLineContentLength = firstLine.Length;
+        }
+
+        // Abilita o disabilita il layoutElement in base alla lunghezza della prima riga del testo
+        layoutElement.enabled = (headerLength > characterWrapLimit || firstLineContentLength > characterWrapLimit);
+    }
 
 
     private void FollowMouse()
@@ -84,6 +95,7 @@ private void AdjustLayout()
         Vector2 mousePosition = Input.mousePosition;
         Vector2 adjustedPosition = mousePosition + offset;
         transform.position = adjustedPosition;
+        matrixTooltip.GetComponent<RectTransform>().position = adjustedPosition;
     }
 
     public void Show()
