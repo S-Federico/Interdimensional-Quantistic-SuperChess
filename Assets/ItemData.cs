@@ -447,17 +447,17 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
         {
             if (scriptableItem != null)
             {
-                (string description,string matrix) = GenerateTooltipDescription();
-                tooltip.SetText(scriptableItem.Name, description,matrix);
+                (string description, string matrix) = GenerateTooltipDescription();
+                tooltip.SetText(scriptableItem.Name, description, matrix);
             }
             else if (pieceData != null)
             {
-                (string description,string matrix) = GenerateTooltipDescription();
-                tooltip.SetText("One Piece", description,"");
+                (string description, string matrix) = GenerateTooltipDescription();
+                tooltip.SetText("One Piece", description, "");
             }
             else
             {
-                tooltip.SetText("Elemento Sconosciuto", "","");
+                tooltip.SetText("Elemento Sconosciuto", "", "");
             }
             tooltip.ShowAfterDelay(scriptableItem?.GetInstanceID() ?? 0);
         }
@@ -507,13 +507,13 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                 {
                     for (int j = 0; j < applicationMatrix.GetLength(1); j++)
                     {
-                        matrix += applicationMatrix[i, j] == 1 ? "X " : "O ";
+                        matrix += applicationMatrix[i, j] == 1 ? "[X]" : "[ ]";
                     }
                     matrix += "\n";
                 }
             }
 
-            return (description,matrix);
+            return (description, matrix);
 
         }
         else if (scriptableItem is ScriptableManual)
@@ -543,7 +543,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                 // Aggiungi le etichette delle colonne (lettere)
                 for (int j = 0; j < applicationMatrix.GetLength(1); j++)
                 {
-                    matrix += $"{(char)('A' + j)}";
+                    matrix += $"{(char)('A' + j)} ";
                 }
                 matrix += "\n";
 
@@ -554,13 +554,13 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                     for (int j = 0; j < applicationMatrix.GetLength(1); j++)
                     {
                         // Aggiungi la cella con "X" o "O" e un separatore verticale "|"
-                        matrix += applicationMatrix[i, j] == 1 ? "X" : "O";
+                        matrix += applicationMatrix[i, j] == 1 ? "[X]" : "[ ]";
                     }
 
                     matrix += "\n"; // Fine riga
                 }
             }
-            return (description,matrix);
+            return (description, matrix);
         }
         else if (pieceData != null)
         {
@@ -579,11 +579,11 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                     description += $"{modifier.statusEffectType}\n";
                 }
             }
-            return (description,matrix);
+            return (description, matrix);
         }
         else
         {
-            return (description,matrix);
+            return (description, matrix);
         }
     }
 
