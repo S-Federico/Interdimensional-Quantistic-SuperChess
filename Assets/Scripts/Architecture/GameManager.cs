@@ -256,6 +256,8 @@ public class GameManager : Singleton<GameManager>
         this.isGameOver = true;
         GameInfo.Winner = winner;
 
+        SoundManager.Instance.PlaySoud((winner != null && PieceColor.White == winner) ? Sound.VICTORY_FANFARE : Sound.DEFEAT_FANFARE, looping: false, alone: false, resumeOthersAfter: true);
+
         // Give money only if game is currently running to prevent giving again money
         if (GameInfo.GameState == GameState.RUNNING && GameInfo.Winner == PieceColor.White)
         {

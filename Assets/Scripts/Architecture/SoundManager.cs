@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using Unity.VisualScripting;
+using System.Data.Common;
 using UnityEngine;
 
 public class SoundManager : Singleton<SoundManager>
@@ -12,22 +12,26 @@ public class SoundManager : Singleton<SoundManager>
     private Dictionary<Sound, GameObject> NonOneShotSounds = new Dictionary<Sound, GameObject>();
     private Dictionary<Sound, GameObject> OneShotSounds = new Dictionary<Sound, GameObject>();
 
-    void Awake() {
+    void Awake()
+    {
         options = GameManager.Instance.Options;
     }
 
-    void Update() {
+    void Update()
+    {
 
         if (NonOneShotSounds.Keys.Count == 0) return;
 
-        if (!options.MusicEnabled) {
+        if (!options.MusicEnabled)
+        {
             StopAllSounds();
         }
 
         foreach (var item in NonOneShotSounds.Keys)
         {
             AudioSource audioSource = NonOneShotSounds[item]?.GetComponent<AudioSource>();
-            if (audioSource != null) {
+            if (audioSource != null)
+            {
                 audioSource.volume = GameManager.Instance.Options.MusicVolumeClamped;
             }
         }
@@ -37,7 +41,8 @@ public class SoundManager : Singleton<SoundManager>
     {
         if (!options.SoundEnabled) return;
 
-        if (preventOverlapping && OneShotSounds.ContainsKey(sound)) {
+        if (preventOverlapping && OneShotSounds.ContainsKey(sound))
+        {
             return;
         }
 
@@ -58,9 +63,11 @@ public class SoundManager : Singleton<SoundManager>
         StartCoroutine(DestroyOneShotFromDict(sound, audioClip.length));
     }
 
-    private IEnumerator DestroyOneShotFromDict(Sound sound, float delay) {
+    private IEnumerator DestroyOneShotFromDict(Sound sound, float delay)
+    {
         yield return new WaitForSeconds(delay);
-        if (OneShotSounds.ContainsKey(sound)) {
+        if (OneShotSounds.ContainsKey(sound))
+        {
             OneShotSounds.Remove(sound);
         }
     }
@@ -71,8 +78,9 @@ public class SoundManager : Singleton<SoundManager>
     /// <param name="sound">The sound to play</param>
     /// <param name="looping">Looping mode on/off</param>
     /// <param name="alone">If this sound should pause all other sounds playing</param>
-    /// /// <param name="forceRestart">If true, the song will restart also if it was already playing</param>
-    public void PlaySoud(Sound sound, bool looping = true, bool alone = false, bool forceRestart = false)
+    /// <param name="forceRestart">If true, the song will restart also if it was already playing</param>
+    /// <param name="resumeOthersAfter">If true, the song will pause all other songs and resume them later. Incompatible with alone=true</param>
+    public void PlaySoud(Sound sound, bool looping = true, bool alone = false, bool forceRestart = false, bool resumeOthersAfter = false)
     {
         if (!options.SoundEnabled) return;
 
@@ -98,6 +106,10 @@ public class SoundManager : Singleton<SoundManager>
         {
             StopAllSounds();
         }
+        else if (resumeOthersAfter)
+        {
+            PauseAllSounds();
+        }
 
 
         // Store playing sound in a map.
@@ -111,6 +123,41 @@ public class SoundManager : Singleton<SoundManager>
 
         // Play sound
         audioSource.Play();
+
+        if (resumeOthersAfter)
+        {
+           StartCoroutine( DelayFunction(() =>
+            {
+                StopSound(sound);
+                ResumeAllSounds();
+            }, audioClip.length));
+        }
+
+    }
+
+    private void PauseAllSounds()
+    {
+        foreach (Sound s in NonOneShotSounds.Keys)
+        {
+            AudioSource audioSource = NonOneShotSounds[s]?.GetComponent<AudioSource>();
+            if (audioSource != null && audioSource.isPlaying)
+            {
+                audioSource.Pause();
+            }
+        }
+    }
+
+    private void ResumeAllSounds()
+    {
+        foreach (Sound s in NonOneShotSounds.Keys)
+        {
+            AudioSource audioSource = NonOneShotSounds[s]?.GetComponent<AudioSource>();
+            if (audioSource != null && !audioSource.isPlaying)
+            {
+                audioSource.UnPause();
+                // audioSource.Play();
+            }
+        }
     }
 
     private void StopAllSounds()
@@ -171,5 +218,11 @@ public class SoundManager : Singleton<SoundManager>
         }
         Debug.LogError($"Cannot find audio {sound}");
         return null;
+    }
+
+    private IEnumerator DelayFunction(System.Action action, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        action.Invoke();
     }
 }
