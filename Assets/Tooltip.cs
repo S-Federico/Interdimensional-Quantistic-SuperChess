@@ -8,7 +8,7 @@ public class Tooltip : MonoBehaviour
     public TextMeshProUGUI headerField;
     public TextMeshProUGUI contentField;
     public TextMeshProUGUI matrixField;
-
+    public GameObject matrixTooltip;
     public LayoutElement layoutElement;
     public int characterWrapLimit;
     public Vector2 offset; // Offset to avoid the tooltip covering the mouse cursor
@@ -59,8 +59,13 @@ public class Tooltip : MonoBehaviour
             contentField.text = contentText;
         }
 
-        if (matrixField != null)
+        if (matrixText == null || matrixText == string.Empty)
         {
+            matrixTooltip.SetActive(false);
+        }
+        else if (matrixField != null)
+        {
+            matrixTooltip.SetActive(true);
             matrixField.text = matrixText;
         }
         // Aggiorna il layout in base alla lunghezza dei nuovi testi
@@ -90,6 +95,7 @@ public class Tooltip : MonoBehaviour
         Vector2 mousePosition = Input.mousePosition;
         Vector2 adjustedPosition = mousePosition + offset;
         transform.position = adjustedPosition;
+        matrixTooltip.GetComponent<RectTransform>().position = adjustedPosition;
     }
 
     public void Show()

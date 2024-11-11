@@ -501,16 +501,15 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             }
             if (!inGameSceneFlag)
             {
-                description += "Area of Effect:\n";
                 int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(consumable.ApplicationMatrix);
 
                 for (int i = 0; i < applicationMatrix.GetLength(0); i++)
                 {
                     for (int j = 0; j < applicationMatrix.GetLength(1); j++)
                     {
-                        description += applicationMatrix[i, j] == 1 ? "X " : "O ";
+                        matrix += applicationMatrix[i, j] == 1 ? "X " : "O ";
                     }
-                    description += "\n";
+                    matrix += "\n";
                 }
             }
 
@@ -538,28 +537,27 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
             }
             if (!inGameSceneFlag)
             {
-                description += "\nArea of Effect:\n";
                 int[,] applicationMatrix = Utility.ConvertA2DintToIntMatrix(manual.ApplicationMatrix);
-                description += "  "; // Spazio iniziale per allineare le etichette di colonna
+                matrix += "  "; // Spazio iniziale per allineare le etichette di colonna
 
                 // Aggiungi le etichette delle colonne (lettere)
                 for (int j = 0; j < applicationMatrix.GetLength(1); j++)
                 {
-                    description += $"{(char)('A' + j)}";
+                    matrix += $"{(char)('A' + j)}";
                 }
-                description += "\n";
+                matrix += "\n";
 
                 for (int i = 0; i < applicationMatrix.GetLength(0); i++)
                 {
-                    description += $"{applicationMatrix.GetLength(0) - i} "; // Aggiungi il numero di riga all'inizio
+                    matrix += $"{applicationMatrix.GetLength(0) - i} "; // Aggiungi il numero di riga all'inizio
 
                     for (int j = 0; j < applicationMatrix.GetLength(1); j++)
                     {
                         // Aggiungi la cella con "X" o "O" e un separatore verticale "|"
-                        description += (applicationMatrix[i, j] == 1 ? "X" : "O");
+                        matrix += applicationMatrix[i, j] == 1 ? "X" : "O";
                     }
 
-                    description += "\n"; // Fine riga
+                    matrix += "\n"; // Fine riga
                 }
             }
             return (description,matrix);
