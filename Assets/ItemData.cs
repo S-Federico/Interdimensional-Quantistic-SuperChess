@@ -447,17 +447,17 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
         {
             if (scriptableItem != null)
             {
-                string description = GenerateTooltipDescription();
-                tooltip.SetText(scriptableItem.Name, description);
+                (string description,string matrix) = GenerateTooltipDescription();
+                tooltip.SetText(scriptableItem.Name, description,matrix);
             }
             else if (pieceData != null)
             {
-                string description = GenerateTooltipDescription();
-                tooltip.SetText("One Piece", description);
+                (string description,string matrix) = GenerateTooltipDescription();
+                tooltip.SetText("One Piece", description,"");
             }
             else
             {
-                tooltip.SetText("Elemento Sconosciuto", "");
+                tooltip.SetText("Elemento Sconosciuto", "","");
             }
             tooltip.ShowAfterDelay(scriptableItem?.GetInstanceID() ?? 0);
         }
@@ -475,9 +475,11 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
         GameUI.SetCursor(CursorType.Default);
     }
 
-    private string GenerateTooltipDescription()
+    private (string description, string matrix) GenerateTooltipDescription()
     {
         string description = "";
+        string matrix = "";
+
         if (scriptableItem is ScriptableConsumable)
         {
             // Caso consumabile
@@ -512,7 +514,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                 }
             }
 
-            return description;
+            return (description,matrix);
 
         }
         else if (scriptableItem is ScriptableManual)
@@ -560,7 +562,7 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                     description += "\n"; // Fine riga
                 }
             }
-            return description;
+            return (description,matrix);
         }
         else if (pieceData != null)
         {
@@ -579,12 +581,11 @@ public class ItemData : MonoBehaviour, IClickable, IPointerEnterHandler, IPointe
                     description += $"{modifier.statusEffectType}\n";
                 }
             }
-            return description;
+            return (description,matrix);
         }
         else
         {
-            // Caso predefinito
-            return scriptableItem?.Description ?? "";
+            return (description,matrix);
         }
     }
 
