@@ -14,12 +14,12 @@ public class InputManager : MonoBehaviour
 
     // Right click
     private bool rightClickPressed = false;
-    public bool RightClickPressed {get => rightClickPressed; }
+    public bool RightClickPressed { get => rightClickPressed; }
 
     // Mouse movement
     private Vector2 mouseDelta = Vector2.zero;
     private Vector2? currMousePosition = null;
-    public Vector2 MouseDelta {get => mouseDelta; }
+    public Vector2 MouseDelta { get => mouseDelta; }
 
     private IDraggable draggedObject = null;
     void Awake()
@@ -62,6 +62,19 @@ public class InputManager : MonoBehaviour
         mousePositionAction.Disable();
     }
 
+    private void OnCheat()
+    {
+        PieceStatus[] pieces = FindObjectsByType<PieceStatus>(FindObjectsSortMode.None);
+        foreach (var piece in pieces)
+        {
+            if (PieceColor.Black == piece.PieceColor && PieceType.King == piece.PieceType) {
+                Destroy(piece.gameObject);
+                break;
+            }
+        }
+
+    }
+
     private void OnLeftClick(InputAction.CallbackContext context)
     {
         Vector2 mousePosition = Mouse.current.position.ReadValue();
@@ -92,14 +105,17 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    void Update() {
+    void Update()
+    {
         OnMouseMove();
     }
-    
-    private void OnMouseMove() {
+
+    private void OnMouseMove()
+    {
         if (!mousePositionAction.enabled) return;
         Vector2 newPos = mousePositionAction.ReadValue<Vector2>();
-        if (currMousePosition != null) {
+        if (currMousePosition != null)
+        {
             mouseDelta = (Vector2)(newPos - currMousePosition);
         }
         currMousePosition = newPos;
