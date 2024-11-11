@@ -49,10 +49,13 @@ public class BoardManager : MonoBehaviour
 
         AssignModifiers();
 
-        LoadConsumables();
+        if (!isTutorial)
+            LoadConsumables();
 
         plane_manuals = GameObject.Find("ManualPlane");
-        LoadManuals();
+
+        if (!isTutorial)
+            LoadManuals();
         showMovesFlag = false;
         alreadyExcecuting = false;
 
