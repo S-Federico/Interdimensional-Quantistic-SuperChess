@@ -2120,7 +2120,7 @@ PrefabInstance:
       objectReference: {fileID: 6340433234315216965, guid: c9077f8320f82d1439b7d6c66b5735f8, type: 3}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: LightsModule.range
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: LightsModule.ratio
@@ -2152,7 +2152,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: LightsModule.intensity
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: LightsModule.maxLights
@@ -2176,7 +2176,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: LightsModule.rangeCurve.scalar
-      value: 3
+      value: 5.5
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: CollisionModule.m_Dampen.scalar
@@ -2196,7 +2196,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: LightsModule.intensityCurve.scalar
-      value: 1.1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2627077442773820349, guid: 9dcad986191372b47bc76ddb675aabd7, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.key0.b
