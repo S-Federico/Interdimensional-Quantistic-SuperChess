@@ -164,6 +164,7 @@ public class GameManager : Singleton<GameManager>
     public void NewGame(GameInfo gameInfo)
     {
         this.GameInfo = gameInfo;
+        this.isGameOver = false;
 
         StartCoroutine(NewGameCoroutine(Constants.Scenes.SAMPLE_SCENE));
     }
@@ -376,6 +377,7 @@ public class GameManager : Singleton<GameManager>
 
     internal void PlayTutorial(GameInfo selectedGameInfo)
     {
+        this.isGameOver = false;
         StartCoroutine(PlayTutorialCoroutine(Constants.Scenes.TUTORIAL));
     }
 }
